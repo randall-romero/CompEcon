@@ -31,11 +31,11 @@ class BasisChebyshev:
         # Validate the inputs
         #todo: find Matlab equivalent isscalar()
         if not n>2:
-            raise Exception, 'n must be at least 3'
+            raise Exception('n must be at least 3')
         if not a < b:
-            raise Exception, 'a must be less than b'
+            raise Exception('a must be less than b')
         if not nodetype in ["gaussian", "endpoint", "lobatto"]:
-            raise Exception, "nodetype must be 'gaussian', 'endpoint', or 'lobatto'."
+            raise Exception("nodetype must be 'gaussian', 'endpoint', or 'lobatto'.")
 
         self.n, self.a, self.b = n, a, b
         self.nodetype = nodetype
@@ -53,7 +53,7 @@ class BasisChebyshev:
         elif self.nodetype == 'lobatto':
             x = np.array([-np.cos(np.pi*k/(n-1)) for k in range(n)])
         else:
-            raise Exception, 'Unknown node type'
+            raise Exception('Unknown node type')
 
         if self.nodetype == 'endpoint':
             x = x / x[-1]
