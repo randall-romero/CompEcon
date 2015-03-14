@@ -52,8 +52,8 @@ class BasisChebyshev:
         self.varName = varName
         self.nodes = None
         self.setNodes()
-        self.D = []
-        self.I = []
+        self._D = []
+        self._I = []
 
     def setNodes(self):
         """
@@ -93,7 +93,7 @@ class BasisChebyshev:
         :return: None
         """
 
-        if len(self.D) >= order:
+        if len(self._D) >= order:
             return  # Use previously stored values if available
 
         n, a, b = self.n, self.a, self.b
@@ -102,7 +102,7 @@ class BasisChebyshev:
             # todo:  use warning about this change
             order = n - 2
 
-        if len(self.D) == 0:
+        if len(self._D) == 0:
             hh = np.arange(n) + 1
             jj, ii = np.meshgrid(hh, hh)
             rc = np.logical_and(np.asarray((ii + jj) % 2, bool), jj > ii)
@@ -110,15 +110,15 @@ class BasisChebyshev:
             d[rc] = (4 / (b - a)) * (jj[rc] - 1)
             d[0, :] = d[0, :] / 2
             # todo: convert d to sparse matrix
-            d = d[:-1, :]
-            self.D.append(d)
+            d = np.mat(d[:-1, :])
+            self._D.append(d)
         else:
-            d = self.D[0]
+            d = self._D[0]
 
-        while len(self.D) < order:
-            h = len(self.D)
+        while len(self._D) < order:
+            h = len(self._D)
             dd = d[:n-h-1, :n-h]
-            self.D.append(np.dot(dd, self.D[-1]))
+            self._D.append(dd * self._D[-1])
 
     def update_I(self, order=1):
         """
@@ -127,7 +127,7 @@ class BasisChebyshev:
         :return: None
         """
 
-        if len(self.I) >= order:
+        if len(self._I) >= order:
             return  # Use previously stored values if available
 
         n, a, b = self.n, self.a, self.b
@@ -138,14 +138,14 @@ class BasisChebyshev:
         d[0, 0] *= 2
         d0 = np.array([(-1) ** k for k in range(nn)]) * sum(d)
         d0.resize((1, d0.size))  # need to have 2 dimensions to concatenate with d
-        dd = np.r_[d0, d]
+        dd = np.mat(np.r_[d0, d])
 
-        while len(self.I) < order:
-            h = len(self.I)
+        while len(self._I) < order:
+            h = len(self._I)
             if h > 0:
-                self.I.append(np.dot(dd[:n + h + 1, :n + h], self.I[-1]))
+                self._I.append(dd[:n + h + 1, :n + h] * self._I[-1])
             else:
-                self.I.append(dd[:n + 1, :n])
+                self._I.append(dd[:n + 1, :n])
 
     def __repr__(self):
         """
@@ -156,3 +156,23 @@ class BasisChebyshev:
         bstr = "A Chebyshev basis function:  "
         bstr += "using {:d} {} nodes in [{:6.2f}, {:6.2f}]".format(n, nodetype.upper(), a, b)
         return bstr
+
+    def D(self, k=1):
+        """
+        Operator to differentiate order k
+        :param k: order of differentiation
+        :return: operator (matrix)
+        """
+        if len(self._D)<k:
+            self.update_D(k)
+        return self._D[k - 1]
+
+    def I(self, k=1):
+        """
+        Operator to integrate order k
+        :param k: order of integration
+        :return: operator (matrix)
+        """
+        if len(self._I) < k:
+            self.update_I(k)
+        return self._I[k - 1]
