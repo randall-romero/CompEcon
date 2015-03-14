@@ -38,8 +38,26 @@ class BasisChebyshev:
         """
         nodetype = nodetype.lower()
 
-        # Validate the inputs
-        # todo: find Matlab equivalent isscalar()
+        self._n, self._a, self._b = n, a, b
+        self._nodetype = nodetype.lower()
+        self.varName = varName
+        self.nodes = None
+        self._D = []
+        self._I = []
+        self._reset()
+
+    def _reset(self):
+        self._validate()
+        self._setNodes()
+        self._D = []
+        self._I = []
+
+    def _validate(self):
+        """
+        Validates values of n, a, b, nodetype
+        :return: None
+        """
+        n, a, b, nodetype = self._n, self._a, self._b, self._nodetype
         if not n > 2:
             raise Exception('n must be at least 3')
         if not a < b:
@@ -47,20 +65,12 @@ class BasisChebyshev:
         if not nodetype in ["gaussian", "endpoint", "lobatto"]:
             raise Exception("nodetype must be 'gaussian', 'endpoint', or 'lobatto'.")
 
-        self.n, self.a, self.b = n, a, b
-        self.nodetype = nodetype
-        self.varName = varName
-        self.nodes = None
-        self.setNodes()
-        self._D = []
-        self._I = []
-
-    def setNodes(self):
+    def _setNodes(self):
         """
         Sets the basis nodes
         :return: None
         """
-        n = self.n
+        n = self._n
 
         if self.nodetype in ['gaussian', 'endpoint']:
             x = np.array([-np.cos(np.pi * k / (2 * n)) for k in range(1, 2 * n, 2)])
@@ -80,15 +90,29 @@ class BasisChebyshev:
         :param x: nodes in [-1,1] domain (array)
         :return: None
         """
-        n, a, b = self.n, self.a, self.b
-        if n != len(x) or min(x) < -1 or max(x)> 1:
+        n, a, b = self._n, self._a, self._b
+        if n != len(x) or min(x) < -1 or max(x) > 1:
             raise Exception('x must have {} nodes between -1 and 1.'.format(n))
 
         return (a + b + (b - a) * x) / 2
 
+    """
+    Methods D and I return operators to differentiate/integrate, which are stored in _D and _I
+    """
+
+    def D(self, k=1):
+        """
+        Operator to differentiate order k
+        :param k: order of differentiation
+        :return: operator (matrix)
+        """
+        if len(self._D) < k:
+            self.update_D(k)
+        return self._D[k - 1]
+
     def update_D(self, order=1):
         """
-        Updates the list D of differentiation operators
+        Updates the list _D of differentiation operators
         :param order: order of required derivative
         :return: None
         """
@@ -96,7 +120,7 @@ class BasisChebyshev:
         if len(self._D) >= order:
             return  # Use previously stored values if available
 
-        n, a, b = self.n, self.a, self.b
+        n, a, b = self._n, self._a, self._b
 
         if n - order < 2:
             # todo:  use warning about this change
@@ -117,12 +141,22 @@ class BasisChebyshev:
 
         while len(self._D) < order:
             h = len(self._D)
-            dd = d[:n-h-1, :n-h]
+            dd = d[:n - h - 1, :n - h]
             self._D.append(dd * self._D[-1])
+
+    def I(self, k=1):
+        """
+        Operator to integrate order k
+        :param k: order of integration
+        :return: operator (matrix)
+        """
+        if len(self._I) < k:
+            self.update_I(k)
+        return self._I[k - 1]
 
     def update_I(self, order=1):
         """
-        Updates the list I of integration operators
+        Updates the list _I of integration operators
         :param order: order of required integral
         :return: None
         """
@@ -130,7 +164,7 @@ class BasisChebyshev:
         if len(self._I) >= order:
             return  # Use previously stored values if available
 
-        n, a, b = self.n, self.a, self.b
+        n, a, b = self._n, self._a, self._b
         nn = n + order
         ii = np.array([(0.25 * (b - a)) / k for k in range(1, nn + 1)])
         d = np.diag(ii) - np.diag(ii[:-2], 2)
@@ -147,32 +181,56 @@ class BasisChebyshev:
             else:
                 self._I.append(dd[:n + 1, :n])
 
+    """
+        SETTERS AND GETTERS:  these methods update the basis if n,a,b or nodetype are changed
+    """
+
+    @property
+    def n(self):
+        return self._n
+
+    @property
+    def a(self):
+        return self._a
+
+    @property
+    def b(self):
+        return self._b
+
+    @property
+    def nodetype(self):
+        return self._nodetype
+
+    @n.setter
+    def n(self, val):
+        self._n = val
+        self._reset()
+
+    @a.setter
+    def a(self, val):
+        self._a = val
+        self._reset()
+
+    @b.setter
+    def b(self, val):
+        self._b = val
+        self._reset()
+
+    @nodetype.setter
+    def nodetype(self, val):
+        self._nodetype = val.lower()
+        self._reset()
+
+    """
+    Display output for the basis
+    """
+
     def __repr__(self):
         """
         Creates a description of the basis
         :return: string (description)
         """
-        n, a, b, nodetype = self.n, self.a, self.b, self.nodetype
+        n, a, b, nodetype = self._n, self._a, self._b, self._nodetype
         bstr = "A Chebyshev basis function:  "
         bstr += "using {:d} {} nodes in [{:6.2f}, {:6.2f}]".format(n, nodetype.upper(), a, b)
         return bstr
-
-    def D(self, k=1):
-        """
-        Operator to differentiate order k
-        :param k: order of differentiation
-        :return: operator (matrix)
-        """
-        if len(self._D)<k:
-            self.update_D(k)
-        return self._D[k - 1]
-
-    def I(self, k=1):
-        """
-        Operator to integrate order k
-        :param k: order of integration
-        :return: operator (matrix)
-        """
-        if len(self._I) < k:
-            self.update_I(k)
-        return self._I[k - 1]
