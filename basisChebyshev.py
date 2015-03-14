@@ -29,8 +29,8 @@ class BasisChebyshev:
         nodetype = nodetype.lower()
 
         # Validate the inputs
-        #todo: find Matlab equivalent isscalar()
-        if not n>2:
+        # todo: find Matlab equivalent isscalar()
+        if not n > 2:
             raise Exception('n must be at least 3')
         if not a < b:
             raise Exception('a must be less than b')
@@ -48,10 +48,10 @@ class BasisChebyshev:
     def setNodes(self):
         n = self.n
 
-        if self.nodetype in ['gaussian','endpoint']:
-            x = np.array([-np.cos(np.pi*k/(2*n)) for k in range(1, 2*n, 2)])
+        if self.nodetype in ['gaussian', 'endpoint']:
+            x = np.array([-np.cos(np.pi * k / (2 * n)) for k in range(1, 2 * n, 2)])
         elif self.nodetype == 'lobatto':
-            x = np.array([-np.cos(np.pi*k/(n-1)) for k in range(n)])
+            x = np.array([-np.cos(np.pi * k / (n - 1)) for k in range(n)])
         else:
             raise Exception('Unknown node type')
 
@@ -60,9 +60,9 @@ class BasisChebyshev:
 
         self.nodes = self.rescale2ab(x)
 
-    def rescale2ab(self,x):
+    def rescale2ab(self, x):
         a, b = self.a, self.b
-        return (a + b + (b-a) * x)/2
+        return (a + b + (b - a) * x) / 2
 
     def update_D(self, order=1):
 
@@ -72,27 +72,27 @@ class BasisChebyshev:
 
         n, a, b = self.n, self.a, self.b
 
-        if n-order < 2:
-            #todo:  use warning about this change
-            order = n-2
+        if n - order < 2:
+            # todo:  use warning about this change
+            order = n - 2
 
         if len(self.D) == 0:
-            hh = np.arange(n)+1
-            jj, ii = np.meshgrid(hh,hh)
-            rc = np.logical_and(np.asarray((ii+jj) % 2, bool), jj>ii)
-            d = np.zeros([n,n])
-            d[rc] = (4/(b-a)) * (jj[rc]-1)
-            d[0,:] = d[0,:]/2
-            #todo: convert d to sparse matrix
-            d = d[:-1,:]
+            hh = np.arange(n) + 1
+            jj, ii = np.meshgrid(hh, hh)
+            rc = np.logical_and(np.asarray((ii + jj) % 2, bool), jj > ii)
+            d = np.zeros([n, n])
+            d[rc] = (4 / (b - a)) * (jj[rc] - 1)
+            d[0, :] = d[0, :] / 2
+            # todo: convert d to sparse matrix
+            d = d[:-1, :]
             self.D.append(d)
         else:
             d = self.D[0]
 
         while len(self.D) < order:
             h = len(self.D)
-            dd = d[:n-h-1,:n-h]
-            self.D.append(np.dot(dd,self.D[-1]))
+            dd = d[:n-h-1, :n-h]
+            self.D.append(np.dot(dd, self.D[-1]))
 
     def update_I(self, order=1):
 
@@ -112,7 +112,7 @@ class BasisChebyshev:
 
         while len(self.I) < order:
             h = len(self.I)
-            if h>0:
+            if h > 0:
                 self.I.append(np.dot(dd[:n + h + 1, :n + h], self.I[-1]))
             else:
                 self.I.append(dd[:n + 1, :n])
@@ -120,5 +120,5 @@ class BasisChebyshev:
     def __repr__(self):
         n, a, b = self.n, self.a, self.b
         bstr = "A Chebyshev basis function:  "
-        bstr += "Using {0:d} nodes in [{1:6.2f}, {2:6.2f}]".format(n,a,b)
+        bstr += "Using {0:d} nodes in [{1:6.2f}, {2:6.2f}]".format(n, a, b)
         return bstr
