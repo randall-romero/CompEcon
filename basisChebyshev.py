@@ -1,4 +1,3 @@
-from __future__ import division
 __author__ = 'Randall'
 
 
@@ -23,9 +22,20 @@ class BasisChebyshev:
             nodetype:  node type, i.e. 'gaussian','lobatto', or 'endpoint'
             varName: 	string, variable name. Defaults to ''.
             WarnOutOfBounds: boolean, warns if interpolating outside [a,b] if true. Defaults to 'false'.
+
+    This class is based on code from Miranda and Fackler.
     """
 
     def __init__(self, n=3, a=-1.0, b=1.0, nodetype="gaussian", varName=""):
+        """
+        Creates an instance of a BasisChebyshev object
+        :param n: number of nodes (scalar > 2)
+        :param a: lower bound (scalar)
+        :param b: upper bound (scalar)
+        :param nodetype: type of collocation nodes, ('gaussian','lobatto', or 'endpoint')
+        :param varName: a string to name the variable
+        :return: a BasisChebyshev instance
+        """
         nodetype = nodetype.lower()
 
         # Validate the inputs
@@ -46,6 +56,10 @@ class BasisChebyshev:
         self.I = []
 
     def setNodes(self):
+        """
+        Sets the basis nodes
+        :return: None
+        """
         n = self.n
 
         if self.nodetype in ['gaussian', 'endpoint']:
@@ -56,19 +70,31 @@ class BasisChebyshev:
             raise Exception('Unknown node type')
 
         if self.nodetype == 'endpoint':
-            x = x / x[-1]
+            x /= x[-1]
 
         self.nodes = self.rescale2ab(x)
 
     def rescale2ab(self, x):
-        a, b = self.a, self.b
+        """
+        Rescales nodes from [-1,1] domain to [a,b] domain
+        :param x: nodes in [-1,1] domain (array)
+        :return: None
+        """
+        n, a, b = self.n, self.a, self.b
+        if n != len(x) or min(x) < -1 or max(x)> 1:
+            raise Exception('x must have {} nodes between -1 and 1.'.format(n))
+
         return (a + b + (b - a) * x) / 2
 
     def update_D(self, order=1):
+        """
+        Updates the list D of differentiation operators
+        :param order: order of required derivative
+        :return: None
+        """
 
-        # Use previously stored values if available
         if len(self.D) >= order:
-            return
+            return  # Use previously stored values if available
 
         n, a, b = self.n, self.a, self.b
 
@@ -95,18 +121,22 @@ class BasisChebyshev:
             self.D.append(np.dot(dd, self.D[-1]))
 
     def update_I(self, order=1):
+        """
+        Updates the list I of integration operators
+        :param order: order of required integral
+        :return: None
+        """
 
-        # Use previously stored values if available
         if len(self.I) >= order:
-            return
+            return  # Use previously stored values if available
 
         n, a, b = self.n, self.a, self.b
         nn = n + order
-        ii = (0.25 * (b - a)) / np.arange(1, nn + 1)
+        ii = np.array([(0.25 * (b - a)) / k for k in range(1, nn + 1)])
         d = np.diag(ii) - np.diag(ii[:-2], 2)
         # todo: make d sparse
         d[0, 0] *= 2
-        d0 = (-1) ** np.arange(nn) * sum(d)
+        d0 = np.array([(-1) ** k for k in range(nn)]) * sum(d)
         d0.resize((1, d0.size))  # need to have 2 dimensions to concatenate with d
         dd = np.r_[d0, d]
 
@@ -118,7 +148,11 @@ class BasisChebyshev:
                 self.I.append(dd[:n + 1, :n])
 
     def __repr__(self):
-        n, a, b = self.n, self.a, self.b
+        """
+        Creates a description of the basis
+        :return: string (description)
+        """
+        n, a, b, nodetype = self.n, self.a, self.b, self.nodetype
         bstr = "A Chebyshev basis function:  "
-        bstr += "Using {0:d} nodes in [{1:6.2f}, {2:6.2f}]".format(n, a, b)
+        bstr += "using {:d} {} nodes in [{:6.2f}, {:6.2f}]".format(n, nodetype.upper(), a, b)
         return bstr
