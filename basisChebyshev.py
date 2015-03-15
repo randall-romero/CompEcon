@@ -1,7 +1,10 @@
 __author__ = 'Randall'
 import numpy as np
+from scipy.sparse import csc_matrix
 import matplotlib.pyplot as plt
-# TODO: complete this class, this is just the beginning!!
+
+# TODO: complete this class
+# todo: compare performance of csr_matrix and csc_matrix to deal with sparse interpolation operators
 
 
 
@@ -151,7 +154,7 @@ class BasisChebyshev:
             d[rc] = (4 / (b - a)) * (jj[rc] - 1)
             d[0, :] = d[0, :] / 2
             # todo: convert d to sparse matrix
-            d = np.mat(d[:-1, :])
+            d = csc_matrix(d[:-1, :])
             self._D.append(d)
         else:
             d = self._D[0]
