@@ -1,9 +1,9 @@
 __author__ = 'Randall'
-
-
+import numpy as np
+import matplotlib.pyplot as plt
 # TODO: complete this class, this is just the beginning!!
 
-import numpy as np
+
 
 
 class BasisChebyshev:
@@ -84,17 +84,34 @@ class BasisChebyshev:
 
         self.nodes = self.rescale2ab(x)
 
+    """
+        Methods to standardize and rescale the nodes
+    """
+
     def rescale2ab(self, x):
         """
         Rescales nodes from [-1,1] domain to [a,b] domain
         :param x: nodes in [-1,1] domain (array)
-        :return: None
+        :return: nodes in [a, b] domain
         """
         n, a, b = self._n, self._a, self._b
         if n != len(x) or min(x) < -1 or max(x) > 1:
             raise Exception('x must have {} nodes between -1 and 1.'.format(n))
 
         return (a + b + (b - a) * x) / 2
+
+    def rescale201(self,x):
+        """
+        Rescales nodes from [a, b] domain to [-1, 1] domain
+        :param x: nodes in [a, b] domain (array)
+        :return: nodes in [-1, 1] domain
+        """
+        n, a, b = self._n, self._a, self._b
+        # if min(x) < a or max(x) > b:
+        #     raise Exception('x values must be between a and b.')  # todo: turn this into a warning!
+        return (2 / (b-a)) * (x - (a + b) /2)
+
+
 
     """
     Methods D and I return operators to differentiate/integrate, which are stored in _D and _I
@@ -182,6 +199,50 @@ class BasisChebyshev:
                 self._I.append(dd[:n + 1, :n])
 
     """
+        Interpolation methods
+    """
+    def interpolation(self, x=None, order=[0]):
+        """
+        Computes interpolation matrices for given data x and order of differentiation 'order' (integration if negative)
+        :param x: array of evaluation points (defaults to nodes)
+        :param order: a list of orders for differentiation (+) / integration (-)
+        :return: a dictionary with interpolation matrices, keys given by unique elements of order.
+        """
+        n, a, b = self._n, self._a, self._b
+        nn = n + max(0,-min(order))
+
+        # Check for x argument
+        xIsProvided = (x is not None)
+        x = np.mat(x) if xIsProvided else self.nodes
+        nx = x.size
+
+        # Compute order 0 interpolation matrix
+        if xIsProvided:
+            z = self.rescale201(x)
+            bas = np.mat(np.zeros([nn,nx]))
+            bas[0] = 1
+            bas[1] = z
+            z *=2
+            for k in range(2, nn):
+                bas[k] = np.multiply(z, bas[k - 1]) - bas[k - 2]
+            bas = bas.T
+        else:
+            z = np.mat(np.arange(n - 0.5, -0.5, -1)).T
+            bas = np.cos((np.pi/n) * z * np.mat(np.arange(0, nn)))
+
+        # Compute Phi
+        Phi = dict()
+        for ii in set(order):
+
+            if ii > 0: # take derivative
+                Phi[ii] = bas[:, :n - ii] * self.D(ii)
+            elif ii < 0:
+                Phi[ii] = bas[:, :n - ii] * self.I(-ii)
+            else:
+                Phi[ii] = bas
+        return Phi
+
+    """
         SETTERS AND GETTERS:  these methods update the basis if n,a,b or nodetype are changed
     """
 
@@ -234,3 +295,16 @@ class BasisChebyshev:
         bstr = "A Chebyshev basis function:  "
         bstr += "using {:d} {} nodes in [{:6.2f}, {:6.2f}]".format(n, nodetype.upper(), a, b)
         return bstr
+
+    def plot(self, k=5):
+        """
+        Plots the first k basis functions
+        :param k: number of functions to include in plot
+        :return: None
+        """
+        a, b, = self._a, self._b
+        x = np.linspace(a, b, 120)
+        y = self.interpolation(x)
+        plt.plot(x.T, y[0][:, :k])
+        plt.plot(self.nodes,0*self.nodes,'ro')
+        return None
