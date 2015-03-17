@@ -1,5 +1,7 @@
-from pycompecon import BasisChebyshev
 import numpy as np
+from .basisChebyshev import BasisChebyshev
+
+
 __author__ = 'Randall'
 
 
@@ -101,17 +103,17 @@ class Basis:
         # todo: expand basis
 
     def expandBasis(self):
-        raise Exception('NOT YET IMPLEMENTED')
+        raise NotImplementedError
 
     def interpolation(self,x,order):
-        raise Exception('NOT YET IMPLEMENTED')
+        raise NotImplementedError
 
     def plot(self):
-        raise Exception('NOT YET IMPLEMENTED')
+        raise NotImplementedError
 
     def __repr__(self):
-        raise Exception('NOT YET IMPLEMENTED')
+        return "WARNING! Class Basis is still work in progress"
 
 
 def SmolyakGrid(n,qnode,qdegree):
-    raise Exception('NOT YET IMPLEMENTED')
+    raise NotImplementedError

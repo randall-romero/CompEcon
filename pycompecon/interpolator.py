@@ -57,33 +57,24 @@ from pycompecon import Basis
 
 ##
 class Interpolator(Basis):
-    """
-    properties (Dependent)
-        y    # value of functions at nodes
-        c    # interpolation coefficients
-        x    # basis nodes
-    end
-    
-    properties (Access = protected)
-        fnodes_  # stored values for function at nodes
-        coef_    # stored coefficients
-        fnodes_is_outdated # if true, calling "y" updates fnodes_ before returning values
-        coef_is_outdated   # if true, calling "c" updates coef_ before returning values
-    end
-    
-    properties (SetAccess = protected)
-        Phi     # interpolation matrix
-        Phiinv  # inverse of interpolation matrix
-    end
-    
+    #properties (Dependent)
+    y = None   # value of functions at nodes
+    c = None   # interpolation coefficients
+    x = None   # basis nodes
+    #properties (Access = protected)
+    fnodes_ = None # stored values for function at nodes
+    coef_ = None # stored coefficients
+    fnodes_is_outdated = None# if true, calling "y" updates fnodes_ before returning values
+    coef_is_outdated = None# if true, calling "c" updates coef_ before returning values
+    #properties (SetAccess = protected)
+    Phi = None  # interpolation matrix
+    Phiinv = None # inverse of interpolation matrix
 
-    ##
-    
-    methods
+    #methods
         
         ## funcApprox
-    """
-    def interpolator(B,fnodes):  # return self
+
+    def __init__(self,fnodes):
         ###
         # Constructor for funcApprox
         #
@@ -93,7 +84,7 @@ class Interpolator(Basis):
         #
         # * |B|: basis object
         # * |fnodes|: matrix, values of the interpolant at basis B nodes
-        return None
+        raise NotImplementedError
         """
         if nargin==0
             return
