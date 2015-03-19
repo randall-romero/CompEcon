@@ -1,6 +1,6 @@
 import numpy as np
 from .basisChebyshev import BasisChebyshev
-
+from .ce_util import gridmake, ckron
 
 __author__ = 'Randall'
 
@@ -37,8 +37,8 @@ class Basis:
             nodetype='gaussian',
             k=3,
             method='tensor',
-            qnode=None,
-            qdegree=None,
+            qn=None,
+            qp=None,
             varnames=["V{}".format(dim) for dim in range(d)]
         )
 
@@ -47,8 +47,8 @@ class Basis:
             nodetype={'gaussian', 'lobatto', 'endpoint','cardinal'},   #todo: cardinal is only valid in spline basis
             k=range(min(n)),
             method={'tensor', 'smolyak', 'complete', 'cluster', 'zcluster'},
-            qnode=range(min(n)),
-            qdegree=range(min(n)),
+            qn=range(np.prod(n)),
+            qp=range(np.prod(n))
         )
 
         # get variable names, if provided
@@ -71,10 +71,10 @@ class Basis:
         # Validate options for chebyshev basis of several dimensions
         if d > 1 and opts['type'] == 'chebyshev':
             if opts['method'] in ['complete', 'cluster', 'zcluster']:
-                if opts['qnode'] is None:
-                    opts['qnode'] = 0
-                if opts['qdegree'] is None:
-                    opts['qdegree'] = max(n) - 1
+                if opts['qn'] is None:
+                    opts['qn'] = 0
+                if opts['qp'] is None:
+                    opts['qp'] = max(n) - 1
             elif opts['method'] == 'smolyak':
                 n_valid = 2 ** np.ceil(np.log2(n - 1)) + 1
                 if np.any(n != n_valid):
@@ -86,10 +86,10 @@ class Basis:
                     n = np.array(n_valid,'int')
                 if opts['nodetype'] != 'lobatto':
                     opts['nodetype'] = 'lobatto'  # todo issue warning
-                if opts['qnode'] is None:
-                    opts['qnode'] = 2
-                if opts['qdegree'] is None:
-                    opts['qdegree'] = opts['qnode']
+                if opts['qn'] is None:
+                    opts['qn'] = np.array([2])
+                if opts['qp'] is None:
+                    opts['qp'] = opts['qn']
 
         # make list of 1-basis
         B1 = []
@@ -107,6 +107,7 @@ class Basis:
         self.opts = opts
         self._B1 = B1
         self.type = opts['type']
+        self._expandBasis()
 
         # todo: expand basis
 
@@ -124,38 +125,53 @@ class Basis:
             
              * 'tensor' takes all possible combinations,
              * 'smolyak' computes Smolyak basis, given |opts.degreeParam|,
-             * 'complete', 'cluster', and 'zcluster' choose polynomials with degrees not exceeding opts.qdegree
+             * 'complete', 'cluster', and 'zcluster' choose polynomials with degrees not exceeding opts.qp
             
              Expanding nodes depends on value of field opts.method
             
              * 'tensor' and 'complete' take all possible combinations,
-             * 'smolyak' computes Smolyak basis, given opts.qnode
-             * 'cluster' and 'zcluster' compute clusters of the tensor nodes based on opts.qnode
+             * 'smolyak' computes Smolyak basis, given opts.qn
+             * 'cluster' and 'zcluster' compute clusters of the tensor nodes based on opts.qn
 
         :return: None
         """
         if self.d == 1:
             return
 
-        # Smolyak interpolation: Now it is done by SmolyakGrid function.
-        n, qnode, qdegree = self.n, self.opts.qnode, self.opts.qdegree
+        ''' Smolyak interpolation: Now it is done by SmolyakGrid function'''
+        n, qn, qp = self.n, self.opts['qn'], self.opts['qp']
 
-        if self.opts.met == 'smolyak':
-            self.opts['validX'], self.opts['validPhi'] = SmolyakGrid(n, qnode, qdegree)
-            self.nodes = np.zeros(self.opts.validX.shape)
+        if self.opts['method'] == 'smolyak':
+            self.opts['validX'], self.opts['validPhi'] = SmolyakGrid(n, qn, qp)
+            self.nodes = np.zeros(self.opts['validX'].shape)
             for k in range(self.d):
-                self.nodes[:,k] = self.B1[k].nodes[self.opts.validX[:,k]]
+                self.nodes[:,k] = self._B1[k].nodes[self.opts['validX'][:,k]].flatten()
             return
 
+        ''' All other methods'''
+        degs = self.n - 1 # degree of polynomials
+        ldeg = [np.arange(degs[ni] + 1) for ni in range(self.d)]
+
+        idxAll = gridmake(*ldeg)   # degree of polynomials = index
 
 
+        ''' Expanding the polynomials'''
+        if self.opts['method'] == 'tensor':
+            self.opts['validPhi'] = idxAll
+        else:
+            degValid = np.sum(idxAll, axis=1) <= self.opts['qp']
+            self.opts['validPhi'] = idxAll[degValid, :]
 
+        ''' Expanding the nodes'''
+        nodes1 = [self._B1[k].nodes for k in range(self.d)]
+        nodes_tensor = gridmake(*nodes1)
 
-        raise NotImplementedError # todo: implement this method
-
-
-
-
+        if self.opts['method'] in ['tensor', 'complete']:
+            self.nodes = nodes_tensor
+            self.opts['validX'] = idxAll
+        elif self.opts['method'] in ['cluster', 'zcluster']:
+            H = self.opts['validPhi'].size[0] + self.opts['qn']
+            raise NotImplementedError # todo: implement this method
 
 
     def interpolation(self,x,order):
@@ -164,21 +180,48 @@ class Basis:
     def plot(self):
         raise NotImplementedError # todo: implement this method
 
+    @property
+    def N(self):
+        """ Total number of nodes"""
+        return self.opts['validX'].shape[0]
+
+    @property
+    def M(self):
+        """ Total number of polynomials"""
+        return self.opts['validPhi'].shape[0]
+
+
     def __repr__(self):
-        return "WARNING! Class Basis is still work in progress"
+        n, a, b = self.n, self.a, self.b
+        nodetype = self.opts['nodetype']
+        vnames = self.opts['varnames']
+
+        bstr = "A {}-dimension basis function:  ".format(self.d)
+        bstr += "using {:d} {} nodes and {:d} polynomials, expanded by {}".format(
+            self.N, nodetype.upper(), self.M, self.opts['method'])
+        bstr += '\n' + '_' * 60 + '\n'
+        for k in range(self.d):
+            bstr += "\t{:12s}: {:d} nodes in [{:6.2f}, {:6.2f}]\n".format(vnames[k], n[k], a[k], b[k])
+
+        bstr += '\n' + '=' * 60 + '\n'
+        bstr += "WARNING! Class Basis is still work in progress"
+        return bstr
 
 
-def SmolyakGrid(n, qnode, qdegree=None):
+
+
+
+def SmolyakGrid(n, qn, qp=None):
     """
 
     :param n: number of nodes per dimension
-    :param qnode: cut-off parameters for node selection (array)
-    :param qdegree: cut-off parameters for polynomial selection(array)
+    :param qn: cut-off parameters for node selection (array)
+    :param qp: cut-off parameters for polynomial selection(array)
     :return: a (node_indices, polynomial_indices) tuple to form the Smolyak grid from univariate nodes and polynomials
     """
 
-    if qdegree is None:
-        qdegree = qnode
+    if qp is None:
+        qp = qn
 
     # Dimensions
     d = n.size
@@ -186,16 +229,16 @@ def SmolyakGrid(n, qnode, qdegree=None):
     N = max(ngroups)
 
     # node parameter
-    node_q = max(qnode)
-    node_isotropic = qnode.size == 1
+    node_q = max(qn)
+    node_isotropic = qn.size == 1
     if node_isotropic:
-        qnode = np.zeros(d)
+        qn = np.zeros(d)
 
     # polynomial parameter
-    poly_q = max(qdegree)
-    poly_isotropic = qdegree.size == 1
+    poly_q = max(qp)
+    poly_isotropic = qp.size == 1
     if poly_isotropic:
-        qdegree = np.zeros(d)
+        qp = np.zeros(d)
 
     # make grid that identifies node groups
     k = np.arange(2 ** (N - 1) + 1)
@@ -225,7 +268,7 @@ def SmolyakGrid(n, qnode, qdegree=None):
     nodeSum = nodeMapping[0]
     theNodes = np.mat(nodeIndex[0]).T
     if not node_isotropic:
-        isValid = nodeSum <= (qnode[0] + 1)  # todo: not sure this index is ok
+        isValid = nodeSum <= (qn[0] + 1)  # todo: not sure this index is ok
         nodeSum = nodeSum[isValid]
         theNodes = theNodes[isValid,:]
 
@@ -233,14 +276,14 @@ def SmolyakGrid(n, qnode, qdegree=None):
     polySum = polyMapping[0]
     thePolys = np.mat(nodeIndex[0]).T
     if not poly_isotropic:
-        isValid = polySum <= (qdegree[0] + 1)  # todo: not sure this index is ok
+        isValid = polySum <= (qp[0] + 1)  # todo: not sure this index is ok
         polySum = polySum[isValid]
         thePolys = thePolys[isValid,:]
 
     # compute the grid
     for k in range(1,d):
-        theNodes, nodeSum = ndgrid2(theNodes,nodeSum,nodeMapping[k], 1 + k + node_q, qnode[k])
-        thePolys, polySum = ndgrid2(thePolys,polySum,polyMapping[k], 1 + k + poly_q, qdegree[k])
+        theNodes, nodeSum = ndgrid2(theNodes,nodeSum,nodeMapping[k], 1 + k + node_q, qn[k])
+        thePolys, polySum = ndgrid2(thePolys,polySum,polyMapping[k], 1 + k + poly_q, qp[k])
 
     return theNodes, thePolys
 
