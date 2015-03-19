@@ -44,7 +44,7 @@ class Basis:
 
         valid_opts = dict(
             type={'chebyshev', 'spline'},
-            nodetype={'gaussian', 'lobatto', 'endpoint','cardinal'},   #todo: cardinal is only valid in spline basis
+            nodetype={'gaussian', 'lobatto', 'endpoint', 'cardinal'},   # todo: cardinal is only valid in spline basis
             k=range(min(n)),
             method={'tensor', 'smolyak', 'complete', 'cluster', 'zcluster'},
             qn=range(np.prod(n)),
@@ -64,7 +64,7 @@ class Basis:
             if opt not in opts.keys():
                 print('Unknown option {} with value {}; ignoring'.format(opt, val))  # todo: make this a warning
             elif val not in valid_opts[opt]:
-                print('Value {} is not a valid option for {}; ignoring'.format(val,opt))  # todo: make this a warning
+                print('Value {} is not a valid option for {}; ignoring'.format(val, opt))  # todo: make this a warning
             else:
                 opts[opt] = val
 
@@ -174,8 +174,132 @@ class Basis:
             raise NotImplementedError # todo: implement this method
 
 
-    def interpolation(self,x,order):
-        raise NotImplementedError # todo: implement this method
+    def interpolation(self, x=None, order=None):
+        if self.d == 1:
+            return self._B1(x, order)
+
+        if order is None:
+            order = np.zeros(1, self.d)
+        else:
+            assert (order.shape(1) == self.d)
+
+        # check what type of input x is provided
+        if x is None:
+            return self._interp_default(order)
+        elif type(x) == list:
+            return self._interp_list(x,order)
+        elif type(x) == np.array:
+            return self._interp_matrix(x,order)
+        else:
+            raise Exception('wrong x input')
+
+
+
+
+        # HANDLE POLYNOMIALS DIMENSION
+
+
+
+    def _interp_default(self, order):
+        """
+
+        :param x:
+        :param order:
+        :return:
+        """
+        x = self.nodes
+        nrows = self.N
+        if self.opts['method'] not in {'cluster', 'zcluster'}:
+            r = self.opts['validX']  # combine default basis nodes
+
+        c = self.opts['validPhi']
+        ncols = c.shape(0)
+        Norders = order.shape(0)
+
+        if self.opts['type'] == 'Chebyshev':
+            PHI = np.zeros([nrows, ncols, Norders, self.d])
+            # Compute interpolation matrices for each dimension
+            for k in range(self.d):
+                Phij = self._B1[k](order=order[:, k])
+                PHI[:, :, :, k] = Phij[r[:, k], c[:, k], :]
+        else:
+            raise NotImplemented
+
+        # todo multiply 4th dimension
+        return PHI
+
+
+
+
+
+
+    def _interp_matrix(self, x, order):
+        """
+
+        :param x:
+        :param order:
+        :return:
+        """
+        assert (x.shape(1) == self.d)  # 'In Interpolation, class basis: x must have d columns')
+        nrows = x.shape(0)
+        r = np.tile(np.arange(x.shape(0)), [self.d, 1])
+
+        c = self.opts['validPhi']
+        ncols = c.shape(0)
+        Norders = order.shape(0)
+
+        if self.opts['type'] == 'Chebyshev':
+            PHI = np.zeros([nrows, ncols, Norders, self.d])
+            # Compute interpolation matrices for each dimension
+            for k in range(self.d):
+                Phij = self._B1[k](x[:, k], order[:, k])
+                PHI[:, :, :, k] = Phij[:, c[:,k], :]
+        else:
+            raise NotImplemented
+
+        # todo multiply 4th dimension
+        return PHI
+
+
+
+
+
+    def _interp_list(self, x, order):
+        """
+
+        :param x:
+        :param order:
+        :return:
+        """
+        assert (len(x) == self.d)
+        nrows = np.array([xi.size for xi in x]).prod()
+        r = self.opts['validX']  # combine default basis nodes
+
+        c = self.opts['validPhi']
+        ncols = c.shape(0)
+        Norders = order.shape(0)
+
+        if self.opts['type'] == 'Chebyshev':
+            PHI = np.zeros([nrows, ncols, Norders, self.d])
+            # Compute interpolation matrices for each dimension
+            for k in range(self.d):
+                Phij = self._B1[k](x[k], order[:, k])
+                PHI[:, :, :, k] = Phij[r[:, k], c[:, k], :]
+        else:
+            raise NotImplemented
+
+        # todo multiply 4th dimension
+        return PHI
+
+
+
+
+
+
+
+
+
+
 
     def plot(self):
         raise NotImplementedError # todo: implement this method
