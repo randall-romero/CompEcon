@@ -39,15 +39,13 @@ class BasisChebyshev:
         self._nodetype = nodetype.lower()
         self.varName = varName
         self._nodes = None
-        self._D = []
-        self._I = []
+        self._Diff = dict()
         self._reset()
 
     def _reset(self):
         self._validate()
         self._setNodes()
-        self._D = []
-        self._I = []
+        self._Diff = dict()
 
     def _validate(self):
         """
@@ -118,95 +116,84 @@ class BasisChebyshev:
     Methods D and I return operators to differentiate/integrate, which are stored in _D and _I
     """
 
-    def D(self, k=1):
+    def Diff(self, k):
         """
         Operator to differentiate
 
         :param k: order of differentiation
         :return: operator (matrix)
         """
-        if len(self._D) < k:
-            self._update_D(k)
-        return self._D[k - 1]
+        if k not in self._Diff.keys():
+            self._update_Diff(k)
+        return self._Diff[k]
 
-    def _update_D(self, order=1):
+    def _update_Diff(self, order=1):
         """
         Updates the list _D of differentiation operators
 
         :param order: order of required derivative
         :return: None
         """
-
-        if len(self._D) >= order:
+        if order in self._Diff.keys() or order == 0:
             return  # Use previously stored values if available
 
         n, a, b = self._n, self._a, self._b
+        keys = set(self._Diff.keys())
 
-        if n - order < 2:
-            # todo:  use warning about this change
-            order = n - 2
+        if order > 0:
+            if order > n - 2:
+                # todo:  use warning about this change
+                order = n - 2
 
-        if len(self._D) == 0:
-            hh = np.arange(n) + 1
-            jj, ii = np.meshgrid(hh, hh)
-            rc = np.logical_and(np.asarray((ii + jj) % 2, bool), jj > ii)
-            d = np.zeros([n, n])
-            d[rc] = (4 / (b - a)) * (jj[rc] - 1)
-            d[0, :] = d[0, :] / 2
-            # todo: convert d to sparse matrix
-            d = csc_matrix(d[:-1, :])
-            self._D.append(d)
-        else:
-            d = self._D[0]
+            missing_keys = set(range(1, order + 1)) - keys
 
-        while len(self._D) < order:
-            h = len(self._D)
-            dd = d[:n - h - 1, :n - h]
-            self._D.append(dd * self._D[-1])
-
-    def I(self, k=1):
-        """
-        Operator to integrate
-
-        :param k: order of integration
-        :return: operator (matrix)
-        """
-        if len(self._I) < k:
-            self._update_I(k)
-        return self._I[k - 1]
-
-    def _update_I(self, order=1):
-        """
-        Updates the list _I of integration operators
-
-        :param order: order of required integral
-        :return: None
-        """
-
-        if len(self._I) >= order:
-            return  # Use previously stored values if available
-
-        n, a, b = self._n, self._a, self._b
-        nn = n + order
-        ii = np.array([(0.25 * (b - a)) / k for k in range(1, nn + 1)])
-        d = np.diag(ii) - np.diag(ii[:-2], 2)
-        # todo: make d sparse
-        d[0, 0] *= 2
-        d0 = np.array([(-1) ** k for k in range(nn)]) * sum(d)
-        d0.resize((1, d0.size))  # need to have 2 dimensions to concatenate with d
-        dd = np.mat(np.r_[d0, d])
-
-        while len(self._I) < order:
-            h = len(self._I)
-            if h > 0:
-                self._I.append(dd[:n + h + 1, :n + h] * self._I[-1])
+            if 1 in missing_keys:
+                hh = np.arange(n) + 1
+                jj, ii = np.meshgrid(hh, hh)
+                rc = np.logical_and(np.asarray((ii + jj) % 2, bool), jj > ii)
+                d = np.zeros([n, n])
+                d[rc] = (4 / (b - a)) * (jj[rc] - 1)
+                d[0, :] = d[0, :] / 2
+                # todo: convert d to sparse matrix
+                d = csc_matrix(d[:-1, :])
+                self._Diff[1] = d
+                missing_keys -= {1}
             else:
-                self._I.append(dd[:n + 1, :n])
+                d = self._Diff[1]
+
+            missing_keys = list(missing_keys)
+            missing_keys.sort(reverse=True)
+            while missing_keys:
+                k = missing_keys.pop()
+                self._Diff[k] = d[:n - k, :n - k + 1] * self._Diff[k - 1]
+        else:
+
+            nn = n - order
+            ii = np.array([(0.25 * (b - a)) / k for k in range(1, nn + 1)])
+            d = np.diag(ii) - np.diag(ii[:-2], 2)
+            # todo: make d sparse
+            d[0, 0] *= 2
+            d0 = np.array([(-1) ** k for k in range(nn)]) * sum(d)
+            d0.resize((1, d0.size))  # need to have 2 dimensions to concatenate with d
+            dd = np.mat(np.r_[d0, d])
+
+            missing_keys = set(range(order, 0)) - keys
+
+            if -1 in missing_keys:
+                self._Diff[-1] = dd[:n + 1, :n]
+                missing_keys -= {-1}
+
+            missing_keys = list(missing_keys)
+            missing_keys.sort(reverse=False)
+            while missing_keys:
+                k = missing_keys.pop()
+                self._Diff[k] = dd[:n - k, :n - k - 1] * self._Diff[k + 1]
+
 
     """
         Interpolation methods
     """
-    def interpolation(self, x=None, order=[0]):
+    def interpolation(self, x=None, order=0, asdict=False):
         """
         Computes interpolation matrices for given data x and order of differentiation 'order' (integration if negative)
 
@@ -214,8 +201,11 @@ class BasisChebyshev:
         :param order: a list of orders for differentiation (+) / integration (-)
         :return a: dictionary with interpolation matrices, keys given by unique elements of order.
         """
+        if isinstance(order, (float, int)):
+            order = [order]
+
         n, a, b = self._n, self._a, self._b
-        nn = n + max(0,-min(order))
+        nn = n + max(0, -min(order))
 
         # Check for x argument
         xIsProvided = (x is not None)
@@ -239,14 +229,15 @@ class BasisChebyshev:
         # Compute Phi
         Phi = dict()
         for ii in set(order):
-
-            if ii > 0: # take derivative
-                Phi[ii] = bas[:, :n - ii] * self.D(ii)
-            elif ii < 0:
-                Phi[ii] = bas[:, :n - ii] * self.I(-ii)
-            else:
+            if ii == 0:
                 Phi[ii] = bas
-        return Phi
+            else:
+                Phi[ii] = bas[:, :n - ii] * self.Diff(ii)
+
+        if len(order) == 1 and not asdict:
+            return Phi[order[0]]
+        else:
+            return Phi
 
     """
         SETTERS AND GETTERS:  these methods update the basis if n,a,b or nodetype are changed
@@ -311,7 +302,7 @@ class BasisChebyshev:
         bstr += "using {:d} {} nodes in [{:6.2f}, {:6.2f}]".format(n, nodetype.upper(), a, b)
         return bstr
 
-    def plot(self, k=5):
+    def plot(self, order=0, k=5):
         """
         Plots the first k basis functions
 
@@ -319,8 +310,17 @@ class BasisChebyshev:
         :return: None
         """
         a, b, = self._a, self._b
+        nodes = self._nodes
         x = np.linspace(a, b, 120)
-        y = self.interpolation(x)
-        plt.plot(x.T, y[0][:, :k])
-        plt.plot(self.nodes,0*self.nodes,'ro')
-        return None
+        y = self(x, order)
+        x.resize((x.size, 1))
+        plt.plot(x, y[:, :k])
+        plt.plot(nodes, 0 * nodes, 'ro')
+        plt.show()
+
+
+    """
+    Calling the basis directly returns the interpolation matrix
+    """
+    def __call__(self, x=None, order=0, asdict=False):
+        return self.interpolation(x, order, asdict)
