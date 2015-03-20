@@ -47,7 +47,9 @@ class Basis:
             method='tensor',
             qn=None,
             qp=None,
-            varnames=["V{}".format(dim) for dim in range(d)]
+            varnames=["V{}".format(dim) for dim in range(d)],
+            validX=[],
+            validPhi=[]
         )
 
         valid_opts = dict(
@@ -69,6 +71,8 @@ class Basis:
 
         # Read user options
         for opt, val in options.items():
+            if opt in ['qn', 'qp', 'validX', 'validPhi']:    # for now just skip this validation
+                continue
             if opt not in opts.keys():
                 print('Unknown option {} with value {}; ignoring'.format(opt, val))  # todo: make this a warning
             elif val not in valid_opts[opt]:
@@ -148,6 +152,9 @@ class Basis:
         :return: None
         """
         if self.d == 1:
+            self.nodes = self._B1[0].nodes
+            self.opts['validX'] = np.arange(self.n)
+            self.opts['validPhi'] = np.arange(self.n)
             return
 
         ''' Smolyak interpolation: Now it is done by SmolyakGrid function'''
@@ -186,16 +193,23 @@ class Basis:
 
 
     def interpolation(self, x=None, order=None):
-        if self.d == 1:
-            return self._B1(x, order)
-
         if order is None:
             order = np.zeros([self.d, 1], 'int')
         else:
             assert (order.shape[0] == self.d)
 
+        orderIsScalar = order.shape[1] == 1
 
-        orderIsScalar =  order.shape[1] == 1
+        if self.d == 1:
+            if orderIsScalar:
+                return self._B1[0](x, order[0, 0])
+            else:
+                return self._B1[0](x, order[0])
+
+
+
+
+
 
 
 
@@ -231,8 +245,6 @@ class Basis:
         r = self.opts['validX']
         c = self.opts['validPhi']
         oo = np.arange(order.shape[1])
-
-        print('r = ', r[0].shape, 'c = ', c[0].shape, 'oo = ', oo.shape,)
 
         if self.opts['type'] == 'chebyshev':
             PHI = [self._B1[k](order=order[k])[np.ix_(oo, r[k], c[k])] for k in range(self.d)]
@@ -309,6 +321,9 @@ class Basis:
 
 
     def __repr__(self):
+        if self.d == 1:
+            return self._B1[0].__repr__()
+
         n, a, b = self.n, self.a, self.b
         nodetype = self.opts['nodetype']
         vnames = self.opts['varnames']
