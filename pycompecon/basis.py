@@ -21,9 +21,17 @@ class Basis:
         :param options: keyword-separated list of additional options (see below)
         :return: a Basis object
         """
-        n = np.array([n] if np.isscalar(n) else n, 'int')
-        a = np.array([a] if np.isscalar(a) else a)
-        b = np.array([b] if np.isscalar(b) else b)
+
+        # Convert n, a, and b to np.arrays
+        def asArray(param):
+            if np.isscalar(param):
+                param = [param]
+            return np.asarray(param)
+
+        n = asArray(n)
+        a = asArray(a)
+        b = asArray(b)
+        n = np.asarray(n,'int')
 
         d = a.size  # dimension of basis
 
@@ -87,9 +95,13 @@ class Basis:
                 if opts['nodetype'] != 'lobatto':
                     opts['nodetype'] = 'lobatto'  # todo issue warning
                 if opts['qn'] is None:
-                    opts['qn'] = np.array([2])
+                    opts['qn'] = asArray(2)
+                else:
+                    opts['qn'] = asArray(opts['qn'])
                 if opts['qp'] is None:
                     opts['qp'] = opts['qn']
+                else:
+                    opts['qp'] = asArray(opts['qp'])
 
         # make list of 1-basis
         B1 = []
@@ -152,25 +164,24 @@ class Basis:
         degs = self.n - 1 # degree of polynomials
         ldeg = [np.arange(degs[ni] + 1) for ni in range(self.d)]
 
-        idxAll = gridmake(*ldeg)   # degree of polynomials = index
+        idxAll = gridmake(*ldeg).T   # degree of polynomials = index
 
 
         ''' Expanding the polynomials'''
         if self.opts['method'] == 'tensor':
             self.opts['validPhi'] = idxAll
         else:
-            degValid = np.sum(idxAll, axis=1) <= self.opts['qp']
-            self.opts['validPhi'] = idxAll[degValid, :]
+            degValid = np.sum(idxAll, axis=0) <= self.opts['qp']
+            self.opts['validPhi'] = idxAll[:, degValid]
 
         ''' Expanding the nodes'''
         nodes1 = [self._B1[k].nodes for k in range(self.d)]
-        nodes_tensor = gridmake(*nodes1)
+        nodes_tensor = gridmake(*nodes1).T
 
         if self.opts['method'] in ['tensor', 'complete']:
             self.nodes = nodes_tensor
             self.opts['validX'] = idxAll
         elif self.opts['method'] in ['cluster', 'zcluster']:
-            H = self.opts['validPhi'].size[0] + self.opts['qn']
             raise NotImplementedError # todo: implement this method
 
 
@@ -179,55 +190,55 @@ class Basis:
             return self._B1(x, order)
 
         if order is None:
-            order = np.zeros(1, self.d)
+            order = np.zeros([self.d, 1], 'int')
         else:
-            assert (order.shape(1) == self.d)
+            assert (order.shape[0] == self.d)
+
+
+        orderIsScalar =  order.shape[1] == 1
+
+
 
         # check what type of input x is provided
         if x is None:
-            return self._interp_default(order)
+            Phi = self._interp_default(order)
         elif type(x) == list:
-            return self._interp_list(x,order)
-        elif type(x) == np.array:
-            return self._interp_matrix(x,order)
+            Phi = self._interp_list(x,order)
+        elif type(x) == np.ndarray:
+            Phi = self._interp_matrix(x,order)
         else:
             raise Exception('wrong x input')
+        return Phi[0] if orderIsScalar else Phi
 
 
 
 
-        # HANDLE POLYNOMIALS DIMENSION
+
+
+
+    def __call__(self, x=None, order=None):
+        return self.interpolation(x, order)
+
 
 
 
     def _interp_default(self, order):
         """
 
-        :param x:
         :param order:
         :return:
         """
-        x = self.nodes
-        nrows = self.N
-        if self.opts['method'] not in {'cluster', 'zcluster'}:
-            r = self.opts['validX']  # combine default basis nodes
-
+        r = self.opts['validX']
         c = self.opts['validPhi']
-        ncols = c.shape(0)
-        Norders = order.shape(0)
+        oo = np.arange(order.shape[1])
 
-        if self.opts['type'] == 'Chebyshev':
-            PHI = np.zeros([nrows, ncols, Norders, self.d])
-            # Compute interpolation matrices for each dimension
-            for k in range(self.d):
-                Phij = self._B1[k](order=order[:, k])
-                PHI[:, :, :, k] = Phij[r[:, k], c[:, k], :]
+        print('r = ', r[0].shape, 'c = ', c[0].shape, 'oo = ', oo.shape,)
+
+        if self.opts['type'] == 'chebyshev':
+            PHI = [self._B1[k](order=order[k])[np.ix_(oo, r[k], c[k])] for k in range(self.d)]
         else:
             raise NotImplemented
-
-        # todo multiply 4th dimension
-        return PHI
-
+        return np.prod(PHI, 0)
 
 
 
@@ -240,25 +251,16 @@ class Basis:
         :param order:
         :return:
         """
-        assert (x.shape(1) == self.d)  # 'In Interpolation, class basis: x must have d columns')
-        nrows = x.shape(0)
-        r = np.tile(np.arange(x.shape(0)), [self.d, 1])
-
+        assert (x.shape[0] == self.d)  # 'In Interpolation, class basis: x must have d columns')
+        r = np.arange(x.shape[1])
         c = self.opts['validPhi']
-        ncols = c.shape(0)
-        Norders = order.shape(0)
+        oo = np.arange(order.shape[1])
 
-        if self.opts['type'] == 'Chebyshev':
-            PHI = np.zeros([nrows, ncols, Norders, self.d])
-            # Compute interpolation matrices for each dimension
-            for k in range(self.d):
-                Phij = self._B1[k](x[:, k], order[:, k])
-                PHI[:, :, :, k] = Phij[:, c[:,k], :]
+        if self.opts['type'] == 'chebyshev':
+            PHI = [self._B1[k](x[k], order[k])[np.ix_(oo, r, c[k])] for k in range(self.d)]
         else:
             raise NotImplemented
-
-        # todo multiply 4th dimension
-        return PHI
+        return np.prod(PHI, 0)
 
 
 
@@ -272,24 +274,15 @@ class Basis:
         :return:
         """
         assert (len(x) == self.d)
-        nrows = np.array([xi.size for xi in x]).prod()
-        r = self.opts['validX']  # combine default basis nodes
-
+        r = gridmake(*[np.arange(xi.size) for xi in x]).T
         c = self.opts['validPhi']
-        ncols = c.shape(0)
-        Norders = order.shape(0)
+        oo = np.arange(order.shape[1])
 
-        if self.opts['type'] == 'Chebyshev':
-            PHI = np.zeros([nrows, ncols, Norders, self.d])
-            # Compute interpolation matrices for each dimension
-            for k in range(self.d):
-                Phij = self._B1[k](x[k], order[:, k])
-                PHI[:, :, :, k] = Phij[r[:, k], c[:, k], :]
+        if self.opts['type'] == 'chebyshev':
+            PHI = [self._B1[k](x[k], order[k])[np.ix_(oo, r[k], c[k])] for k in range(self.d)]
         else:
             raise NotImplemented
-
-        # todo multiply 4th dimension
-        return PHI
+        return np.product(PHI,0)
 
 
 
@@ -346,6 +339,15 @@ def SmolyakGrid(n, qn, qp=None):
 
     if qp is None:
         qp = qn
+
+    if isinstance(qn,(float, int)):
+        qn = np.array([qn])
+
+    if isinstance(qp, (float, int)):
+        qp = np.array([qp])
+
+
+
 
     # Dimensions
     d = n.size
@@ -409,7 +411,7 @@ def SmolyakGrid(n, qn, qp=None):
         theNodes, nodeSum = ndgrid2(theNodes,nodeSum,nodeMapping[k], 1 + k + node_q, qn[k])
         thePolys, polySum = ndgrid2(thePolys,polySum,polyMapping[k], 1 + k + poly_q, qp[k])
 
-    return theNodes, thePolys
+    return theNodes.T, thePolys.T
 
 
 
