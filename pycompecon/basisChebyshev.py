@@ -204,7 +204,7 @@ class BasisChebyshev:
         if order is None:  #REVISAR ESTO!!!
             order = 0
 
-        if isinstance(order, (float, int)):
+        if isinstance(order, (float, int, np.int32)):
             order = [order]
             orderIsScalar = True
         else:
@@ -329,7 +329,6 @@ class BasisChebyshev:
         x = np.linspace(a, b, 120)
         y = self(x, order)
         x.resize((x.size, 1))
-        print(x.shape,y.shape)
         plt.plot(x, y[:, :k])
 
         plt.plot(nodes, 0 * nodes, 'ro')
