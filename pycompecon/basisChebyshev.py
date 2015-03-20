@@ -193,7 +193,7 @@ class BasisChebyshev:
     """
         Interpolation methods
     """
-    def interpolation(self, x=None, order=0, asdict=False):
+    def interpolation(self, x=None, order=None, asmatrix=False):
         """
         Computes interpolation matrices for given data x and order of differentiation 'order' (integration if negative)
 
@@ -201,8 +201,14 @@ class BasisChebyshev:
         :param order: a list of orders for differentiation (+) / integration (-)
         :return a: dictionary with interpolation matrices, keys given by unique elements of order.
         """
+        if order is None:  #REVISAR ESTO!!!
+            order = 0
+
         if isinstance(order, (float, int)):
             order = [order]
+            orderIsScalar = True
+        else:
+            orderIsScalar = False
 
         n, a, b = self._n, self._a, self._b
         nn = n + max(0, -min(order))
@@ -227,17 +233,26 @@ class BasisChebyshev:
             bas = np.cos((np.pi/n) * z * np.mat(np.arange(0, nn)))
 
         # Compute Phi
-        Phi = dict()
+        Phidict = dict()
         for ii in set(order):
             if ii == 0:
-                Phi[ii] = bas
+                Phidict[ii] = bas
             else:
-                Phi[ii] = bas[:, :n - ii] * self.Diff(ii)
+                Phidict[ii] = bas[:, :n - ii] * self.Diff(ii)
 
-        if len(order) == 1 and not asdict:
-            return Phi[order[0]]
+        Phi = np.array([Phidict[k] for k in order])
+
+        if orderIsScalar:
+            if asmatrix:
+                return np.mat(Phi[0])
+            else:
+                return Phi[0]
         else:
             return Phi
+
+
+
+
 
     """
         SETTERS AND GETTERS:  these methods update the basis if n,a,b or nodetype are changed
@@ -314,7 +329,9 @@ class BasisChebyshev:
         x = np.linspace(a, b, 120)
         y = self(x, order)
         x.resize((x.size, 1))
+        print(x.shape,y.shape)
         plt.plot(x, y[:, :k])
+
         plt.plot(nodes, 0 * nodes, 'ro')
         plt.show()
 
@@ -322,5 +339,5 @@ class BasisChebyshev:
     """
     Calling the basis directly returns the interpolation matrix
     """
-    def __call__(self, x=None, order=0, asdict=False):
-        return self.interpolation(x, order, asdict)
+    def __call__(self, x=None, order=0, asmatrix=False):
+        return self.interpolation(x, order, asmatrix)
