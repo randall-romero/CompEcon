@@ -1,6 +1,6 @@
 from nose.tools import *
 import numpy as np
-from pycompecon.basisChebyshev import BasisChebyshev
+from compecon.basisChebyshev import BasisChebyshev
 
 
 ''' test for size of Diff operator '''

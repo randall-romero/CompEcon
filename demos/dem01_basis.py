@@ -8,7 +8,7 @@ __author__ = 'Randall'
     Licensed under the MIT license, see LICENSE.txt
 """
 
-from pycompecon.basisChebyshev import BasisChebyshev
+from compecon.basisChebyshev import BasisChebyshev
 import numpy as np
 import matplotlib.pyplot as plt
 

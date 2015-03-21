@@ -1,6 +1,6 @@
 from nose.tools import *
 
-from pycompecon.basis import Basis, SmolyakGrid
+from compecon.basis import Basis, SmolyakGrid
 import numpy as np
 
 

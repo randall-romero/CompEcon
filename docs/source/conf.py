@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# pycompecon documentation build configuration file, created by
+# compecon documentation build configuration file, created by
 # sphinx-quickstart on Tue Mar 17 12:00:04 2015.
 #
 # This file is execfile()d with the current directory set to its
@@ -20,7 +20,7 @@ import os
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.insert(0, os.path.abspath('.'))
-sys.path.insert(0, os.path.abspath('../..') + '/pycompecon')
+sys.path.insert(0, os.path.abspath('../..') + '/compecon')
 
 
 primary_domain = 'py'
@@ -53,7 +53,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'pycompecon'
+project = 'compecon'
 copyright = '2015, Randall Romero'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -186,7 +186,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'pycompecondoc'
+htmlhelp_basename = 'compecondoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -206,7 +206,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'pycompecon.tex', 'pycompecon Documentation',
+  ('index', 'compecon.tex', 'compecon Documentation',
    'Randall Romero', 'manual'),
 ]
 
@@ -236,7 +236,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'pycompecon', 'pycompecon Documentation',
+    ('index', 'compecon', 'compecon Documentation',
      ['Randall Romero'], 1)
 ]
 
@@ -250,8 +250,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'pycompecon', 'pycompecon Documentation',
-   'Randall Romero', 'pycompecon', 'One line description of project.',
+  ('index', 'compecon', 'compecon Documentation',
+   'Randall Romero', 'compecon', 'One line description of project.',
    'Miscellaneous'),
 ]
 
