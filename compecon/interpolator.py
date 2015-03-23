@@ -201,3 +201,66 @@ class Interpolator(Basis):
 # todo: need to fix the setter methods: they do not adjust the other value when set with a subset
 
 """
+
+
+def Interpolator_array(basis, dims):
+    """
+    Creates an array of Interpolator objects
+
+    :param basis: a Basis instance common to all functions in the array
+    :param dims: the shape of the array
+    :return: a numpy array of Interpolator instances
+    """
+
+    A = np.array([Interpolator(basis) for k in range(np.prod(dims))])
+    return A.reshape(dims)
+
+
+class Hola(Interpolator):
+    def __init__(self, basis, dims):
+        A = np.array([Interpolator(basis) for k in range(np.prod(dims))])
+        self.F = A.reshape(dims)
+        self.shape = self.F.shape
+        self.size = self.F.size
+        self.ndim = self.F.ndim
+        self.idx = [np.unravel_index(k, self.shape) for k in range(self.size)]
+        Shape = list(self.shape)
+        Shape.append(self.N)
+        self.Shape = Shape
+
+
+    def __getitem__(self, item):
+        return self.F[item]
+
+    def __setitem__(self, key, value):
+        if isinstance(value, (list, np.ndarray)):
+            value = np.asarray(value)
+            value = value.reshape([value.size])
+        else:
+            raise ValueError('y must be a list or numpy array with {} elements'.format(self.N))
+
+        if value.size != self.N:
+            raise ValueError('val must be a list or numpy array with {} elements'.format(self.N))
+        self.F[key].y = value
+
+    @property
+    def N(self):
+        """  :return: number of nodes """
+        return self.F[self.idx[0]].N
+
+    @property
+    def y(self):
+        """ :return: function values at nodes """
+        y = np.array([self.F[k].y for k in self.idx])
+        return y.reshape(self.Shape)
+
+    @property
+    def c(self):
+        """ :return: interpolation coefficients """
+        c = np.array([self.F[k].c for k in self.idx])
+        return c.reshape(self.Shape)
+
+    @property
+    def x(self):
+        """  :return: interpolation nodes  """
+        return self.F[self.idx[0]].x
