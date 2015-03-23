@@ -11,7 +11,7 @@ class Basis(object):
       A multivariate interpolation basis
     """
 
-    def __init__(self, n, a, b, **options):
+    def __init__(self, n=None, a=None, b=None, **options):
         """
         A multivariate basis
 
@@ -21,6 +21,9 @@ class Basis(object):
         :param options: keyword-separated list of additional options (see below)
         :return: a Basis object
         """
+
+        if n is None:
+            return
 
         # Convert n, a, and b to np.arrays
         def asArray(param):
