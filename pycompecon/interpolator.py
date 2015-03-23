@@ -1,4 +1,5 @@
-from pycompecon import Basis
+import copy
+from compecon import Basis
 import numpy as np
 from scipy import linalg
 
@@ -84,29 +85,40 @@ class Interpolator(Basis):
         # add data
         self._y = np.zeros([self.N]) if y is None else y
         self._c = np.dot(self._y, self._PhiInvT)
-        self._yIsOutdated = False
-        self._cIsOutdated = False
+        self._oldy = copy.copy(self._y)
+        self._oldc = copy.copy(self._c)
+
 
 
     """ setter and getter methods """
+
+    @property
+    def _yIsOutdated(self):
+        """ :return: True iff _c and _oldc have same shape and values """
+        return not np.array_equal(self._c, self._oldc)
+
+    @property
+    def _cIsOutdated(self):
+        """ :return: True iff _y and _oldy have same shape and values """
+        return not np.array_equal(self._y, self._oldy)
 
     @property
     def y(self):
         """ :return: function values at nodes """
         if self._yIsOutdated:
             self._y = np.dot(self._c, self._PhiT)
-            self._yIsOutdated = False
+            self._oldy = copy.copy(self._y)
+            self._oldc = copy.copy(self._c)
         return self._y
-
 
     @property
     def c(self):
         """ :return: interpolation coefficients """
         if self._cIsOutdated:
             self._c = np.dot(self._y, self._PhiInvT)
-            self._cIsOutdated = False
+            self._oldc = copy.copy(self._c)
+            self._oldy = copy.copy(self._y)
         return self._c
-
 
     @property
     def x(self):
@@ -116,21 +128,20 @@ class Interpolator(Basis):
 
     @y.setter
     def y(self, val):
+        print('calling the y setter')
         if val.ndim == 1:
             assert(val.size == self.N)
-        else:
-            assert(val.shape[1] == self.N)  # one observation per node
+        elif val.shape[-1] != self.N:
+            raise ValueError('last index of value must have {} values (one for each node)'.format(self.N))
         self._y = val
-        self._yIsOutdated = False
-        self._cIsOutdated = True
-
 
     @c.setter
     def c(self, val):
-        assert (val.shape[0] == self.M)  # one value per polynomial
+        print('calling the c setter')
+        assert (val.shape[-1] == self.M)  # one value per polynomial
         self._c = val
-        self._cIsOutdated = False
-        self._yIsOutdated = True
+
+
 
 
     """  Interpolation method """
@@ -155,3 +166,23 @@ class Interpolator(Basis):
             return np.dot(self.c, Phix.T)
         else:
             return np.array([np.dot(self.c, Phix[k].T) for k in range(order.shape[1])])
+
+
+
+    def __getitem__(self, item):
+        Fij = copy.copy(self)
+        Fij.y = self.y[item]
+        Fij.c = self.c[item]
+        return Fij
+
+    def __setitem__(self, key, value):
+        if isinstance(value,(int,float)):
+            raise TypeError('new value must be a numpy array')
+        vsh = value.shape
+        if vsh[-1] == self.N:
+            self.y[key] = value
+        else:
+            raise ValueError('last index of value must have {} values (one for each node)'.format(self.N))
+
+
+# todo: need to fix the setter methods: they do not adjust the other value when set with a subset

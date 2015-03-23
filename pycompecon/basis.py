@@ -6,7 +6,7 @@ __author__ = 'Randall'
 
 
 
-class Basis:
+class Basis(object):
     """
       A multivariate interpolation basis
     """
@@ -312,12 +312,12 @@ class Basis:
     @property
     def N(self):
         """ Total number of nodes"""
-        return self.opts['validX'].shape[0]
+        return self.opts['validX'].shape[-1]
 
     @property
     def M(self):
         """ Total number of polynomials"""
-        return self.opts['validPhi'].shape[0]
+        return self.opts['validPhi'].shape[-1]
 
 
     def __repr__(self):

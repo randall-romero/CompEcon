@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 # TODO: complete this class
 # todo: compare performance of csr_matrix and csc_matrix to deal with sparse interpolation operators
 
-class BasisChebyshev:
+class BasisChebyshev(object):
     """
         A univariate Chebyshev basis with properties:
             * n:    scalar, number of nodes
