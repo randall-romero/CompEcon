@@ -196,25 +196,18 @@ class Basis(object):
 
 
     def interpolation(self, x=None, order=None):
+        if self.d == 1:
+            return self._B1[0](x, order)
+
         if order is None:
             order = np.zeros([self.d, 1], 'int')
         else:
+            order = np.asarray(order)
+            if order.ndim == 1:
+                order.reshape([order.size, 1])
             assert (order.shape[0] == self.d)
 
         orderIsScalar = order.shape[1] == 1
-
-        if self.d == 1:
-            if orderIsScalar:
-                return self._B1[0](x, order[0, 0])
-            else:
-                return self._B1[0](x, order[0])
-
-
-
-
-
-
-
 
         # check what type of input x is provided
         if x is None:
