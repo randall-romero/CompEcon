@@ -164,62 +164,40 @@ class Interpolator(Basis):
         :param order:
         :return:
         """
-
-        if order is None:
-            order = np.zeros([self.d, 1], 'int')
+        if isinstance(self,InterpolatorArray):
+            Phix = self.F[self.idx[0]].interpolation(x, order)
         else:
-            assert (order.shape[0] == self.d)
+            Phix = self.interpolation(x, order)
 
-        Phix = self.interpolation(x, order)
 
-        orderIsScalar = order.shape[1] == 1
-        if orderIsScalar:
+        if Phix.ndim == 2:
             return np.dot(self.c, Phix.T)
         else:
-            return np.array([np.dot(self.c, Phix[k].T) for k in range(order.shape[1])])
-
-"""
-        NO LONGER NEEDED: INTERPOLATOR ONLY HANDLES ONE FUNCTION AT A TIME:
-        For more dimension, just make a numpy.array from a list comprehension
-
-    def __getitem__(self, item):
-        Fij = copy.copy(self)
-        Fij.y = self.y[item]
-        Fij.c = self.c[item]
-        return Fij
-
-    def __setitem__(self, key, value):
-        if isinstance(value,(int,float)):
-            raise TypeError('new value must be a numpy array')
-        vsh = value.shape
-        if vsh[-1] == self.N:
-            self.y[key] = value
-        else:
-            raise ValueError('last index of value must have {} values (one for each node)'.format(self.N))
+            return np.array([np.dot(self.c, Phix[k].T) for k in range(Phix.shape[0])])
 
 
-# todo: need to fix the setter methods: they do not adjust the other value when set with a subset
-
-"""
 
 
-def Interpolator_array(basis, dims):
-    """
-    Creates an array of Interpolator objects
+# def interpolator_array(basis, dims):
+#     """
+#     Creates an array of Interpolator objects
+#
+#     :param basis: a Basis instance common to all functions in the array
+#     :param dims: the shape of the array
+#     :return: a numpy array of Interpolator instances
+#     """
+#
+#     A = np.array([Interpolator(basis) for k in range(np.prod(dims))])
+#     return A.reshape(dims)
 
-    :param basis: a Basis instance common to all functions in the array
-    :param dims: the shape of the array
-    :return: a numpy array of Interpolator instances
-    """
 
-    A = np.array([Interpolator(basis) for k in range(np.prod(dims))])
-    return A.reshape(dims)
-
-
-class Hola(Interpolator):
+class InterpolatorArray(Interpolator):
     def __init__(self, basis, dims):
         A = np.array([Interpolator(basis) for k in range(np.prod(dims))])
         self.F = A.reshape(dims)
+        self._setDims()
+
+    def _setDims(self):
         self.shape = self.F.shape
         self.size = self.F.size
         self.ndim = self.F.ndim
@@ -228,9 +206,20 @@ class Hola(Interpolator):
         Shape.append(self.N)
         self.Shape = Shape
 
+    def copy(self):
+        return copy.copy(self)
+
 
     def __getitem__(self, item):
-        return self.F[item]
+        FF = self.F[item]
+        if isinstance(FF, Interpolator):
+            return FF
+        else:
+            other = self.copy()
+            print(self, other)
+            other.F = self.F[item]
+            other._setDims()
+            return other
 
     def __setitem__(self, key, value):
         if isinstance(value, (list, np.ndarray)):
@@ -264,3 +253,7 @@ class Hola(Interpolator):
     def x(self):
         """  :return: interpolation nodes  """
         return self.F[self.idx[0]].x
+
+    @property
+    def d(self):
+        return self.F[self.idx[0]].d
