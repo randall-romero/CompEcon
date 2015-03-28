@@ -1,7 +1,6 @@
 import copy
 from compecon import Basis
 import numpy as np
-from scipy import linalg
 
 '''
         just the template from Matlab version.
@@ -74,12 +73,12 @@ class Interpolator(Basis):
             Basis.__init__(B, *args, **kwargs)
 
         # Compute interpolation matrix at nodes
-        _PhiT = B.interpolation().T
-        B._PhiT = _PhiT
+        _Phi = B.interpolation()
+        B._PhiT = _Phi.T
 
         # Compute inverse if not spline
         if B.type == 'chebyshev':
-            B._PhiInvT = linalg.solve(np.dot(_PhiT, _PhiT.T), _PhiT).T
+            B._PhiInvT = np.linalg.pinv(_Phi).T
         else:
             raise NotImplementedError
 
@@ -173,8 +172,7 @@ class Interpolator(Basis):
         if Phix.ndim == 2:
             return np.dot(self.c, Phix.T)
         else:
-            return np.array([np.dot(self.c, Phix[k].T) for k in range(Phix.shape[0])])
-
+            return np.array([np.dot(self.c, phix.T) for phix in Phix])
 
 
 
@@ -193,7 +191,7 @@ class Interpolator(Basis):
 
 class InterpolatorArray(Interpolator):
     def __init__(self, basis, dims):
-        A = np.array([Interpolator(basis) for k in range(np.prod(dims))])
+        A = np.array([Interpolator(basis)] * np.prod(dims))
         self.F = A.reshape(dims)
         self._setDims()
 
