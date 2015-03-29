@@ -255,3 +255,9 @@ class InterpolatorArray(Interpolator):
     @property
     def d(self):
         return self.F[self.idx[0]].d
+
+    @y.setter
+    def y(self, value):
+        # todo add assert here
+        for k in self.idx:
+            self.F[k].y = value[k]
