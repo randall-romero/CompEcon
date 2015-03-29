@@ -245,10 +245,6 @@ class OptBasis(object):
         return self._validPhi
 
     @property
-    def validPhi(self):
-        return self._validPhi
-
-    @property
     def varnames(self):
         return self._varnames
 
