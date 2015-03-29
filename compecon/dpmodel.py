@@ -109,7 +109,6 @@ class DPmodel(object):
         self.nr = 10
         self.output = True
         self.nc = None #[]
-        self.ns = None #[]
         self.xnames = None #[]
         self.discretized = False
 
@@ -206,10 +205,16 @@ class DPmodel(object):
 
     def updateValue(self):
         value = self.Value_j.y
-        self.DiscreteAction = np.array([np.argmax(Vi, 0) for Vi in value])
-        self.Value.y = np.array([np.max(Vi, 0) for Vi in value])
-        #ugly but works
+        self.DiscreteAction = jmax = np.array([np.argmax(Vi, 0) for Vi in value])
+        for i in range(self.ni):
+            self.Value[i] = value[i][jmax[i], range(self.ns)]
 
+    def updatePolicy(self):
+        policy = self.Policy_j.y.swapaxes(1, 2)
+        jmax = self.DiscreteAction
+        for i in range(self.ni):
+            for k in range(self.dx):
+                self.Policy[i, k] = policy[i, k][jmax[i], range(self.ns)]
 
 
 # TODO: design this class:
