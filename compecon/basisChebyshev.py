@@ -332,6 +332,7 @@ class BasisChebyshev(object):
         plt.plot(x, y[:, :k])
 
         plt.plot(nodes, 0 * nodes, 'ro')
+        plt.xlim(a, b)
         plt.show()
 
 
