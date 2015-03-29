@@ -191,7 +191,7 @@ class Interpolator(Basis):
 
 class InterpolatorArray(Interpolator):
     def __init__(self, basis, dims):
-        A = np.array([Interpolator(basis)] * np.prod(dims))
+        A = np.array([Interpolator(basis) for k in range(np.prod(dims))])  # Make prod(dims) independent copies!!
         self.F = A.reshape(dims)
         self._setDims()
 
