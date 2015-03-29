@@ -5,7 +5,6 @@ from .ce_util import gridmake, ckron
 __author__ = 'Randall'
 
 
-
 class Basis(object):
     """
       A multivariate interpolation basis
@@ -26,11 +25,6 @@ class Basis(object):
             return
 
         # Convert n, a, and b to np.arrays
-        def asArray(param):
-            if np.isscalar(param):
-                param = [param]
-            return np.asarray(param)
-
         n = asArray(n)
         a = asArray(a)
         b = asArray(b)
@@ -42,158 +36,36 @@ class Basis(object):
         if not np.all(a < b):
             raise ValueError('All lower bounds must be less than their corresponding upper bound')
 
-        # Make default options dictionary
-        opts = dict(
-            type='chebyshev',
-            nodetype='gaussian',
-            k=3,
-            method='tensor',
-            qn=None,
-            qp=None,
-            varnames=["V{}".format(dim) for dim in range(d)],
-            validX=[],
-            validPhi=[]
-        )
-
-        valid_opts = dict(
-            type={'chebyshev', 'spline'},
-            nodetype={'gaussian', 'lobatto', 'endpoint', 'cardinal'},   # todo: cardinal is only valid in spline basis
-            k=range(min(n)),
-            method={'tensor', 'smolyak', 'complete', 'cluster', 'zcluster'},
-            qn=range(np.prod(n)),
-            qp=range(np.prod(n))
-        )
-
-        # get variable names, if provided
-        if 'varnames' in options.keys():
-            if len(options['varnames']) == d:
-                opts["varnames"] = options['varnames']
-            else:
-                print('If provided, option varnames must have {} elements'.format(d))
-            del options['varnames']
-
         # Read user options
-        for opt, val in options.items():
-            if opt in ['qn', 'qp', 'validX', 'validPhi']:    # for now just skip this validation
-                continue
-            if opt not in opts.keys():
-                print('Unknown option {} with value {}; ignoring'.format(opt, val))  # todo: make this a warning
-            elif val not in valid_opts[opt]:
-                print('Value {} is not a valid option for {}; ignoring'.format(val, opt))  # todo: make this a warning
+        opts = OptBasis(d)
+        for option, value in options.items():
+            if option not in opts.keys:
+                print('Unknown option {} with value {}; ignoring'.format(option, value))  # todo: make this a warning
             else:
-                opts[opt] = val
+                setattr(opts, option, value)
 
         # Validate options for chebyshev basis of several dimensions
-        if d > 1 and opts['type'] == 'chebyshev':
-            if opts['method'] in ['complete', 'cluster', 'zcluster']:
-                if opts['qn'] is None:
-                    opts['qn'] = 0
-                if opts['qp'] is None:
-                    opts['qp'] = max(n) - 1
-            elif opts['method'] == 'smolyak':
-                n_valid = 2 ** np.ceil(np.log2(n - 1)) + 1
-                if np.any(n != n_valid):
-                    # todo: make this a warning
-                    print('Warning: For smolyak expansion, number of nodes should be n = 2^k+1 for some k=1,2,...')
-                    print('Adjusting nodes\n {:7s}  {:7s}'.format('old n', 'new n'))
-                    for n1, n2 in zip(n,n_valid):
-                        print('{:7.0f} {:7.0f}'.format(n1, n2))
-                    n = np.array(n_valid,'int')
-                if opts['nodetype'] != 'lobatto':
-                    opts['nodetype'] = 'lobatto'  # todo issue warning
-                if opts['qn'] is None:
-                    opts['qn'] = asArray(2)
-                else:
-                    opts['qn'] = asArray(opts['qn'])
-                if opts['qp'] is None:
-                    opts['qp'] = opts['qn']
-                else:
-                    opts['qp'] = asArray(opts['qp'])
+        if opts.type == 'chebyshev':
+            opts.validateChebyshev(n)
+
+
 
         # make list of 1-basis
-        B1 = []
-        nodetype, varnames = opts['nodetype'], opts['varnames']
+        nodetype, varnames = opts.nodetype, opts.varnames
 
-        if opts['type'] == 'chebyshev':
-            for i in range(d):
-                B1.append(BasisChebyshev(n[i], a[i], b[i], nodetype, varnames[i]))
+        if opts.type == 'chebyshev':
+            B1 = [BasisChebyshev(n[i], a[i], b[i], nodetype, varnames[i]) for i in range(d)]
 
         # Pack value in object
         self.a = a
         self.b = b
         self.n = n
         self.d = d
-        self.opts = opts
         self._B1 = B1
-        self.type = opts['type']
-        self._expandBasis()
-
-        # todo: expand basis
-
-    def _expandBasis(self):
-        """
-             ExpandBasis computes nodes for multidimensional basis and other auxiliary fields required to keep track
-             of the basis (how to combine unidimensional nodes bases). It is called by the constructor method, and as
-             such is not directly needed by the user. ExpandBasis updates the following fields
-
-             * nodes: matrix with all nodes, one column by dimension
-             * opts.validPhi: indices to combine unidimensional bases
-             * B.opts.validX: indices to combine unidimensional nodes
-            
-             Combining polynomials depends on value of input opts.method:
-            
-             * 'tensor' takes all possible combinations,
-             * 'smolyak' computes Smolyak basis, given |opts.degreeParam|,
-             * 'complete', 'cluster', and 'zcluster' choose polynomials with degrees not exceeding opts.qp
-            
-             Expanding nodes depends on value of field opts.method
-            
-             * 'tensor' and 'complete' take all possible combinations,
-             * 'smolyak' computes Smolyak basis, given opts.qn
-             * 'cluster' and 'zcluster' compute clusters of the tensor nodes based on opts.qn
-
-        :return: None
-        """
-        if self.d == 1:
-            self.nodes = self._B1[0].nodes
-            self.opts['validX'] = np.arange(self.n)
-            self.opts['validPhi'] = np.arange(self.n)
-            return
-
-        ''' Smolyak interpolation: Now it is done by SmolyakGrid function'''
-        n, qn, qp = self.n, self.opts['qn'], self.opts['qp']
-
-        if self.opts['method'] == 'smolyak':
-            self.opts['validX'], self.opts['validPhi'] = SmolyakGrid(n, qn, qp)
-            self.nodes = np.zeros(self.opts['validX'].shape)
-            for k in range(self.d):
-                self.nodes[:,k] = self._B1[k].nodes[self.opts['validX'][:,k]].flatten()
-            return
-
-        ''' All other methods'''
-        degs = self.n - 1 # degree of polynomials
-        ldeg = [np.arange(degs[ni] + 1) for ni in range(self.d)]
-
-        idxAll = gridmake(*ldeg).T   # degree of polynomials = index
-
-
-        ''' Expanding the polynomials'''
-        if self.opts['method'] == 'tensor':
-            self.opts['validPhi'] = idxAll
-        else:
-            degValid = np.sum(idxAll, axis=0) <= self.opts['qp']
-            self.opts['validPhi'] = idxAll[:, degValid]
-
-        ''' Expanding the nodes'''
-        nodes1 = [self._B1[k].nodes for k in range(self.d)]
-        nodes_tensor = gridmake(*nodes1).T
-
-        if self.opts['method'] in ['tensor', 'complete']:
-            self.nodes = nodes_tensor
-            self.opts['validX'] = idxAll
-        elif self.opts['method'] in ['cluster', 'zcluster']:
-            raise NotImplementedError # todo: implement this method
-
+        self.opts = opts
+        self.opts.expandGrid(n)
+        self.type = opts.type
+        self.nodes = np.array([self._B1[k].nodes[self.opts.validX[k]].flatten() for k in range(self.d)])
 
     def interpolation(self, x=None, order=None):
         if self.d == 1:
@@ -238,11 +110,11 @@ class Basis(object):
         :param order:
         :return:
         """
-        r = self.opts['validX']
-        c = self.opts['validPhi']
+        r = self.opts.validX
+        c = self.opts.validPhi
         oo = np.arange(order.shape[1])
 
-        if self.opts['type'] == 'chebyshev':
+        if self.opts.type == 'chebyshev':
             PHI = [self._B1[k](order=order[k])[np.ix_(oo, r[k], c[k])] for k in range(self.d)]
         else:
             raise NotImplemented
@@ -261,10 +133,10 @@ class Basis(object):
         """
         assert (x.shape[0] == self.d)  # 'In Interpolation, class basis: x must have d columns')
         r = np.arange(x.shape[1])
-        c = self.opts['validPhi']
+        c = self.opts.validPhi
         oo = np.arange(order.shape[1])
 
-        if self.opts['type'] == 'chebyshev':
+        if self.opts.type == 'chebyshev':
             PHI = [self._B1[k](x[k], order[k])[np.ix_(oo, r, c[k])] for k in range(self.d)]
         else:
             raise NotImplemented
@@ -283,10 +155,10 @@ class Basis(object):
         """
         assert (len(x) == self.d)
         r = gridmake(*[np.arange(xi.size) for xi in x]).T
-        c = self.opts['validPhi']
+        c = self.opts.validPhi
         oo = np.arange(order.shape[1])
 
-        if self.opts['type'] == 'chebyshev':
+        if self.opts.type == 'chebyshev':
             PHI = [self._B1[k](x[k], order[k])[np.ix_(oo, r[k], c[k])] for k in range(self.d)]
         else:
             raise NotImplemented
@@ -308,12 +180,12 @@ class Basis(object):
     @property
     def N(self):
         """ Total number of nodes"""
-        return self.opts['validX'].shape[-1]
+        return self.opts.validX.shape[-1]
 
     @property
     def M(self):
         """ Total number of polynomials"""
-        return self.opts['validPhi'].shape[-1]
+        return self.opts.validPhi.shape[-1]
 
 
     def __repr__(self):
@@ -321,12 +193,12 @@ class Basis(object):
             return self._B1[0].__repr__()
 
         n, a, b = self.n, self.a, self.b
-        nodetype = self.opts['nodetype']
-        vnames = self.opts['varnames']
+        nodetype = self.opts.nodetype
+        vnames = self.opts.varnames
 
         bstr = "A {}-dimension basis function:  ".format(self.d)
         bstr += "using {:d} {} nodes and {:d} polynomials, expanded by {}".format(
-            self.N, nodetype.upper(), self.M, self.opts['method'])
+            self.N, nodetype.upper(), self.M, self.opts.method)
         bstr += '\n' + '_' * 60 + '\n'
         for k in range(self.d):
             bstr += "\t{:12s}: {:d} nodes in [{:6.2f}, {:6.2f}]\n".format(vnames[k], n[k], a[k], b[k])
@@ -336,7 +208,202 @@ class Basis(object):
         return bstr
 
 
+class OptBasis(object):
 
+    def __init__(self, d):
+        # Make default options dictionary
+        self._d = d
+        self._type = 'chebyshev'
+        self._nodetype = 'gaussian'
+        self._k = 3
+        self._method = 'tensor'
+        self._qn = None
+        self._qp = None
+        self._varnames = ["V{}".format(dim) for dim in range(d)]
+        self._validX = []
+        self._validPhi = []
+
+    ''' Properties'''
+    @property
+    def type(self):
+        return self._type
+
+    @property
+    def nodetype(self):
+        return self._nodetype
+
+    @property
+    def method(self):
+        return self._method
+
+    @property
+    def validX(self):
+        return self._validX
+
+    @property
+    def validPhi(self):
+        return self._validPhi
+
+    @property
+    def validPhi(self):
+        return self._validPhi
+
+    @property
+    def varnames(self):
+        return self._varnames
+
+    @property
+    def keys(self):
+        return([name for name in OptBasis.__dict__ if not name.startswith('_')])
+
+    @property
+    def qn(self):
+        return self._qn
+
+    @property
+    def qp(self):
+        return self._qp
+
+
+    ''' Setters '''
+    @type.setter
+    def type(self, value):
+        valid = ['chebyshev', 'spline']
+        print(value, valid, value in valid)
+        if value in valid:
+            self._type = value
+        else:
+            raise ValueError('type value must be in ' + str(valid))
+
+
+    @nodetype.setter
+    def nodetype(self, value):
+        valid = ['gaussian', 'lobatto', 'endpoint', 'cardinal']
+        if value in valid:
+            self._nodetype = value
+        else:
+            raise ValueError('nodetype value must be in ' + str(valid))
+
+    @method.setter
+    def method(self, value):
+        valid = ['tensor', 'smolyak', 'complete', 'cluster', 'zcluster']
+        if value in valid:
+            self._method = value
+        else:
+            raise ValueError('method value must be in ' + str(valid))
+
+    @validX.setter
+    def validX(self, value):
+        if isinstance(value, np.ndarray) and value.ndim == 2 and value.shape[0] == self._d:
+            self._validX = value
+        else:
+            raise ValueError('validX must be a 2-dimensional numpy array with {} rows'.format(self._d))
+
+    @validPhi.setter
+    def validPhi(self, value):
+        if isinstance(value, np.ndarray) and value.ndim == 2 and value.shape[0] == self._d:
+            self._validPhi = value
+        else:
+            raise ValueError('validPhi must be a 2-dimensional numpy array with {} rows'.format(self._d))
+
+    @varnames.setter
+    def varnames(self, value):
+        if isinstance(value, list) and len(value) == self._d:
+            self._varnames = value
+        else:
+            raise ValueError('varnames must be a list of {} strings'.format(self._d))
+
+    @qn.setter
+    def qn(self, value):
+        self._qn = value
+
+    @qp.setter
+    def qp(self, value):
+        self._qp = value
+
+
+
+    def validateChebyshev(self, n):
+        if self._d == 1:
+            return
+
+        if self.method in ['complete', 'cluster', 'zcluster']:
+            if self.qn is None:
+                self.qn = 0
+            if self.qp is None:
+                self.qp = max(n) - 1
+        elif self.method == 'smolyak':
+            n_valid = 2 ** np.ceil(np.log2(n - 1)) + 1
+            if np.any(n != n_valid):
+                # todo: make this a warning
+                print('Warning: For smolyak expansion, number of nodes should be n = 2^k+1 for some k=1,2,...')
+                print('Adjusting nodes\n {:7s}  {:7s}'.format('old n', 'new n'))
+                for n1, n2 in zip(n, n_valid):
+                    print('{:7.0f} {:7.0f}'.format(n1, n2))
+                n = np.array(n_valid,'int')
+            if self.nodetype != 'lobatto':
+                self.nodetype = 'lobatto'  # todo issue warning
+            if self.qn is None:
+                self.qn = asArray(2)
+            else:
+                self.qn = asArray(self.qn)
+            if self.qp is None:
+                self.qp = self.qn
+            else:
+                self.qp = asArray(self.qp)
+
+
+    def expandGrid(self, n):
+        """
+             Compute nodes for multidimensional basis and other auxiliary fields required to keep track
+             of the basis (how to combine unidimensional nodes bases). It is called by the constructor method, and as
+             such is not directly needed by the user. ExpandBasis updates the following fields
+
+             * nodes: matrix with all nodes, one column by dimension
+             * opts.validPhi: indices to combine unidimensional bases
+             * B.opts.validX: indices to combine unidimensional nodes
+
+             Combining polynomials depends on value of input opts.method:
+
+             * 'tensor' takes all possible combinations,
+             * 'smolyak' computes Smolyak basis, given |opts.degreeParam|,
+             * 'complete', 'cluster', and 'zcluster' choose polynomials with degrees not exceeding opts.qp
+
+             Expanding nodes depends on value of field opts.method
+
+             * 'tensor' and 'complete' take all possible combinations,
+             * 'smolyak' computes Smolyak basis, given opts.qn
+             * 'cluster' and 'zcluster' compute clusters of the tensor nodes based on opts.qn
+
+        :return: None
+        """
+        if self._d == 1:
+            self.validX = np.arange(n).reshape(1, -1)
+            self.validPhi = np.arange(n).reshape(1, -1)
+            return
+
+        ''' Smolyak interpolation: done by SmolyakGrid function'''
+        if self.method == 'smolyak':
+            self.validX, self.validPhi = SmolyakGrid(n, self.qn, self.qp)
+
+        ''' All other methods'''
+        degs = n - 1 # degree of polynomials
+        ldeg = [np.arange(degs[ni] + 1) for ni in range(self._d)]
+
+        idxAll = gridmake(*ldeg).T   # degree of polynomials = index
+
+        ''' Expanding the polynomials'''
+        if self.method == 'tensor':
+            self.validPhi = idxAll
+        else:
+            degValid = np.sum(idxAll, axis=0) <= self.qp
+            self.validPhi = idxAll[:, degValid]
+
+        ''' Expanding the nodes'''
+        if self.method in ['tensor', 'complete']:
+            self.validX = idxAll
+        elif self.method in ['cluster', 'zcluster']:
+            raise NotImplementedError # todo: implement this method
 
 
 def SmolyakGrid(n, qn, qp=None):
@@ -425,8 +492,6 @@ def SmolyakGrid(n, qn, qp=None):
     return theNodes.T, thePolys.T
 
 
-
-
 def ndgrid2(Indices,groupsum,newGroup,q,qk):
     """
     Expanding a Smolyak grid, 2 dimensions
@@ -451,3 +516,9 @@ def ndgrid2(Indices,groupsum,newGroup,q,qk):
     idyv = np.mat(idy[isValid]).T
     newIndices = np.concatenate((Indices[idxv, :], idyv), axis=1)
     return newIndices, newSum
+
+
+def asArray(param):
+            if np.isscalar(param):
+                param = [param]
+            return np.asarray(param)
