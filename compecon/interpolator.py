@@ -156,7 +156,7 @@ class Interpolator(Basis):
 
     """  Interpolation method """
 
-    def __call__(self,x=None, order=None):
+    def __call__(self, x=None, order=None):
         """
 
         :param x:

@@ -75,18 +75,11 @@ class DPmodel(object):
         self.X = None #np.zeros([1,0])
 
         #  -- Value and policy functions
-        ns = self.ns
+        # Set to zero by default
         self.Value = InterpolatorArray(basis, [ni])
-        self.Value.y = np.zeros([ni, ns])
-
         self.Policy = InterpolatorArray(basis, [ni, dx])
-        self.Policy.y = np.zeros([ni, dx, ns])
-
         self.Value_j = InterpolatorArray(basis, [ni, nj])
-        self.Value_j.y = np.zeros([ni, nj, ns])
-
         self.Policy_j = InterpolatorArray(basis, [ni, nj, dx])
-        self.Policy_j.y = np.zeros([ni, nj, dx, ns])
 
         self.DiscreteAction = np.zeros([ni, self.ns], int)
 
