@@ -77,23 +77,21 @@ class DPmodel(object):
         #  -- Value and policy functions
         self.Value = InterpolatorArray(basis, [ni])
         self.Policy = InterpolatorArray(basis, [ni, dx])
-        self.Value_j = InterpolatorArray(basis, [nj, ni])
-        self.Policy_j = InterpolatorArray(basis, [nj, ni, dx])
+        self.Value_j = InterpolatorArray(basis, [ni, nj])
+        self.Policy_j = InterpolatorArray(basis, [ni, nj, dx])
 
         #  -- Fill with zeros
-        ZERO = np.zeros([self.ns], float)
-
         for k in self.Value.idx:
-            self.Value[k] = ZERO
+            self.Value[k] = np.zeros([self.ns], float)
 
         for k in self.Policy.idx:
-            self.Policy[k] = ZERO
+            self.Policy[k] = np.zeros([self.ns], float)
 
         for k in self.Value_j.idx:
-            self.Value_j[k] = ZERO
+            self.Value_j[k] = np.zeros([self.ns], float)
 
         for k in self.Policy_j.idx:
-            self.Policy_j[k] = ZERO
+            self.Policy_j[k] = np.zeros([self.ns], float)
 
         self.DiscreteAction = np.zeros([ni, self.ns], int)
 
@@ -103,7 +101,7 @@ class DPmodel(object):
         self.ncpmethod = 'minmax'
         self.maxit = 500
         self.maxitncp = 50
-        self.knownFunctions = np.zeros([nj, ni], bool)
+        self.knownFunctions = np.zeros([ni, nj], bool)
         self.D_reward_provided = True
         self.D_transition_provided = True
 
@@ -204,11 +202,13 @@ class DPmodel(object):
             fx = fx[:, 0]
             fxx = fxx[:, :, 0]
 
-
         return f, fx, fxx
 
-
-
+    def updateValue(self):
+        value = self.Value_j.y
+        self.DiscreteAction = np.array([np.argmax(Vi, 0) for Vi in value])
+        self.Value.y = np.array([np.max(Vi, 0) for Vi in value])
+        #ugly but works
 
 
 
