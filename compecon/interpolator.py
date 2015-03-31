@@ -253,6 +253,11 @@ class InterpolatorArray(Interpolator):
         return self.F[self.idx[0]].x
 
     @property
+    def Phi(self):
+        """  :return: interpolation matrix  """
+        return self.F[self.idx[0]].Phi
+
+    @property
     def d(self):
         return self.F[self.idx[0]].d
 
@@ -261,3 +266,9 @@ class InterpolatorArray(Interpolator):
         # todo add assert here
         for k in self.idx:
             self.F[k].y = value[k]
+
+    @c.setter
+    def c(self, value):
+        # todo add assert here
+        for k in self.idx:
+            self.F[k].c = value[k]
