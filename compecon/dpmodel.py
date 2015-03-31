@@ -1,4 +1,5 @@
 import copy
+import time
 from compecon import Basis, InterpolatorArray
 import numpy as np
 from scipy import linalg
@@ -109,6 +110,67 @@ class DPmodel(object):
             if self.X.shape[0] != self.dx:
                 raise ValueError('If model is discretized, field "X" must have {} columns'.format(self.dx))
 
+    def _printIter(self, it, change, tic):
+        if self.output:
+            print('{:4i}  {:10.1e}  {:10.4f}'.format(it, change, time.time() - tic))
+
+    def _printElapsed(self, tic, change):
+        if self.output:
+            if change >= self.tol:
+                print('Failure to converge in DPmodel.solve()')
+            print('Elapsed Time = {:7.2f} Seconds'.format(time.time() - tic))
+
+    def solveFuncit(self):
+        """
+            Solves infinite-horizon model collocation equation by function iteration. Solution is found when the
+            collocation coefficients of the value function converge to a fixed point (within |self.tol| tolerance).
+         """
+        tic = time.time()
+        if self.output:
+            print('Solving infinite-horizon model collocation equation by function iteration.')
+            print('{:4s}  {:10s}  {:10s}'.format('iter', 'change', 'toc'))
+
+        for it in range(self.maxit):
+            cold = self.Value.c.copy()
+            self.vmax()
+            self.updateValue()
+            change = np.linalg.norm((self.Value.c - cold).flatten(), np.Inf)
+            self._printIter(it, change, tic)
+            if change < self.tol:
+                break
+
+        self._printElapsed(tic, change)
+
+
+    def solveNewton(self):
+        tic = time.time()
+        if self.output:
+            print("Solving infinite-horizon model collocation equation by Newton's method.")
+            print('{:4s}  {:10s}  {:10s}'.format('iter', 'change', 'toc'))
+
+        # todo: fix the dimensions and check that Phik is transposed?
+        Phik = np.kron(np.eye(self.ni), self.Value.Phi)
+        for it in range(self.maxit):
+            cold = self.Value.c.copy().flatten()
+            vc = self.vmax()
+            self.updateValue
+            step = - np.linalg.lstsq(Phik - vc, Phik * cold - self.Value.y.flatten())
+            c = cold + step
+            change = np.linalg.norm(step, np.Inf)
+            self.Value.c = c.reshape(self.nc, self.ni)
+            self._printIter(it, change, tic)
+            if change < self.tol:
+                break
+
+        self._printElapsed(tic, change)
+
+
+
+
+
+
+
+
 
     def getDerivative(self, func, s, x, *args, **kwargs):
         dx, nx = x.shape
@@ -204,6 +266,24 @@ class DPmodel(object):
             for k in range(self.dx):
                 self.Policy[i, k] = policy[i, k][jmax[i], range(self.ns)]
 
+    def VNEXT(self):
+        dx, ds, ns = self.dx, self.ds, self.ns
+        SNX = np.ones((dx, ds, ns))
+        SNXX = np.ones((dx, dx, ds, ns))
+
+        VN =  np.random.random_integers(1, 9, (ns))/9
+        VNS = np.random.random_integers(1, 9, (ds, ns))/9
+        VNSS = np.random.random_integers(1, 9, (ds, ds, ns))/9
+
+        """vnx  =  vns * snx """
+        VNX = np.einsum('k...,jk...->j...', VNS, SNX)
+
+        """vnxx   =  snx' * vnss * snx + Sum_{k}[ vns(k) * snxx(:,:,k)]         """
+        VNXX = np.einsum('hi...,ij...,kj...->hk...', SNX, VNSS, SNX) + np.einsum('k...,ijk...->ij...', VNS, SNXX)
+
+        return VN, VNX, VNXX
+
+
 
 # TODO: design this class:
 """
@@ -214,3 +294,5 @@ class DPmodel(object):
 
 als?
 """
+
+
