@@ -46,8 +46,8 @@ def test_smolyak():
 
 
 # anisotropic grid
-qna = np.array([3, 2, 1])
-nodes2, polys2 = SmolyakGrid(np.array(n), qna)
+qna = [3, 2, 1]
+nodes2, polys2 = SmolyakGrid(n, qna)
 
 
 def test_smolyak():

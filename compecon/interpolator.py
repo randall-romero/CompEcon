@@ -214,7 +214,6 @@ class InterpolatorArray(Interpolator):
             return FF
         else:
             other = self.copy()
-            print(self, other)
             other.F = self.F[item]
             other._setDims()
             return other

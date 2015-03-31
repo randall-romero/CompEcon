@@ -25,10 +25,9 @@ class Basis(object):
             return
 
         # Convert n, a, and b to np.arrays
-        n = asArray(n)
-        a = asArray(a)
-        b = asArray(b)
-        n = np.asarray(n,'int')
+        n = np.atleast_1d(n)
+        a = np.atleast_1d(a)
+        b = np.atleast_1d(b)
 
         d = a.size  # dimension of basis
 
@@ -265,7 +264,6 @@ class OptBasis(object):
     @type.setter
     def type(self, value):
         valid = ['chebyshev', 'spline']
-        print(value, valid, value in valid)
         if value in valid:
             self._type = value
         else:
@@ -340,13 +338,13 @@ class OptBasis(object):
             if self.nodetype != 'lobatto':
                 self.nodetype = 'lobatto'  # todo issue warning
             if self.qn is None:
-                self.qn = asArray(2)
+                self.qn = np.atleast_1d(2)
             else:
-                self.qn = asArray(self.qn)
+                self.qn = np.atleast_1d(self.qn)
             if self.qp is None:
                 self.qp = self.qn
             else:
-                self.qp = asArray(self.qp)
+                self.qp = np.atleast_1d(self.qp)
 
 
     def expandGrid(self, n):
@@ -411,21 +409,14 @@ def SmolyakGrid(n, qn, qp=None):
     :return: a (node_indices, polynomial_indices) tuple to form the Smolyak grid from univariate nodes and polynomials
     """
 
-    if qp is None:
-        qp = qn
-
-    if isinstance(qn,(float, int)):
-        qn = np.array([qn])
-
-    if isinstance(qp, (float, int)):
-        qp = np.array([qp])
-
-
-
+    n = np.atleast_1d(n)
+    qn = np.atleast_1d(qn)
+    qp = qn if qp is None else np.atleast_1d(qp)
 
     # Dimensions
     d = n.size
     ngroups = np.log2(n - 1) + 1
+
     N = max(ngroups)
 
     # node parameter
@@ -454,67 +445,54 @@ def SmolyakGrid(n, qn, qp=None):
     g[0] = g[-1] = 2
     g[(-1 + g.size) / 2] = 1
 
-    # make disjoint sets
-    nodeMapping = []
-    polyMapping = []
-    nodeIndex = []
+    #gg = np.copy(g)
 
-    for i in range(d):
-        nodeMapping.append(g[g <= ngroups[i]])
-        polyMapping.append(np.sort(nodeMapping[i]))
-        nodeIndex.append(np.arange(n[i]))
+    # make disjoint sets
+    nodeMapping = [g[g <= ngroups[i]] for i in range(d)]
+    polyMapping = [np.sort(A) for A in nodeMapping]
 
     # set up nodes for first dimension
     nodeSum = nodeMapping[0]
-    theNodes = np.mat(nodeIndex[0]).T
+    theNodes = np.atleast_2d(np.arange(n[0]))
     if not node_isotropic:
-        isValid = nodeSum <= (qn[0] + 1)  # todo: not sure this index is ok
-        nodeSum = nodeSum[isValid]
-        theNodes = theNodes[isValid,:]
+        isvalid = nodeSum  <= (qn[0] + 1)
+        theNodes = theNodes[:, isvalid ]  # todo: not sure this index is ok
+        nodeSum = nodeSum[isvalid]
 
     # set up polynomials for first dimension
     polySum = polyMapping[0]
-    thePolys = np.mat(nodeIndex[0]).T
+    thePolys = np.atleast_2d(np.arange(n[0]))
     if not poly_isotropic:
-        isValid = polySum <= (qp[0] + 1)  # todo: not sure this index is ok
-        polySum = polySum[isValid]
-        thePolys = thePolys[isValid,:]
+        isvalid = polySum  <= (qp[0] + 1)
+        thePolys = thePolys[:, isvalid]   # todo: not sure this index is ok
+        polySum = polySum[isvalid]
 
     # compute the grid
-    for k in range(1,d):
-        theNodes, nodeSum = ndgrid2(theNodes,nodeSum,nodeMapping[k], 1 + k + node_q, qn[k])
-        thePolys, polySum = ndgrid2(thePolys,polySum,polyMapping[k], 1 + k + poly_q, qp[k])
+    for k in range(1, d):
+        theNodes, nodeSum = ndgrid2(theNodes, nodeSum, nodeMapping[k], 1 + k + node_q, qn[k])
+        thePolys, polySum = ndgrid2(thePolys, polySum, polyMapping[k], 1 + k + poly_q, qp[k])
 
-    return theNodes.T, thePolys.T
+    return theNodes, thePolys
 
 
-def ndgrid2(Indices,groupsum,newGroup,q,qk):
+def ndgrid2(Indices, indSum, newDim, q, qk):
     """
     Expanding a Smolyak grid, 2 dimensions
 
     :param Indices: Previous iteration smolyak grid
-    :param groupsum: sum of indices from previous iteration
-    :param newGroup: new indices to be combined with Indices
+    :param newDim: new indices to be combined with Indices
     :param q: cutt-off parameter for new sum of indices
     :param qk: adjustment for anisotropic grids
     :return: Updated "Indices" and "groupsum"
     """
-    nx, ny = np.arange(groupsum.size), np.arange(newGroup.size)
-    idx, idy = np.meshgrid(nx,ny)
-    idx, idy = idx.flatten(0), idy.flatten(0)
-    newSum = groupsum[idx] + newGroup[idy]
-    isValid = newSum <= q
+    idx = np.indices((indSum.size, newDim.size)).reshape(2, -1)
+    NewSum = indSum[idx[0]] + newDim[idx[1]]
+    isValid = NewSum <= q
     if qk != 0: #anisotropic
-        isValid = np.logical_and(isValid,newGroup[idy] <= qk + 1)
+        isValid &= (newDim[idx[1]] <= qk + 1)
 
-    newSum = newSum[isValid]
-    idxv = idx[isValid]
-    idyv = np.mat(idy[isValid]).T
-    newIndices = np.concatenate((Indices[idxv, :], idyv), axis=1)
-    return newIndices, newSum
+    idxv = idx[:, isValid]
+    NewSum = NewSum[isValid]
+    NewIndices = np.vstack((Indices[:, idxv[0]], newDim[idxv[1]]))
+    return NewIndices, NewSum
 
-
-def asArray(param):
-            if np.isscalar(param):
-                param = [param]
-            return np.asarray(param)

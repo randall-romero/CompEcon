@@ -193,7 +193,7 @@ class BasisChebyshev(object):
     """
         Interpolation methods
     """
-    def interpolation(self, x=None, order=None, asmatrix=False):
+    def interpolation(self, x=None, order=None):
         """
         Computes interpolation matrices for given data x and order of differentiation 'order' (integration if negative)
 
@@ -204,11 +204,8 @@ class BasisChebyshev(object):
         if order is None:  #REVISAR ESTO!!!
             order = 0
 
-        if isinstance(order, (float, int, np.int32)):
-            order = [order]
-            orderIsScalar = True
-        else:
-            orderIsScalar = False
+        orderIsScalar = np.isscalar(order)
+        order = np.atleast_1d(order)
 
         n, a, b = self._n, self._a, self._b
         nn = n + max(0, -min(order))
@@ -243,9 +240,6 @@ class BasisChebyshev(object):
         Phi = np.array([Phidict[k] for k in order])
 
         if orderIsScalar:
-            if asmatrix:
-                return np.mat(Phi[0])
-            else:
                 return Phi[0]
         else:
             return Phi
@@ -339,5 +333,5 @@ class BasisChebyshev(object):
     """
     Calling the basis directly returns the interpolation matrix
     """
-    def __call__(self, x=None, order=0, asmatrix=False):
-        return self.interpolation(x, order, asmatrix)
+    def __call__(self, x=None, order=0):
+        return self.interpolation(x, order)
