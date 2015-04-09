@@ -1,4 +1,4 @@
-basisChebyshev
+BasisChebyshev
 ==============
 
 About Chebyshev basis:
@@ -13,9 +13,10 @@ where :math:`c_i` are the collocation coefficients. The approximation uses :math
 ---------------------------
 
 
-.. automodule:: basisChebyshev
+.. autoclass:: compecon.BasisChebyshev
     :members:
     :undoc-members:
     :show-inheritance:
-    :special-members: __init__
+    :special-members: __call__
+
 

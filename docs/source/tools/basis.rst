@@ -1,8 +1,15 @@
-basis
+Basis
 =====
 
-.. automodule:: basis
-    :members:
-    :undoc-members:
-    :show-inheritance:
-    :special-members: __init__
+.. autoclass:: compecon.Basis
+   :members:
+   :undoc-members:
+   :special-members: __call__
+
+---------------------------------------
+
+.. autoclass:: compecon.basis.OptBasis
+   :members:
+   :undoc-members:
+
+

@@ -16,7 +16,7 @@ Contents:
 
    tools/basis
    tools/basisChebyshev
-   tools/temp
+   tools/interpolator
 
 
 
