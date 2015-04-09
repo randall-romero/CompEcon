@@ -1,5 +1,5 @@
 import copy
-from compecon import Basis
+from .basis import Basis
 import numpy as np
 
 '''

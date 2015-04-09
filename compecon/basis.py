@@ -14,21 +14,27 @@ class Basis(object):
         """
         A multivariate basis
 
-        :param n: number of nodes (:math:`1\\times d` vector)
-        :param a: lower bounds (:math:`1\\times d` vector)
-        :param b: upper bounds (:math:`1\\times d` vector)
+        :param n: number of nodes (d-array)
+        :param a: lower bounds (d-array)
+        :param b: upper bounds (d-vector)
         :param options: keyword-separated list of additional options (see below)
-        :return: a Basis object
+
+        Some examples::
+
+                n, a, b = [5, 9], [0, 2], [4, 7]
+                Basis(n, a, b)
+                Basis(n, a, b, type='gaussian', nodetype='lobatto')
+                Basis(n, a, b, type = 'spline', k = 3)
+                Basis(n, a, b, method='smolyak', qn = 3, qp = 3)
+                Basis(n, a, b, varnames=['savings','productivity'])
+
+        For more details about the options, see the OptBasis class documentation
         """
 
         if n is None:
             return
 
-        # Convert n, a, and b to np.arrays
-        n = np.atleast_1d(n)
-        a = np.atleast_1d(a)
-        b = np.atleast_1d(b)
-
+        n, a, b = map(np.atleast_1d, (n, a, b))  # Convert n, a, and b to np.arrays
         d = a.size  # dimension of basis
 
         # todo use same number of nodes in all dimension if n is scalar
@@ -47,26 +53,42 @@ class Basis(object):
         if opts.type == 'chebyshev':
             opts.validateChebyshev(n)
 
-
-
         # make list of 1-basis
         nodetype, varnames = opts.nodetype, opts.varnames
 
         if opts.type == 'chebyshev':
             B1 = [BasisChebyshev(n[i], a[i], b[i], nodetype, varnames[i]) for i in range(d)]
+        else:
+            raise NotImplementedError
 
         # Pack value in object
-        self.a = a
-        self.b = b
-        self.n = n
-        self.d = d
-        self._B1 = B1
-        self.opts = opts
+        self.a = a              #: lower bounds
+        self.b = b              #: upper bounds
+        self.n = n              #: number of nodes
+        self.d = d              #: dimension
+        self._B1 = B1           #: list with 1-d bases
+        self.opts = opts        #: OptBasis object, basis options
         self.opts.expandGrid(n)
-        self.type = opts.type
-        self.nodes = np.array([self._B1[k].nodes[self.opts.validX[k]].flatten() for k in range(self.d)])
+        self.type = opts.type   #: type of basis (chebyshev, spline)
+        self.nodes = np.array([self._B1[k].nodes[self.opts.validX[k]].flatten() for k in range(self.d)]) #: basis nodes
 
     def interpolation(self, x=None, order=None):
+        """Compute the interpolation matrix :math:`\Phi(x)`
+
+        :param np.array x: evaluation points
+        :param np.array order: order of derivatives (integrates if negative)
+        :return: Interpolation matrix
+
+        Example::
+
+                n, a, b = [9, 9], [0, 0], [5, 7]
+                Phi = Basis(n, a, b, method='smolyak', qn = 3, qp = 3)
+                Phi.interpolation()
+                Phi()                                       # same as previous line
+                Phi(order = [[2, 1, 1, 0], [0, 1, 1, 2]])   # Hessian of interpolation matrix
+
+        Calling an instance directly (as in the last two lines) is equivalent to calling the interpolation method.
+        """
         if self.d == 1:
             return self._B1[0](x, order)
 
@@ -98,6 +120,15 @@ class Basis(object):
 
 
     def __call__(self, x=None, order=None):
+        """
+        Equivalent to self.interpolation(x, order)
+
+        Example: If V is a Basis instance, the following to lines are equivalent::
+
+                V.interpolation(x, order)
+                V(x, order)
+
+        """
         return self.interpolation(x, order)
 
 
@@ -208,9 +239,17 @@ class Basis(object):
 
 
 class OptBasis(object):
+    """
+    Options for Basis class.
 
+    This class stores options for creating a Basis class. It takes care of validating options given by user to Basis constructor.
+    """
     def __init__(self, d):
-        # Make default options dictionary
+        """
+        Make default options dictionary
+        :param int d: dimension of the basis
+        :return: an object with default values for Basis.opts
+        """
         self._d = d
         self._type = 'chebyshev'
         self._nodetype = 'gaussian'
@@ -225,38 +264,47 @@ class OptBasis(object):
     ''' Properties'''
     @property
     def type(self):
+        """ Basis type (chebyshev, spline)"""
         return self._type
 
     @property
     def nodetype(self):
+        """ type of nodes (gaussian, lobatto, endpoint) """
         return self._nodetype
 
     @property
     def method(self):
+        """ method to expand the basis (tensor, smolyak, cluster, zcluster, complete) """
         return self._method
 
     @property
     def validX(self):
+        """  numpy array with valid combination of nodes """
         return self._validX
 
     @property
     def validPhi(self):
+        """  numpy array with valid combination of basis polynomials """
         return self._validPhi
 
     @property
     def varnames(self):
+        """  list of variable names """
         return self._varnames
 
     @property
     def keys(self):
+        """ list of available options in OptBasis """
         return([name for name in OptBasis.__dict__ if not name.startswith('_')])
 
     @property
     def qn(self):
+        """ node parameter, to guide the selection of node combinations"""
         return self._qn
 
     @property
     def qp(self):
+        """ polynomial parameter, to guide the selection of polynomial combinations"""
         return self._qp
 
 
@@ -318,6 +366,7 @@ class OptBasis(object):
 
 
     def validateChebyshev(self, n):
+        """ Validates the options given for a Chebyshev Basis """
         if self._d == 1:
             return
 
@@ -351,23 +400,22 @@ class OptBasis(object):
         """
              Compute nodes for multidimensional basis and other auxiliary fields required to keep track
              of the basis (how to combine unidimensional nodes bases). It is called by the constructor method, and as
-             such is not directly needed by the user. ExpandBasis updates the following fields
+             such is not directly needed by the user. expandGrid updates the following fields
 
-             * nodes: matrix with all nodes, one column by dimension
-             * opts.validPhi: indices to combine unidimensional bases
-             * B.opts.validX: indices to combine unidimensional nodes
+             * validPhi: indices to combine unidimensional bases
+             * validX:   indices to combine unidimensional nodes
 
-             Combining polynomials depends on value of input opts.method:
+             Combining polynomials depends on value of input "method":
 
-             * 'tensor' takes all possible combinations,
-             * 'smolyak' computes Smolyak basis, given |opts.degreeParam|,
-             * 'complete', 'cluster', and 'zcluster' choose polynomials with degrees not exceeding opts.qp
+             * 'tensor' takes all possible combinations
+             * 'smolyak' computes Smolyak basis, given qp parameter
+             * 'complete', 'cluster', and 'zcluster' choose polynomials with degrees not exceeding qp
 
              Expanding nodes depends on value of field opts.method
 
-             * 'tensor' and 'complete' take all possible combinations,
-             * 'smolyak' computes Smolyak basis, given opts.qn
-             * 'cluster' and 'zcluster' compute clusters of the tensor nodes based on opts.qn
+             * 'tensor' and 'complete' take all possible combinations
+             * 'smolyak' computes Smolyak basis, given qn parameter
+             * 'cluster' and 'zcluster' compute clusters of the tensor nodes based on qn
 
         :return: None
         """

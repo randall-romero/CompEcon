@@ -7,31 +7,15 @@ import matplotlib.pyplot as plt
 # todo: compare performance of csr_matrix and csc_matrix to deal with sparse interpolation operators
 
 class BasisChebyshev(object):
-    """
-        A univariate Chebyshev basis with properties:
-            * n:    scalar, number of nodes
-            * a:    scalar, lower bound
-            * b:    scalar, upper bound
-            * nodes: d.1 vector, basis nodes
-            * D: operators to compute derivative
-            * I: operators to compute integrals
-            * nodetype:  node type, i.e. 'gaussian','lobatto', or 'endpoint'
-            * varName: 	string, variable name. Defaults to ''.
-            * WarnOutOfBounds: boolean, warns if interpolating outside [a,b] if true. Defaults to 'false'.
-
-        This class is based on code from Miranda and Fackler.
-    """
-
     def __init__(self, n=3, a=-1.0, b=1.0, nodetype="gaussian", varName=""):
         """
         Creates an instance of a BasisChebyshev object
 
-        :param float n: number of nodes (scalar > 2)
-        :param float a: lower bound (scalar)
-        :param float b: upper bound (scalar)
+        :param int n: number of nodes
+        :param float a: lower bound
+        :param float b: upper bound
         :param str nodetype: type of collocation nodes, ('gaussian','lobatto', or 'endpoint')
         :param str varName: a string to name the variable
-        :return: a BasisChebyshev instance
         """
         nodetype = nodetype.lower()
 
@@ -113,10 +97,10 @@ class BasisChebyshev(object):
 
 
     """
-    Methods D and I return operators to differentiate/integrate, which are stored in _D and _I
+    Method Diff return operators to differentiate/integrate, which are stored in _Diff
     """
 
-    def Diff(self, k):
+    def _Diff_(self, k):
         """
         Operator to differentiate
 
@@ -200,6 +184,16 @@ class BasisChebyshev(object):
         :param x:  evaluation points (defaults to nodes)
         :param order: a list of orders for differentiation (+) / integration (-)
         :return a: dictionary with interpolation matrices, keys given by unique elements of order.
+
+        Example: Create a basis with 5 nodes, get the interpolation matrix evaluated at 20 points::
+
+                n, a, b = 5, 0, 4
+                x = numpy.linspace(a,b, 20)
+                Phi = BasisChebyshev(n, a, b)
+                Phi.interpolation(x)
+                Phi(x)
+
+        Calling an instance directly (as in the last line) is equivalent to calling the interpolation method.
         """
         if order is None:  #REVISAR ESTO!!!
             order = 0
@@ -235,7 +229,7 @@ class BasisChebyshev(object):
             if ii == 0:
                 Phidict[ii] = bas
             else:
-                Phidict[ii] = bas[:, :n - ii] * self.Diff(ii)
+                Phidict[ii] = bas[:, :n - ii] * self._Diff_(ii)
 
         Phi = np.array([Phidict[k] for k in order])
 
@@ -254,27 +248,27 @@ class BasisChebyshev(object):
 
     @property
     def n(self):
-        """ :return: number of nodes """
+        """ number of nodes (int)"""
         return self._n
 
     @property
     def a(self):
-        """ :return: lower bound """
+        """ lower bound (float)"""
         return self._a
 
     @property
     def b(self):
-        """ :return: upper bound """
+        """ upper bound (float)"""
         return self._b
 
     @property
     def nodes(self):
-        """ :return: basis nodes """
+        """ basis nodes """
         return self._nodes
 
     @property
     def nodetype(self):
-        """ :return: type of node ('gaussian','lobatto','endpoint')"""
+        """ type of node ('gaussian','lobatto','endpoint')"""
         return self._nodetype
 
     @n.setter
@@ -315,8 +309,9 @@ class BasisChebyshev(object):
         """
         Plots the first k basis functions
 
+        :param order: order of differentiation
         :param k: number of functions to include in plot
-        :return: None
+        :return: a plot
         """
         a, b, = self._a, self._b
         nodes = self._nodes
@@ -334,4 +329,7 @@ class BasisChebyshev(object):
     Calling the basis directly returns the interpolation matrix
     """
     def __call__(self, x=None, order=0):
+        """
+        Equivalent to self.interpolation(x, order)
+        """
         return self.interpolation(x, order)
