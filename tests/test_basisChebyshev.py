@@ -1,6 +1,6 @@
 from nose.tools import *
 import numpy as np
-from compecon.basisChebyshev import BasisChebyshev
+from compecon import BasisChebyshev
 
 
 ''' test for size of Diff operator '''
@@ -9,8 +9,8 @@ Phi = BasisChebyshev(n, a, b)
 
 
 def test_Diff():
-    assert_equal(Phi.Diff(2).shape, (n - 2, n))
-    assert_equal(Phi.Diff(-3).shape, (n + 3, n))
+    assert_equal(Phi._Diff_(2).shape, (n - 2, n))
+    assert_equal(Phi._Diff_(-3).shape, (n + 3, n))
 
 
 ''' test for shape of interpolation matrix '''
