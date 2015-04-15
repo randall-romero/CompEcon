@@ -1,5 +1,5 @@
 import copy
-from .basis import Basis
+from compecon import Basis, BasisChebyshev
 import numpy as np
 
 '''
@@ -68,6 +68,10 @@ class Interpolator(Basis):
 
         if type(args[0]) == Basis:
             B = args[0]
+        elif type(args[0]) == BasisChebyshev:
+            bas = args[0]
+            B = Basis()
+            Basis.__init__(B, bas.n, bas.a, bas.b)
         else:
             B = Basis()
             Basis.__init__(B, *args, **kwargs)
@@ -86,14 +90,13 @@ class Interpolator(Basis):
         # share data in this basis with all instances
         self.__dict__ = copy.copy(B.__dict__)
 
-
-
         # add data
         if y is None:
             y = np.zeros([self.N])
         elif isinstance(y, (list, np.ndarray)):
             y = np.asarray(y)
-            y = y.reshape([y.size])
+        elif callable(y):
+            y = y(B.nodes)
         else:
             raise ValueError('y must be a list or numpy array with {} elements'.format(self.N))
 
