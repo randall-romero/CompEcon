@@ -1,3 +1,5 @@
+from warnings import warn
+
 __author__ = 'Randall'
 import numpy as np
 from scipy.sparse import csc_matrix
@@ -82,7 +84,7 @@ class BasisChebyshev(object):
 
         return (a + b + (b - a) * x) / 2
 
-    def _rescale201(self,x):
+    def _rescale201(self, x):
         """
         Rescales nodes from [a, b] domain to [-1, 1] domain
 
@@ -90,9 +92,9 @@ class BasisChebyshev(object):
         :return: nodes in [-1, 1] domain
         """
         n, a, b = self._n, self._a, self._b
-        # if min(x) < a or max(x) > b:
-        #     raise Exception('x values must be between a and b.')  # todo: turn this into a warning!
-        return (2 / (b-a)) * (x - (a + b) /2)
+        #if not(a <= min(x) <= max(x) <= b):
+        #    warn('x values must be between a and b.')
+        return (2 / (b-a)) * (x - (a + b) / 2)
 
 
 
@@ -126,7 +128,7 @@ class BasisChebyshev(object):
 
         if order > 0:
             if order > n - 2:
-                # todo:  use warning about this change
+                warn('order must be less or equal to n - 2; setting order = n - 2')
                 order = n - 2
 
             missing_keys = set(range(1, order + 1)) - keys
