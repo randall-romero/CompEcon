@@ -1,6 +1,7 @@
+from warnings import warn
 import numpy as np
 from .basisChebyshev import BasisChebyshev
-from .ce_util import gridmake, ckron
+from .tools import gridmake
 
 __author__ = 'Randall'
 
@@ -45,7 +46,7 @@ class Basis(object):
         opts = OptBasis(d)
         for option, value in options.items():
             if option not in opts.keys:
-                print('Unknown option {} with value {}; ignoring'.format(option, value))  # todo: make this a warning
+                warn('Unknown option {} with value {}; ignoring'.format(option, value))
             else:
                 setattr(opts, option, value)
 
@@ -70,7 +71,7 @@ class Basis(object):
         self.opts = opts        #: OptBasis object, basis options
         self.opts.expandGrid(n)
         self.type = opts.type   #: type of basis (chebyshev, spline)
-        self.nodes = np.array([self._B1[k].nodes[self.opts.validX[k]].flatten() for k in range(self.d)]) #: basis nodes
+        self._nodes = np.array([self._B1[k].nodes[self.opts.validX[k]].flatten() for k in range(self.d)]) #: basis nodes
 
     def interpolation(self, x=None, order=None):
         """Compute the interpolation matrix :math:`\Phi(x)`
@@ -95,10 +96,12 @@ class Basis(object):
         if order is None:
             order = np.zeros([self.d, 1], 'int')
         else:
-            order = np.asarray(order)
+            order = np.atleast_1d(order)
             if order.ndim == 1:
-                order.reshape([order.size, 1])
-            assert (order.shape[0] == self.d)
+                assert (order.size == self.d)
+                order.shape = (self.d, 1)
+            else:
+                assert (order.shape[0] == self.d)
 
         orderIsScalar = order.shape[1] == 1
 
@@ -184,7 +187,7 @@ class Basis(object):
         :return:
         """
         assert (len(x) == self.d)
-        r = gridmake(*[np.arange(xi.size) for xi in x]).T
+        r = gridmake(*[np.arange(xi.size) for xi in x])
         c = self.opts.validPhi
         oo = np.arange(order.shape[1])
 
@@ -206,6 +209,11 @@ class Basis(object):
 
     def plot(self):
         raise NotImplementedError # todo: implement this method
+
+    @property
+    def nodes(self):
+        """Basis nodes"""
+        return self._nodes.flatten() if self.d == 1 else self._nodes
 
     @property
     def N(self):
@@ -378,14 +386,14 @@ class OptBasis(object):
         elif self.method == 'smolyak':
             n_valid = 2 ** np.ceil(np.log2(n - 1)) + 1
             if np.any(n != n_valid):
-                # todo: make this a warning
-                print('Warning: For smolyak expansion, number of nodes should be n = 2^k+1 for some k=1,2,...')
+                warn('For smolyak expansion, number of nodes should be n = 2^k+1 for some k=1,2,...')
                 print('Adjusting nodes\n {:7s}  {:7s}'.format('old n', 'new n'))
                 for n1, n2 in zip(n, n_valid):
                     print('{:7.0f} {:7.0f}'.format(n1, n2))
                 n = np.array(n_valid,'int')
             if self.nodetype != 'lobatto':
-                self.nodetype = 'lobatto'  # todo issue warning
+                warn('Smolyak expansion requires Lobatto nodes: changing "nodetype".')
+                self.nodetype = 'lobatto'
             if self.qn is None:
                 self.qn = np.atleast_1d(2)
             else:
@@ -432,7 +440,7 @@ class OptBasis(object):
         degs = n - 1 # degree of polynomials
         ldeg = [np.arange(degs[ni] + 1) for ni in range(self._d)]
 
-        idxAll = gridmake(*ldeg).T   # degree of polynomials = index
+        idxAll = gridmake(*ldeg)   # degree of polynomials = index
 
         ''' Expanding the polynomials'''
         if self.method == 'tensor':
