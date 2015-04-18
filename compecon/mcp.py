@@ -18,11 +18,13 @@ class MCP(object):
         elif isinstance(F, np.ndarray):
             if len(args) == 1:
                 self.q = q = args[0]
+                self.f = lambda x: (F.dot(x) + q, F)
+                self.islinear = True
             else:
                 raise ValueError('If problem is linear, exactly one argument (vector q) must be provided after the bounds')
+        else:
+            raise ValueError('First argument to MCP must be either a function (nonlinear problem) or a numpy array (linear problem')
 
-            self.f = lambda x: (F.dot(x) + q, F)
-            self.islinear = True
 
         a, b = np.atleast_1d(a, b)
         self.a, self.b = a.astype(float), b.astype(float)
@@ -144,61 +146,6 @@ def fischer(u, v, du=None, dv=None, plus=True):
     return f, J
 
 
-# def ssmooth(x, a, b, fx, J=None):
-#     """
-#     :param x: an evaluation point (vector)
-#     :param a: lower bound
-#     :param b: upper bound
-#     :param fx: function values at x
-#     :param J: Jacobian of f at x (optional
-#     :return: fhat = vector, Jhat = matrix (if J provided)
-#     """
-#
-#     x, a, b, fx = np.broadcast_arrays(*np.atleast_1d(x, a, b, fx))
-#     ainf, binf = map(np.isinf, (a, b))
-#     I = -np.identity(x.size)
-#
-#     if J is None:
-#         fplus = fischer(fx, a - x)   # apply fischer plus
-#         fplus[ainf] = fx[ainf]
-#
-#         fhat = fischer(fplus, b - x, plus=False)
-#         fhat[binf] = fplus[binf]
-#         return fhat
-#     else:
-#         J = np.atleast_2d(J)
-#         fplus, Jplus = fischer(fx, a - x, J, I)
-#         fplus[ainf], Jplus[ainf] = fx[ainf], J[ainf]
-#
-#         fhat, Jhat = fischer(fplus, b - x, Jplus, I, False)
-#         fhat[binf], Jhat[binf] = fplus[binf], Jplus[binf]
-#         return fhat, Jhat
-#
-#
-# def minmax(x, a, b, fx, J = None):
-#     """
-#     :param x: an evaluation point (vector)
-#     :param a: lower bound
-#     :param b: upper bound
-#     :param fx: function values at x
-#     :param J: Jacobian of f at x (optional
-#     :return: fhat = vector, Jhat = matrix (if J provided)
-#     """
-#
-#     x, a, b, fx = np.broadcast_arrays(*np.atleast_1d(x, a, b, fx))
-#     da, db = a - x, b - x
-#     fhat = np.minimum(np.maximum(fx, da), db)
-#
-#     if J is None:
-#         return fhat
-#     else:
-#         J = np.atleast_2d(J)
-#
-#     Jhat = -np.identity(x.size)
-#     i = (fx > da) & (fx < db)
-#     Jhat[i] = J[i]
-#     return fhat, Jhat
-
 
 def fixpoint(g, x, *args, maxit=100, tol=SQEPS, showiters=False):
     if showiters:
@@ -219,106 +166,3 @@ def fixpoint(g, x, *args, maxit=100, tol=SQEPS, showiters=False):
     return xnew
 
 
-# def ncpsolve(f, a, b, x=None, *args,
-#              kind='ssmooth', method='newton',
-#              maxit=100, maxsteps = 10,
-#              tol=SQEPS, showiters=False):
-#
-#     Transform = ssmooth if kind.lower() == 'ssmooth' else minmax
-#
-#     if x is None:
-#         x = (a + b)/2
-#     a, b, x = map(np.atleast_1d, (a, b, x))
-#
-#     if showiters:
-#         print('{:4}  {:4}  {:6}'.format('it', 'bstep', 'change'))
-#
-#     if method.lower() == 'newton':
-#         for it in range(maxit):
-#             fx, J = Transform(x, a, b, *f(x, *args))
-#             fnorm = np.max(np.abs(fx))
-#             if fnorm < tol:
-#                 break
-#
-#             dx = - solve(J, fx)
-#             fnormold = np.inf
-#
-#             for backstep in range(maxsteps):
-#                 xnew = x + dx
-#                 fxnew = Transform(xnew, a, b, f(xnew, *args)[0])
-#                 fnormnew = np.max(np.abs(fxnew))
-#                 if fnormnew < fnorm:
-#                     break
-#                 if fnormold < fnormnew:
-#                     dx *= 2
-#                     break
-#                 fnormold = fnormnew
-#                 dx /= 2
-#
-#             x = x + dx
-#             if showiters:
-#                 print('{:4}  {:4}  {:6.2e}'.format(it, backstep, fnormnew))
-#
-#
-#         if (it + 1) == maxit:
-#             print('Failure to converge in ncpsolve')
-#
-#         x = np.minimum(np.maximum(a, np.real(x)), b)
-#         return x, fx
-#
-#     else:
-#         if isinstance(f(x, *args), tuple):
-#             xstar = fixpoint(lambda y: y + Transform(y, a, b, f(y, *args)[0]), x)
-#         else:
-#             xstar = fixpoint(lambda y: y + Transform(y, a, b, f(y, *args)), x)
-#         return xstar, xstar - x
-#
-#
-#
-# def lcpsolve(M, q, a, b, x=None,
-#              kind='ssmooth', method='newton',
-#              maxit=100, maxsteps = 20,
-#              tol=SQEPS, showiters=False):
-#
-#     Transform = ssmooth if kind.lower() == 'ssmooth' else minmax
-#     if x is None:
-#         x = q
-#
-#     if method.lower() == 'newton':
-#         for it in range(maxit):
-#             z = np.dot(M, x) + q
-#             fx, J = Transform(x, a, b, z, M)
-#             fnorm = np.max(np.abs(fx))
-#             if fnorm < tol:
-#                 break
-#
-#             dx = - solve(J, fx)
-#             fnormold = np.inf
-#
-#             for backstep in range(maxsteps):
-#                 xnew = x + dx
-#                 znew = np.dot(M, xnew) + q
-#                 fxnew = Transform(xnew, a, b, znew)
-#                 fnormnew = np.max(np.abs(fxnew))
-#                 if fnormnew < fnorm:
-#                     break
-#                 if fnormold < fnormnew:
-#                     dx *= 2
-#                     break
-#                 fnormold = fnormnew
-#                 dx /= 2
-#
-#             x = x + dx
-#             if showiters:
-#                 print('{:4}  {:4}  {:6.2f}'.format(it, backstep, fnormnew))
-#
-#
-#         if (it + 1) == maxit:
-#             warn('Failure to converge in ncpsolve')
-#
-#         x = np.minimum(np.maximum(a, np.real(x)), b)
-#         return x, np.dot(M, x) + q
-#
-#     else:
-#         raise NotImplementedError
-#         #return fixpoint(lambda y: Transform(y, a, b, M), x)
