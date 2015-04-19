@@ -35,7 +35,7 @@ class Basis(object):
         if n is None:
             return
 
-        n, a, b = map(np.atleast_1d, (n, a, b))  # Convert n, a, and b to np.arrays
+        n, a, b = np.atleast_1d(n, a, b)  # Convert n, a, and b to np.arrays
         d = a.size  # dimension of basis
 
         # todo use same number of nodes in all dimension if n is scalar
