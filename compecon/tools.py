@@ -1,6 +1,6 @@
 from functools import reduce
 import numpy as np
-
+import time
 
 def gridmake(*arrays):
     """
@@ -29,7 +29,7 @@ def gridmake(*arrays):
            [ 4,  4,  5,  5,  4,  4,  5,  5,  4,  4,  5,  5],
            [10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20]])
     """
-    arrays = [np.atleast_2d(a) for a in arrays]
+    arrays = np.atleast_2d(*arrays)
     n = len(arrays)
     idx = np.indices([a.shape[1] for a in arrays]).reshape([n, -1])
     return np.vstack(arrays[k][:, idx[k]] for k in range(n))
@@ -78,7 +78,7 @@ def nodeunif(n, a, b, lst = False):
      vector of n(k) uniform nodes spanning the interval [a(k),b(k)] also returns prod(n) by d matrix x of
      grid points created by forming Cartesian product of  vectors in xcoord.
     """
-    n, a, b = map(np.atleast_1d, (n, a, b))  # Convert n, a, and b to np.arrays
+    n, a, b = np.atleast_1d(n, a, b)  # Convert n, a, and b to np.arrays
     d = n.size  # dimension of basis
 
     if d == 1:
@@ -101,3 +101,101 @@ def discmoments(w, x):
     xavg = np.dot(x, w)
     xstd = np.sqrt(np.dot(x ** 2, w) - xavg ** 2)
     return xavg, xstd
+
+
+
+def jacobian(func, x, *args, **kwargs):
+
+    F = lambda x: func(x, *args, **kwargs)
+    dx = x.size
+    f = F(x)
+    df = f.size
+    x = x.astype(float)
+
+    ''' Compute Jacobian'''
+    tol = np.spacing(1) ** (1/3)
+
+    h = tol * np.maximum(abs(x), 1)
+    x_minus_h = x - h
+    x_plus_h = x + h
+    deltaX = x_plus_h - x_minus_h
+    fx = np.zeros((dx, df))
+
+    for k in range(dx):
+        xx = x.copy()
+        xx[k] = x_plus_h[k]
+        fplus = F(xx)
+
+        xx[k] = x_minus_h[k]
+        fminus = F(xx)
+
+        fx[k] = (fplus - fminus) / deltaX[k]
+
+    return fx.T
+
+
+def hessian(func, x, *args, **kwargs):
+
+    F = lambda x: func(x, *args, **kwargs)
+    dx, nx = x.shape
+    f = F(x)
+    df = np.atleast_2d(f).shape[0]
+
+    ''' Compute Hessian'''
+    tol = np.spacing(1) ** (1/4)
+
+    h = tol * np.maximum(abs(x), 1)
+    x_minus_h = x - h
+    x_plus_h = x + h
+    deltaX = h  #repmat(h, 1, 1, dx)
+
+    #deltaXX = deltaX .* permute(deltaX,[1,3,2])
+
+    fxx = np.zeros([dx, dx, df, nx])
+    for k in range(dx):
+        for h in range(dx):
+            xx = x.copy()
+            if h == k:
+                xx[k] = x_plus_h[k]
+                fplus = F(xx)
+
+                xx[k] = x_minus_h[k]
+                fminus = F(xx)
+                fxx[k, k] = (fplus - 2 * f + fminus) / (deltaX[k] ** 2)
+            else:
+                xx[k] = x_plus_h[k]
+                xx[h] = x_plus_h[h]
+                fpp = F(xx)
+
+                xx[h] = x_minus_h[h]
+                fpm = F(xx)
+
+                xx[k] = x_minus_h[k]
+                fmm = F(xx)
+
+                xx[h] = x_plus_h[h]
+                fmp = F(xx)
+
+                fxx[k, h] = (fpp + fmm - fpm - fmp) / (4 * deltaX[k] * deltaX[h])
+
+    fxx = (fxx + fxx.swapaxes(0, 1)) / 2
+    return fxx
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+tic = lambda: time.time()
+toc = lambda t: time.time() - t
