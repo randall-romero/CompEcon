@@ -3,7 +3,9 @@ from warnings import warn
 __author__ = 'Randall'
 import numpy as np
 from scipy.sparse import csc_matrix
+from numba import jit, float64, void
 import matplotlib.pyplot as plt
+
 
 # TODO: complete this class
 # todo: compare performance of csr_matrix and csc_matrix to deal with sparse interpolation operators
@@ -208,22 +210,17 @@ class BasisChebyshev(object):
 
         # Check for x argument
         xIsProvided = (x is not None)
-        x = np.mat(x) if xIsProvided else self._nodes
+        x = x if xIsProvided else self._nodes
         nx = x.size
 
         # Compute order 0 interpolation matrix
         if xIsProvided:
+            bas = np.zeros([nx, nn])
             z = self._rescale201(x)
-            bas = np.mat(np.zeros([nn,nx]))
-            bas[0] = 1
-            bas[1] = z
-            z *=2
-            for k in range(2, nn):
-                bas[k] = np.multiply(z, bas[k - 1]) - bas[k - 2]
-            bas = bas.T
+            cheby_polynomials(z, bas)
         else:
-            z = np.mat(np.arange(n - 0.5, -0.5, -1)).T
-            bas = np.cos((np.pi/n) * z * np.mat(np.arange(0, nn)))
+            z = np.atleast_2d(np.arange(n - 0.5, -0.5, -1)).T
+            bas = np.cos((np.pi/n) * z * np.arange(0, nn))
 
         # Compute Phi
         Phidict = dict()
@@ -231,7 +228,7 @@ class BasisChebyshev(object):
             if ii == 0:
                 Phidict[ii] = bas
             else:
-                Phidict[ii] = bas[:, :n - ii] * self._Diff_(ii)
+                Phidict[ii] = np.asmatrix(bas[:, :n - ii]) * self._Diff_(ii)
 
         Phi = np.array([Phidict[k] for k in order])
 
@@ -335,3 +332,15 @@ class BasisChebyshev(object):
         Equivalent to self.interpolation(x, order)
         """
         return self.interpolation(x, order)
+
+
+
+@jit(void(float64[:], float64[:, :]), nopython=True)
+def cheby_polynomials(z, bas):
+    for node in range(z.size):
+        bas[node, 0] = 1
+        bas[node, 1] = z[node]
+        z[node] *= 2
+        for k in range(bas.shape[1]):
+            bas[node, k] = z[node] * bas[node, k - 1] - bas[node, k - 2]
+    return None
