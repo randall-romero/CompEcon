@@ -71,7 +71,19 @@ class Basis(object):
         self.opts = opts        #: OptBasis object, basis options
         self.opts.expandGrid(n)
         self.type = opts.type   #: type of basis (chebyshev, spline)
-        self._nodes = np.array([self._B1[k].nodes[self.opts.validX[k]].flatten() for k in range(self.d)]) #: basis nodes
+        self._nodes = np.array([self._B1[k].nodes[self.opts.ix[k]].flatten() for k in range(self.d)]) #: basis nodes
+
+        # Compute interpolation matrix at nodes
+        _Phi = self.interpolation()
+        self._PhiT = _Phi.T
+
+        # Compute inverse if not spline
+        if self.type == 'chebyshev':
+            self._PhiInvT = np.linalg.pinv(_Phi).T
+        else:
+            raise NotImplementedError
+
+
 
     def interpolation(self, x=None, order=None):
         """Compute the interpolation matrix :math:`\Phi(x)`
@@ -143,8 +155,8 @@ class Basis(object):
         :param order:
         :return:
         """
-        r = self.opts.validX
-        c = self.opts.validPhi
+        r = self.opts.ix
+        c = self.opts.ip
         oo = np.arange(order.shape[1])
 
         if self.opts.type == 'chebyshev':
@@ -166,7 +178,7 @@ class Basis(object):
         """
         assert (x.shape[0] == self.d)  # 'In Interpolation, class basis: x must have d columns')
         r = np.arange(x.shape[1])
-        c = self.opts.validPhi
+        c = self.opts.ip
         oo = np.arange(order.shape[1])
 
         if self.opts.type == 'chebyshev':
@@ -188,7 +200,7 @@ class Basis(object):
         """
         assert (len(x) == self.d)
         r = gridmake(*[np.arange(xi.size) for xi in x])
-        c = self.opts.validPhi
+        c = self.opts.ip
         oo = np.arange(order.shape[1])
 
         if self.opts.type == 'chebyshev':
@@ -218,12 +230,12 @@ class Basis(object):
     @property
     def N(self):
         """ Total number of nodes"""
-        return self.opts.validX.shape[-1]
+        return self.opts.ix.shape[-1]
 
     @property
     def M(self):
         """ Total number of polynomials"""
-        return self.opts.validPhi.shape[-1]
+        return self.opts.ip.shape[-1]
 
 
     def __repr__(self):
@@ -266,8 +278,8 @@ class OptBasis(object):
         self._qn = None
         self._qp = None
         self._varnames = ["V{}".format(dim) for dim in range(d)]
-        self._validX = []
-        self._validPhi = []
+        self._ix = []
+        self._ip = []
 
     ''' Properties'''
     @property
@@ -286,14 +298,14 @@ class OptBasis(object):
         return self._method
 
     @property
-    def validX(self):
+    def ix(self):
         """  numpy array with valid combination of nodes """
-        return self._validX
+        return self._ix
 
     @property
-    def validPhi(self):
+    def ip(self):
         """  numpy array with valid combination of basis polynomials """
-        return self._validPhi
+        return self._ip
 
     @property
     def varnames(self):
@@ -342,17 +354,17 @@ class OptBasis(object):
         else:
             raise ValueError('method value must be in ' + str(valid))
 
-    @validX.setter
-    def validX(self, value):
+    @ix.setter
+    def ix(self, value):
         if isinstance(value, np.ndarray) and value.ndim == 2 and value.shape[0] == self._d:
-            self._validX = value
+            self._ix = value
         else:
             raise ValueError('validX must be a 2-dimensional numpy array with {} rows'.format(self._d))
 
-    @validPhi.setter
-    def validPhi(self, value):
+    @ip.setter
+    def ip(self, value):
         if isinstance(value, np.ndarray) and value.ndim == 2 and value.shape[0] == self._d:
-            self._validPhi = value
+            self._ip = value
         else:
             raise ValueError('validPhi must be a 2-dimensional numpy array with {} rows'.format(self._d))
 
@@ -428,13 +440,13 @@ class OptBasis(object):
         :return: None
         """
         if self._d == 1:
-            self.validX = np.arange(n).reshape(1, -1)
-            self.validPhi = np.arange(n).reshape(1, -1)
+            self.ix = np.arange(n).reshape(1, -1)
+            self.ip = np.arange(n).reshape(1, -1)
             return
 
         ''' Smolyak interpolation: done by SmolyakGrid function'''
         if self.method == 'smolyak':
-            self.validX, self.validPhi = SmolyakGrid(n, self.qn, self.qp)
+            self.ix, self.ip = SmolyakGrid(n, self.qn, self.qp)
 
         ''' All other methods'''
         degs = n - 1 # degree of polynomials
@@ -444,14 +456,14 @@ class OptBasis(object):
 
         ''' Expanding the polynomials'''
         if self.method == 'tensor':
-            self.validPhi = idxAll
+            self.ip = idxAll
         else:
             degValid = np.sum(idxAll, axis=0) <= self.qp
-            self.validPhi = idxAll[:, degValid]
+            self.ip = idxAll[:, degValid]
 
         ''' Expanding the nodes'''
         if self.method in ['tensor', 'complete']:
-            self.validX = idxAll
+            self.ix = idxAll
         elif self.method in ['cluster', 'zcluster']:
             raise NotImplementedError # todo: implement this method
 

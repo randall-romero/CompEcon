@@ -41,7 +41,7 @@ import numpy as np
 # Last updated: November 24, 2014.
 #
 #
-# Copyright (C) 2014 Randall Romero-Aguilar
+# Copyright (C) 2015 Randall Romero-Aguilar
 #
 # Licensed under the MIT license, see LICENSE.txt
 
@@ -76,16 +76,6 @@ class Interpolator(Basis):
             B = Basis()
             Basis.__init__(B, *args, **kwargs)
 
-        # Compute interpolation matrix at nodes
-        _Phi = B.interpolation()
-        B._PhiT = _Phi.T
-
-        # Compute inverse if not spline
-        if B.type == 'chebyshev':
-            B._PhiInvT = np.linalg.pinv(_Phi).T
-        else:
-            raise NotImplementedError
-
 
         # share data in this basis with all instances
         self.__dict__ = copy.copy(B.__dict__)
@@ -107,8 +97,9 @@ class Interpolator(Basis):
         self._c = np.dot(self._y, self._PhiInvT)
         self._yIsOutdated = False
         self._cIsOutdated = False
-
-
+        self._truncate = 1e-12
+        self._ipp = self.opts.ip.copy()
+        self._cc = None
 
     """ setter and getter methods """
 
@@ -116,7 +107,7 @@ class Interpolator(Basis):
     def y(self):
         """ :return: function values at nodes """
         if self._yIsOutdated:
-            self._y = np.dot(self._c, self._PhiT)
+            self._y = np.dot(self._c, self._PhiT[self.cc] if self._truncate else self._PhiT)
             self._yIsOutdated = False
         return self._y
 
@@ -125,6 +116,7 @@ class Interpolator(Basis):
         """ :return: interpolation coefficients """
         if self._cIsOutdated:
             self._c = np.dot(self._y, self._PhiInvT)
+            self.truncate_coefficients()
             self._cIsOutdated = False
         return self._c
 
@@ -152,10 +144,16 @@ class Interpolator(Basis):
     def c(self, val):
         assert (val.size == self.M)  # one value per polynomial
         self._c = val
+        self.truncate_coefficients()
         self._cIsOutdated = False
         self._yIsOutdated = True
 
-
+    def truncate_coefficients(self):
+        if self._truncate:
+            R = range(self._c.ndim - 1)
+            self._cc = np.any(np.abs(self._c) >= self._truncate, tuple(R))
+            self._c = self._c[..., self._cc]
+            self.opts.ip = self.opts.ip[:, self._cc]
 
     """  Interpolation method """
 
@@ -173,7 +171,7 @@ class Interpolator(Basis):
 
 
         if Phix.ndim == 2:
-            return np.dot(self.c, Phix.T)
+            return np.dot(self.c, Phix.T[self._cc])
         else:
             return np.array([np.dot(self.c, phix.T) for phix in Phix])
 
