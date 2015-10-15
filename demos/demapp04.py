@@ -1,24 +1,9 @@
-import numpy as np
+from demos.setup import np, plt
 from numpy.linalg import norm, cond
-from compecon import Basis, BasisChebyshev, Interpolator
-from compecon.tools import nodeunif
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
-from matplotlib import rcParams as settings
-
+from compecon import Basis, Interpolator
 import warnings
+
 warnings.simplefilter('ignore')
-
-
-''' CHANGE DEFAULT SETTINGS FOR FIGURES'''
-settings['lines.linewidth'] = 2.5
-settings['figure.subplot.hspace'] = 0.25
-settings['legend.frameon'] = False
-settings['savefig.directory'] = '/figures/'
-settings['savefig.extension'] = 'pdf'
-settings['savefig.format'] = 'pdf'
-
 
 
 """ Uniform-node and Chebyshev-node polynomial approximation of Runge's function

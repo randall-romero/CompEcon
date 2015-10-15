@@ -1,20 +1,9 @@
-
-import numpy as np
-from numpy.linalg import norm, cond
-from compecon import Basis, BasisChebyshev, Interpolator
+from demos.setup import np, plt
+from compecon import Basis, Interpolator
 from compecon.tools import nodeunif
-import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
-from matplotlib import rcParams as settings
 
-
-''' CHANGE DEFAULT SETTINGS FOR FIGURES'''
-settings['lines.linewidth'] = 2.5
-settings['figure.subplot.hspace'] = 0.25
-settings['legend.frameon'] = False
-settings['savefig.directory'] = '/figures/'
-settings['savefig.format'] = 'pdf'
 
 
 """ Approximating functions on R^2

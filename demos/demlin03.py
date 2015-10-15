@@ -1,9 +1,7 @@
-import numpy as np
+from demos.setup import np, plt, tic, toc
 from numpy.linalg import solve
 from scipy.sparse.linalg import spsolve
-import matplotlib.pyplot as plt
 from scipy.sparse import csc_matrix
-from compecon.tools import tic, toc
 
 """ Sparse linear equations"""
 AA = np.random.rand(1000, 1000)

@@ -1,8 +1,5 @@
-import numpy as np
+from demos.setup import np, plt
 from numpy.linalg import norm, cond, solve
-import matplotlib.pyplot as plt
-np.set_printoptions(3)
-
 
 """ Ill-conditioning of Vandermonde matrix"""
 #todo: Review this demo, result not the same as in Miranda's
