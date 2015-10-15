@@ -1,8 +1,7 @@
-import numpy as np
-np.set_printoptions(4, linewidth=120)
-from compecon.tools import gridmake
+from demos.setup import np, plt
 from compecon import NLP
-import matplotlib.pyplot as plt
+from compecon.tools import gridmake
+
 
 ''' Set up the Cournot function '''
 def cournot(q, alpha, beta):

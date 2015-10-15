@@ -1,6 +1,5 @@
-import numpy as np
+from demos.setup import np, tic, toc
 from compecon import LCP
-from compecon.tools import tic, toc
 
 # demslv07():
 """Linear complementarity problem methods    """

@@ -5,11 +5,9 @@ Compute fixedpoint of f(x) = x^0.5 using Newton, Broyden, and function iteration
 Initial values generated randomly. Some alrorithms may fail to converge, depending on the initial value.
 True fixedpoint is x=1.
 """
-
-import numpy as np
-from numpy.linalg import norm
+from demos.setup import np, tic, toc
 from compecon import NLP
-from compecon.tools import tic, toc
+
 
 ''' Randomly generate starting point '''
 xinit = np.random.rand(1) + 0.5
@@ -44,7 +42,7 @@ n2 = problem_as_zero.fnorm
 t0 = tic()
 x3 = problem_as_fixpoint.fixpoint()
 t3 = 100 * toc(t0)
-n3 = norm(problem_as_fixpoint.fx - x3)
+n3 = np.linalg.norm(problem_as_fixpoint.fx - x3)
 
 ''' Print table header '''
 print('Hundredths of seconds required to compute fixed-point of g(x)=sqrt(x)')

@@ -15,8 +15,8 @@
 
 # In[1]:
 
-import numpy as np
-from compecon import MCP, tic, toc
+from demos.setup import np, tic, toc
+from compecon import MCP
 
 
 # ### Set up the problem

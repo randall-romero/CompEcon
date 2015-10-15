@@ -6,10 +6,10 @@ Initial values generated randomly.  Some algorithms may fail to converge, depend
 True fixedpoint is x = -0.09 y=-0.46.
 """
 
-import numpy as np
-from numpy.linalg import norm
+from demos.setup import np, tic, toc
 from compecon import NLP
-from compecon.tools import tic, toc
+np.random.seed(12)
+
 
 
 ''' Set up the problem '''
@@ -50,7 +50,7 @@ n2 = problem_as_zero.fnorm
 t0 = tic()
 z3 = problem_as_fixpoint.fixpoint(xinit)
 t3 = 100 * toc(t0)
-n3 = norm(problem_as_fixpoint.fx - z3)
+n3 = np.linalg.norm(problem_as_fixpoint.fx - z3)
 
 ''' Print table header '''
 print('Hundredths of seconds required to compute fixed-point of g(x1,x2)=[x1^2+x2^3;x1*x2-0.5]')

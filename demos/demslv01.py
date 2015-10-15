@@ -3,11 +3,10 @@ DEMSLV01 Compute root of f(x)=exp(-x)-1
 
 Compute root of f(x)=exp(-x)-1 using Newton and secant methods. Initial value generated randomly. True root is x=0.
 """
-import numpy as np
+from demos.setup import np, plt, tic, toc
 from numpy.linalg import norm
 from compecon import NLP
-from compecon.tools import tic, toc
-import matplotlib.pyplot as plt
+
 
 ''' Set up the problem '''
 def f(x):

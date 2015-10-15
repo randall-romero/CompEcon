@@ -11,12 +11,8 @@
 # * Preliminary tasks
 
 # In[1]:
-
-import numpy as np
-from numpy.linalg import norm
-from compecon import MCP, tic, toc
-import matplotlib.pyplot as plt
-import seaborn as sns
+from demos.setup import np, plt, tic, toc
+from compecon import MCP
 
 
 

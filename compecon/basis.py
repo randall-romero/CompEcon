@@ -1,7 +1,7 @@
 from warnings import warn
 import numpy as np
 from .basisChebyshev import BasisChebyshev
-from .tools import gridmake
+from .tools import gridmake, Options_Container
 
 __author__ = 'Randall'
 
@@ -27,12 +27,15 @@ class Basis(object):
                 Basis(n, a, b, type='gaussian', nodetype='lobatto')
                 Basis(n, a, b, type = 'spline', k = 3)
                 Basis(n, a, b, method='smolyak', qn = 3, qp = 3)
-                Basis(n, a, b, varnames=['savings','productivity'])
+                Basis(n, a, b, labels=['savings','productivity'])
 
         For more details about the options, see the OptBasis class documentation
         """
 
         if n is None:
+            return
+        if type(n) in [Basis, BasisChebyshev]:
+            self.__dict__ = as_basis(n).__dict__
             return
 
         n, a, b = np.atleast_1d(n, a, b)  # Convert n, a, and b to np.arrays
@@ -43,22 +46,23 @@ class Basis(object):
             raise ValueError('All lower bounds must be less than their corresponding upper bound')
 
         # Read user options
-        opts = OptBasis(d)
-        for option, value in options.items():
-            if option not in opts.keys:
-                warn('Unknown option {} with value {}; ignoring'.format(option, value))
-            else:
-                setattr(opts, option, value)
+        opts = OptBasis(d, **options)
+        # for option, value in options.items():
+        #     if option not in opts.keys:
+        #         warn('Unknown option {} with value {}; ignoring'.format(option, value))
+        #     else:
+        #         setattr(opts, option, value)
 
         # Validate options for chebyshev basis of several dimensions
         if opts.type == 'chebyshev':
             opts.validateChebyshev(n)
 
         # make list of 1-basis
-        nodetype, varnames = opts.nodetype, opts.varnames
 
         if opts.type == 'chebyshev':
-            B1 = [BasisChebyshev(n[i], a[i], b[i], nodetype, varnames[i]) for i in range(d)]
+            B1 = [BasisChebyshev(n[i], a[i], b[i],
+                                 **{'nodetype': opts.nodetype,
+                                    'label': opts.labels[i]}) for i in range(d)]
         else:
             raise NotImplementedError
 
@@ -128,12 +132,6 @@ class Basis(object):
             raise Exception('wrong x input')
         return Phi[0] if orderIsScalar else Phi
 
-
-
-
-
-
-
     def __call__(self, x=None, order=None):
         """
         Equivalent to self.interpolation(x, order)
@@ -145,9 +143,6 @@ class Basis(object):
 
         """
         return self.interpolation(x, order)
-
-
-
 
     def _interp_default(self, order):
         """
@@ -164,10 +159,6 @@ class Basis(object):
         else:
             raise NotImplemented
         return np.prod(PHI, 0)
-
-
-
-
 
     def _interp_matrix(self, x, order):
         """
@@ -187,10 +178,6 @@ class Basis(object):
             raise NotImplemented
         return np.prod(PHI, 0)
 
-
-
-
-
     def _interp_list(self, x, order):
         """
 
@@ -208,16 +195,6 @@ class Basis(object):
         else:
             raise NotImplemented
         return np.product(PHI,0)
-
-
-
-
-
-
-
-
-
-
 
     def plot(self):
         raise NotImplementedError # todo: implement this method
@@ -237,49 +214,65 @@ class Basis(object):
         """ Total number of polynomials"""
         return self.opts.ip.shape[-1]
 
+    @property
+    def Phi(self):
+        """ Interpolation matrix """
+        return self._PhiT.T
 
     def __repr__(self):
-        if self.d == 1:
-            return self._B1[0].__repr__()
+        # if self.d == 1:
+        #     return self._B1[0].__repr__()
 
         n, a, b = self.n, self.a, self.b
         nodetype = self.opts.nodetype
-        vnames = self.opts.varnames
+        vnames = self.opts.labels
+        vnamelen = str(max(len(v) for v in vnames))
 
-        bstr = "A {}-dimension basis function:  ".format(self.d)
-        bstr += "using {:d} {} nodes and {:d} polynomials, expanded by {}".format(
-            self.N, nodetype.upper(), self.M, self.opts.method)
-        bstr += '\n' + '_' * 60 + '\n'
+        bstr = "A {}-dimension {} basis:  ".format(self.d, self.type.capitalize())
+        bstr += "using {:d} {} nodes and {:d} polynomials".format(self.N, nodetype.capitalize(), self.M)
+        if self.d > 1:
+            bstr += ", expanded by {}".format(self.opts.method)
+
+        bstr += '\n' + '_' * 75 + '\n'
         for k in range(self.d):
-            bstr += "\t{:12s}: {:d} nodes in [{:6.2f}, {:6.2f}]\n".format(vnames[k], n[k], a[k], b[k])
+            bstr += ("\t{:<" + vnamelen +"s}: {:d} nodes in [{:6.2f}, {:6.2f}]\n").format(vnames[k], n[k], a[k], b[k])
 
-        bstr += '\n' + '=' * 60 + '\n'
+        bstr += '\n' + '=' * 75 + '\n'
         bstr += "WARNING! Class Basis is still work in progress"
         return bstr
 
 
-class OptBasis(object):
+class OptBasis(Options_Container):
     """
     Options for Basis class.
 
     This class stores options for creating a Basis class. It takes care of validating options given by user to Basis constructor.
     """
-    def __init__(self, d):
+    valid_types = ['chebyshev', 'spline', 'linear']
+    valid_node_types = {'chebyshev': ['gaussian', 'lobatto', 'endpoint'],
+                        'spline': ['canonical', 'user'],
+                        'linear': ['canonical', 'user']}
+    valid_methods = ['tensor', 'smolyak', 'complete', 'cluster', 'zcluster']
+
+
+    def __init__(self, d, type='chebyshev', nodetype=None, k=3, method='tensor', qn=None, qp=None, labels=None, ix=[], ip=[]):
         """
         Make default options dictionary
         :param int d: dimension of the basis
         :return: an object with default values for Basis.opts
         """
-        self._d = d
-        self._type = 'chebyshev'
-        self._nodetype = 'gaussian'
-        self._k = 3
-        self._method = 'tensor'
+        self.d = d
+        self.type = type if type in self.valid_types else 'chebyshev'
+        self.nodetype = nodetype
+        self.k = k
+        self._method = method
         self._qn = None
         self._qp = None
-        self._varnames = ["V{}".format(dim) for dim in range(d)]
+        self._labels = ["V{}".format(dim) for dim in range(d)]
         self._ix = []
         self._ip = []
+
+
 
     ''' Properties'''
     @property
@@ -308,9 +301,9 @@ class OptBasis(object):
         return self._ip
 
     @property
-    def varnames(self):
+    def labels(self):
         """  list of variable names """
-        return self._varnames
+        return self._labels
 
     @property
     def keys(self):
@@ -327,7 +320,6 @@ class OptBasis(object):
         """ polynomial parameter, to guide the selection of polynomial combinations"""
         return self._qp
 
-
     ''' Setters '''
     @type.setter
     def type(self, value):
@@ -337,43 +329,54 @@ class OptBasis(object):
         else:
             raise ValueError('type value must be in ' + str(valid))
 
-
     @nodetype.setter
     def nodetype(self, value):
-        valid = ['gaussian', 'lobatto', 'endpoint', 'cardinal']
-        if value in valid:
-            self._nodetype = value
+        valid_options = self.valid_node_types[self.type]
+        if value:
+            value = value.lower()
+            if value in valid_options:
+                self._nodetype = value
+            else:
+                warn('For a '+ self.type.capitalize() +
+                     ' basis, nodetype value must be in ' +
+                     str(valid_options) + '.\nUsing nodetype = ' +
+                     valid_options[0] + 'instead.')
+                self._nodetype = valid_options[0]
         else:
-            raise ValueError('nodetype value must be in ' + str(valid))
+            self._nodetype = valid_options[0]
 
     @method.setter
     def method(self, value):
-        valid = ['tensor', 'smolyak', 'complete', 'cluster', 'zcluster']
-        if value in valid:
+        valid_options = self.valid_methods
+        value = value.lower()
+        if value in valid_options:
             self._method = value
         else:
-            raise ValueError('method value must be in ' + str(valid))
+            warn('Expansion method must be one of ' +
+                 str(valid_options) + '.\nUsing method = ' +
+                 valid_options[0] + 'instead.')
+            self._method = valid_options[0]
 
     @ix.setter
     def ix(self, value):
-        if isinstance(value, np.ndarray) and value.ndim == 2 and value.shape[0] == self._d:
+        if isinstance(value, np.ndarray) and value.ndim == 2 and value.shape[0] == self.d:
             self._ix = value
         else:
-            raise ValueError('validX must be a 2-dimensional numpy array with {} rows'.format(self._d))
+            raise ValueError('validX must be a 2-dimensional numpy array with {} rows'.format(self.d))
 
     @ip.setter
     def ip(self, value):
-        if isinstance(value, np.ndarray) and value.ndim == 2 and value.shape[0] == self._d:
+        if isinstance(value, np.ndarray) and value.ndim == 2 and value.shape[0] == self.d:
             self._ip = value
         else:
-            raise ValueError('validPhi must be a 2-dimensional numpy array with {} rows'.format(self._d))
+            raise ValueError('validPhi must be a 2-dimensional numpy array with {} rows'.format(self.d))
 
-    @varnames.setter
-    def varnames(self, value):
-        if isinstance(value, list) and len(value) == self._d:
-            self._varnames = value
+    @labels.setter
+    def labels(self, value):
+        if isinstance(value, list) and len(value) == self.d:
+            self._labels = value
         else:
-            raise ValueError('varnames must be a list of {} strings'.format(self._d))
+            raise ValueError('labels must be a list of {} strings'.format(self.d))
 
     @qn.setter
     def qn(self, value):
@@ -383,11 +386,9 @@ class OptBasis(object):
     def qp(self, value):
         self._qp = value
 
-
-
     def validateChebyshev(self, n):
         """ Validates the options given for a Chebyshev Basis """
-        if self._d == 1:
+        if self.d == 1:
             return
 
         if self.method in ['complete', 'cluster', 'zcluster']:
@@ -415,7 +416,6 @@ class OptBasis(object):
             else:
                 self.qp = np.atleast_1d(self.qp)
 
-
     def expandGrid(self, n):
         """
              Compute nodes for multidimensional basis and other auxiliary fields required to keep track
@@ -439,7 +439,7 @@ class OptBasis(object):
 
         :return: None
         """
-        if self._d == 1:
+        if self.d == 1:
             self.ix = np.arange(n).reshape(1, -1)
             self.ip = np.arange(n).reshape(1, -1)
             return
@@ -450,7 +450,7 @@ class OptBasis(object):
 
         ''' All other methods'''
         degs = n - 1 # degree of polynomials
-        ldeg = [np.arange(degs[ni] + 1) for ni in range(self._d)]
+        ldeg = [np.arange(degs[ni] + 1) for ni in range(self.d)]
 
         idxAll = gridmake(*ldeg)   # degree of polynomials = index
 
@@ -563,4 +563,11 @@ def ndgrid2(Indices, indSum, newDim, q, qk):
     NewSum = NewSum[isValid]
     NewIndices = np.vstack((Indices[:, idxv[0]], newDim[idxv[1]]))
     return NewIndices, NewSum
+
+
+def as_basis(B):
+    if type(B) == Basis:
+        return B
+    elif type(B) == BasisChebyshev:
+        return Basis(B.n, B.a, B.b, type='chebyshev')
 

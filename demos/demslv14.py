@@ -20,10 +20,9 @@
 #
 
 # In[1]:
-
-import numpy as np
+from demos.setup import np
 from compecon import MCP
-np.set_printoptions(precision=3, suppress=True)
+np.set_printoptions(suppress=True)
 
 
 # In[2]:

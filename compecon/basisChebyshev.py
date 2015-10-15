@@ -1,17 +1,26 @@
-from warnings import warn
-
-__author__ = 'Randall'
+import warnings
 import numpy as np
 from scipy.sparse import csc_matrix
 from numba import jit, float64, void
 import matplotlib.pyplot as plt
+from compecon.tools import Options_Container
 
-
+__author__ = 'Randall'
 # TODO: complete this class
 # todo: compare performance of csr_matrix and csc_matrix to deal with sparse interpolation operators
 
-class BasisChebyshev(object):
-    def __init__(self, n=3, a=-1.0, b=1.0, nodetype="gaussian", varName=""):
+
+class OptionsChebyshev(Options_Container):
+    NodeTypes = ['gaussian', 'lobatto', 'endpoint']
+
+    def __init__(self, nodetype='gaussian', label='V0', tol=0.02, warn=True):
+        self.nodetype = nodetype.lower()
+        self.label = label
+        self.tol = tol
+        self.warn = warn
+
+class BasisChebyshev(Options_Container):
+    def __init__(self, n=5, a=-1.0, b=1.0, **kwargs):
         """
         Creates an instance of a BasisChebyshev object
 
@@ -21,12 +30,10 @@ class BasisChebyshev(object):
         :param str nodetype: type of collocation nodes, ('gaussian','lobatto', or 'endpoint')
         :param str varName: a string to name the variable
         """
-        nodetype = nodetype.lower()
 
         self._n, self._a, self._b = n, a, b
-        self._nodetype = nodetype.lower()
-        self.varName = varName
-        self._nodes = None
+        self.opts = OptionsChebyshev(**kwargs)
+        self._nodes = np.array(n)
         self._Diff = dict()
         self._reset()
 
@@ -41,13 +48,12 @@ class BasisChebyshev(object):
 
         :return: None
         """
-        n, a, b, nodetype = self._n, self._a, self._b, self._nodetype
-        if not n > 2:
+        if not self._n > 2:
             raise Exception('n must be at least 3')
-        if not a < b:
+        if not self._a < self._b:
             raise Exception('a must be less than b')
-        if not nodetype in ["gaussian", "endpoint", "lobatto"]:
-            raise Exception("nodetype must be 'gaussian', 'endpoint', or 'lobatto'.")
+        if self.opts.nodetype not in self.opts.NodeTypes:
+            raise Exception('nodetype must be one of ' + str(self.opts.NodeTypes))
 
     def _setNodes(self):
         """
@@ -56,15 +62,16 @@ class BasisChebyshev(object):
         :return: None
         """
         n = self._n
+        nodetype = self.opts.nodetype
 
-        if self.nodetype in ['gaussian', 'endpoint']:
+        if nodetype in ['gaussian', 'endpoint']:
             x = np.array([-np.cos(np.pi * k / (2 * n)) for k in range(1, 2 * n, 2)])
-        elif self.nodetype == 'lobatto':
+        elif nodetype == 'lobatto':
             x = np.array([-np.cos(np.pi * k / (n - 1)) for k in range(n)])
         else:
             raise Exception('Unknown node type')
 
-        if self.nodetype == 'endpoint':
+        if nodetype == 'endpoint':
             x /= x[-1]
 
         self._nodes = self._rescale2ab(x)
@@ -80,7 +87,7 @@ class BasisChebyshev(object):
         :param x: nodes in [-1,1] domain (array)
         :return: nodes in [a, b] domain
         """
-        n, a, b = self._n, self._a, self._b
+        n, a, b = self['n', 'a', 'b']
         if n != len(x) or min(x) < -1 or max(x) > 1:
             raise Exception('x must have {} nodes between -1 and 1.'.format(n))
 
@@ -93,12 +100,10 @@ class BasisChebyshev(object):
         :param x: nodes in [a, b] domain (array)
         :return: nodes in [-1, 1] domain
         """
-        n, a, b = self._n, self._a, self._b
-        #if not(a <= min(x) <= max(x) <= b):
-        #    warn('x values must be between a and b.')
-        return (2 / (b-a)) * (x - (a + b) / 2)
-
-
+        n, a, b = self['n', 'a', 'b']
+        # if not(a <= min(x) <= max(x) <= b):
+        # warnings.warn('x values must be between a and b.')
+        return (2 / (b - a)) * (x - (a + b) / 2)
 
     """
     Method Diff return operators to differentiate/integrate, which are stored in _Diff
@@ -125,12 +130,12 @@ class BasisChebyshev(object):
         if order in self._Diff.keys() or order == 0:
             return  # Use previously stored values if available
 
-        n, a, b = self._n, self._a, self._b
+        n, a, b = self['n', 'a', 'b']
         keys = set(self._Diff.keys())
 
         if order > 0:
             if order > n - 2:
-                warn('order must be less or equal to n - 2; setting order = n - 2')
+                warnings.warn('order must be less or equal to n - 2; setting order = n - 2')
                 order = n - 2
 
             missing_keys = set(range(1, order + 1)) - keys
@@ -177,7 +182,6 @@ class BasisChebyshev(object):
                 k = missing_keys.pop()
                 self._Diff[k] = dd[:n - k, :n - k - 1] * self._Diff[k + 1]
 
-
     """
         Interpolation methods
     """
@@ -199,18 +203,18 @@ class BasisChebyshev(object):
 
         Calling an instance directly (as in the last line) is equivalent to calling the interpolation method.
         """
-        if order is None:  #REVISAR ESTO!!!
+        if order is None:  # REVISAR ESTO!!!
             order = 0
 
         orderIsScalar = np.isscalar(order)
-        order = np.atleast_1d(order)
+        order = np.atleast_1d(order).flatten()
 
-        n, a, b = self._n, self._a, self._b
-        nn = n + max(0, -min(order))
+        n, a, b = self['n', 'a', 'b']
+        nn = n + np.maximum(0, -np.min(order))
 
         # Check for x argument
         xIsProvided = (x is not None)
-        x = x if xIsProvided else self._nodes
+        x = x.flatten() if xIsProvided else self._nodes
         nx = x.size
 
         # Compute order 0 interpolation matrix
@@ -220,7 +224,7 @@ class BasisChebyshev(object):
             cheby_polynomials(z, bas)
         else:
             z = np.atleast_2d(np.arange(n - 0.5, -0.5, -1)).T
-            bas = np.cos((np.pi/n) * z * np.arange(0, nn))
+            bas = np.cos((np.pi / n) * z * np.arange(0, nn))
 
         # Compute Phi
         Phidict = dict()
@@ -236,10 +240,6 @@ class BasisChebyshev(object):
                 return Phi[0]
         else:
             return Phi
-
-
-
-
 
     """
         SETTERS AND GETTERS:  these methods update the basis if n,a,b or nodetype are changed
@@ -268,7 +268,7 @@ class BasisChebyshev(object):
     @property
     def nodetype(self):
         """ type of node ('gaussian','lobatto','endpoint')"""
-        return self._nodetype
+        return self.opts.nodetype
 
     @n.setter
     def n(self, val):
@@ -287,7 +287,7 @@ class BasisChebyshev(object):
 
     @nodetype.setter
     def nodetype(self, val):
-        self._nodetype = val.lower()
+        self.opts.nodetype = val.lower()
         self._reset()
 
     """
@@ -299,9 +299,9 @@ class BasisChebyshev(object):
         Creates a description of the basis
         :return: string (description)
         """
-        n, a, b, nodetype = self._n, self._a, self._b, self._nodetype
+        n, a, b = self['n', 'a', 'b']
         bstr = "A Chebyshev basis function:  "
-        bstr += "using {:d} {} nodes in [{:6.2f}, {:6.2f}]".format(n, nodetype.upper(), a, b)
+        bstr += "using {:d} {} nodes in [{:6.2f}, {:6.2f}]".format(n, self.opts.nodetype.upper(), a, b)
         return bstr
 
     def plot(self, order=0, k=5):
@@ -323,7 +323,6 @@ class BasisChebyshev(object):
         plt.xlim(a, b)
         plt.show()
 
-
     """
     Calling the basis directly returns the interpolation matrix
     """
@@ -334,13 +333,14 @@ class BasisChebyshev(object):
         return self.interpolation(x, order)
 
 
-
 @jit(void(float64[:], float64[:, :]), nopython=True)
 def cheby_polynomials(z, bas):
     for node in range(z.size):
         bas[node, 0] = 1
         bas[node, 1] = z[node]
         z[node] *= 2
-        for k in range(bas.shape[1]):
+        for k in range(2, bas.shape[1]):
             bas[node, k] = z[node] * bas[node, k - 1] - bas[node, k - 2]
     return None
+
+

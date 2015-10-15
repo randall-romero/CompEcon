@@ -106,7 +106,11 @@ def discmoments(w, x):
 
 def jacobian(func, x, *args, **kwargs):
 
-    F = lambda x: func(x, *args, **kwargs)
+    if type(func(x, *args, **kwargs)) is tuple:
+        F = lambda x: func(x, *args, **kwargs)[0]
+    else:
+        F = lambda x: func(x, *args, **kwargs)
+
     dx = x.size
     f = F(x)
     df = f.size
@@ -137,6 +141,9 @@ def jacobian(func, x, *args, **kwargs):
 def hessian(func, x, *args, **kwargs):
 
     F = lambda x: func(x, *args, **kwargs)
+    if x.ndim < 2:
+        x = np.atleast_2d(x).T
+
     dx, nx = x.shape
     f = F(x)
     df = np.atleast_2d(f).shape[0]
@@ -182,20 +189,61 @@ def hessian(func, x, *args, **kwargs):
     return fxx
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 tic = lambda: time.time()
 toc = lambda t: time.time() - t
+
+
+class Options_Container(object):
+    """ A container for groups of attributes
+
+    Used to overwrite the _getitem_ and the _setitem__ methods to handle several items at once
+    Overwrites the __repr__ method to display instance's attributes
+    """
+    description = 'A container class'
+
+    def __getitem__(self, item):
+        if isinstance(item, str):   # treat single key as list of length one
+            return getattr(self, item)
+        else:
+            return (getattr(self, k) for k in item)
+
+    def __setitem__(self, key, value):
+        if type(key) is type({'a':None}.keys()):  # looks ugly, but I couldn't access the dict_keys class directly
+            key = tuple(key)
+
+        if type(key) is not tuple:
+            key = (key,)
+            value = (value,)
+
+        valid_attributes = self.__dict__.keys()
+
+        if len(key) != len(value):
+            raise ValueError('Assigning {} attributes but {} values where provided!'.format(len(key), len(value)))
+
+        for k, v in zip(key, value):
+            if k in valid_attributes:
+                self.__dict__[k] = v
+            else:
+                raise ValueError('{} is not a valid attribute for class {}.'.format(k, type(self)))
+
+    def __repr__(self):
+        sorted_keys = sorted(self.__dict__.keys())
+        maxstr = str(max(len(s) for s in sorted_keys))
+        form = '\t{:>' + maxstr + 's} = '
+
+        txt = self.description + ':\n\n'
+        for j in sorted_keys:
+            txt += form.format(j) + str(self[j]) + '\n'
+        return txt
+
+
+''' Define some convenient functions '''
+
+
+def example(page):
+    print('\n' + '=' * 72)
+    print('Example on page {:d}\n'.format(page))
+
+def exercise(number):
+    print('\n' + '=' * 72)
+    print('Exercise {:s}\n'.format(number))

@@ -6,6 +6,8 @@ much of the functionality is implemented by OOP when possible.
 
 from .basisChebyshev import BasisChebyshev
 from .basis import Basis, SmolyakGrid
-from .mcp import MCP, NLP
-from .interpolator import Interpolator, InterpolatorArray
+from .nonlinear import MCP, NLP, LCP
+from .optimize import OP, MLE
+from .interpolator import Interpolator
+from .dpmodel import DPmodel, DPoptions
 from .tools import tic, toc

@@ -1,7 +1,8 @@
-import copy
-from compecon import Basis, BasisChebyshev
-import numpy as np
+from .basis import Basis, as_basis
+from .basisChebyshev import BasisChebyshev
 
+import numpy as np
+import copy
 '''
         just the template from Matlab version.
         Work in progress
@@ -62,98 +63,141 @@ import numpy as np
 '''
 
 
+class Interpolator(object):
+    def __init__(self, B, y=None, c=None, f=None, s=1):
 
-class Interpolator(Basis):
-    def __init__(self, *args, y=None, **kwargs):
-
-        if type(args[0]) == Basis:
-            B = args[0]
-        elif type(args[0]) == BasisChebyshev:
-            bas = args[0]
-            B = Basis()
-            Basis.__init__(B, bas.n, bas.a, bas.b)
+        if type(B) is Basis:
+            self.B = B
         else:
-            B = Basis()
-            Basis.__init__(B, *args, **kwargs)
-
-
-        # share data in this basis with all instances
-        self.__dict__ = copy.copy(B.__dict__)
+            raise ValueError('B must be a Basis object')
 
         # add data
-        if y is None:
-            y = np.zeros([self.N])
-        elif isinstance(y, (list, np.ndarray)):
-            y = np.asarray(y)
-        elif callable(y):
-            y = y(B.nodes)
+        self._y = None
+        self._c = None
+        self._yIsOutdated = None
+        self._cIsOutdated = None
+
+        if y is not None:
+            self.y = np.atleast_2d(y)
+        elif c is not None:
+            self.c = c
+        elif callable(f):
+            self.y = f(B.nodes)
         else:
-            raise ValueError('y must be a list or numpy array with {} elements'.format(self.N))
+            if type(s) is int:
+                s = [s]
+            elif type(s) is np.ndarray:
+                s = s.tolist()
+            s.append(B.N)
+            self.y = np.zeros(s)
 
-        if y.size != self.N:
-            raise ValueError('y must be a list or numpy array with {} elements'.format(self.N))
-
-        self._y = y
-        self._c = np.dot(self._y, self._PhiInvT)
-        self._yIsOutdated = False
-        self._cIsOutdated = False
-        self._truncate = 1e-12
-        self._ipp = self.opts.ip.copy()
-        self._cc = None
 
     """ setter and getter methods """
+
+    @property
+    def N(self):
+        """  :return: number of nodes """
+        return self.B.N
+
+    @property
+    def M(self):
+        """  :return: number of polynomials """
+        return self.B.M
+
+    @property
+    def x(self):
+        """  :return: interpolation nodes  """
+        return self.B.nodes
+
+    @property
+    def nodes(self):
+        """  :return: interpolation nodes  """
+        return self.B.nodes
+
+    @property
+    def Phi(self):
+        """ Interpolation matrix """
+        return self.B.Phi
+
+
+    def update_y(self):
+        self._y = np.dot(self._c, self.B._PhiT)
+        self._yIsOutdated = False
+
+    def update_c(self):
+        self._c = np.dot(self._y, self.B._PhiInvT)
+        self._cIsOutdated = False
+
+    @property
+    def shape(self):
+        if self._yIsOutdated:
+            return self._c.shape[:-1]
+        else:
+            return self._y.shape[:-1]
+
+    @property
+    def size(self):
+        return np.prod(self.shape)
+
+    @property
+    def ndim(self):
+        return len(self.shape) - 1
+
+    @property
+    def shape_N(self):
+        temp = list(self.shape)
+        temp.append(self.N)
+        return temp
+
+    def copy(self):
+        return copy.copy(self)
 
     @property
     def y(self):
         """ :return: function values at nodes """
         if self._yIsOutdated:
-            self._y = np.dot(self._c, self._PhiT[self.cc] if self._truncate else self._PhiT)
-            self._yIsOutdated = False
+            self.update_y()
         return self._y
 
     @property
     def c(self):
         """ :return: interpolation coefficients """
         if self._cIsOutdated:
-            self._c = np.dot(self._y, self._PhiInvT)
-            self.truncate_coefficients()
-            self._cIsOutdated = False
+            self.update_c()
         return self._c
-
-    @property
-    def x(self):
-        """  :return: interpolation nodes  """
-        return self.nodes
-
 
     @y.setter
     def y(self, val):
-        if isinstance(val, (list, np.ndarray)):
-            val = np.asarray(val)
-            val = val.reshape([val.size])
-        else:
-            raise ValueError('y must be a list or numpy array with {} elements'.format(self.N))
-
-        if val.size != self.N:
-            raise ValueError('val must be a list or numpy array with {} elements'.format(self.N))
+        val = np.atleast_2d(np.asarray(val))
+        if val.shape[-1] != self.N:
+            raise ValueError('y must be an array with {} elements in its last dimension.'.format(self.N))
         self._y = val
         self._yIsOutdated = False
         self._cIsOutdated = True
 
     @c.setter
     def c(self, val):
-        assert (val.size == self.M)  # one value per polynomial
+        val = np.atleast_2d(np.asarray(val))
+        if val.shape[-1] != self.M:
+            raise ValueError('c must be an array with {} elements in its last dimension.'.format(self.M))
         self._c = val
-        self.truncate_coefficients()
         self._cIsOutdated = False
         self._yIsOutdated = True
 
-    def truncate_coefficients(self):
-        if self._truncate:
-            R = range(self._c.ndim - 1)
-            self._cc = np.any(np.abs(self._c) >= self._truncate, tuple(R))
-            self._c = self._c[..., self._cc]
-            self.opts.ip = self.opts.ip[:, self._cc]
+    def __getitem__(self, item):
+        other = self.copy()
+        other._y = None if self._y is None else self._y[item]
+        other._c = None if self._c is None else self._c[item]
+        return other
+
+    def __setitem__(self, key, value):
+        if isinstance(value, Interpolator) and value.B.N == self.N:
+            self._y[key] = value.y
+            self._c[key] = value.c
+        else:
+            raise ValueError('value must be an Interpolator with {} nodes'.format(self.N))
+
+
 
     """  Interpolation method """
 
@@ -164,111 +208,67 @@ class Interpolator(Basis):
         :param order:
         :return:
         """
-        if isinstance(self,InterpolatorArray):
-            Phix = self.F[self.idx[0]].interpolation(x, order)
+        d = self.B.d
+
+        if type(order) is str:
+            if order is 'jac':
+                order_array = np.identity(d, int)
+            elif order is 'hess':
+                order_array, mapping = hess_order(d)
+            elif order is 'all':
+                order_array, mapping = hess_order(d)
+                order_array = np.hstack([np.zeros([d, 1],int), np.identity(d,int), order_array])
+                mapping += 1 + d
+            else:
+                raise NotImplementedError
         else:
-            Phix = self.interpolation(x, order)
+            order_array = order
+            order = 'none' if (order is None) else 'provided'
 
-
+        Phix = self.B.interpolation(x, order_array)
         if Phix.ndim == 2:
-            return np.dot(self.c, Phix.T[self._cc])
+            Phix = Phix[np.newaxis]
+
+        cPhix = np.array([np.dot(self.c, phix.T) for phix in Phix])
+
+        if order is 'none':
+            return cPhix[0]
+        elif order in ['provided', 'jac']:
+            return cPhix
+        elif order in ['hess', 'all']:
+            new_shape = [d, d] + list(cPhix.shape[1:])
+            Hess = np.zeros(new_shape)
+            for i in range(d):
+                for j in range(d):
+                    Hess[i,j] = cPhix[mapping[i,j]]
+            if order is 'hess':
+                return Hess
+            else:
+                return cPhix[0], cPhix[1:(1 + d)], Hess
         else:
-            return np.array([np.dot(self.c, phix.T) for phix in Phix])
+            raise ValueError
 
 
 
-# def interpolator_array(basis, dims):
-#     """
-#     Creates an array of Interpolator objects
-#
-#     :param basis: a Basis instance common to all functions in the array
-#     :param dims: the shape of the array
-#     :return: a numpy array of Interpolator instances
-#     """
-#
-#     A = np.array([Interpolator(basis) for k in range(np.prod(dims))])
-#     return A.reshape(dims)
 
 
-class InterpolatorArray(Interpolator):
-    def __init__(self, basis, dims):
-        A = np.array([Interpolator(basis) for k in range(np.prod(dims))])  # Make prod(dims) independent copies!!
-        self.F = A.reshape(dims)
-        self._setDims()
-
-    def _setDims(self):
-        self.shape = self.F.shape
-        self.size = self.F.size
-        self.ndim = self.F.ndim
-        self.idx = [np.unravel_index(k, self.shape) for k in range(self.size)]
-        Shape = list(self.shape)
-        Shape.append(self.N)
-        self.Shape = Shape
-
-    def copy(self):
-        return copy.copy(self)
 
 
-    def __getitem__(self, item):
-        FF = self.F[item]
-        if isinstance(FF, Interpolator):
-            return FF
-        else:
-            other = self.copy()
-            other.F = self.F[item]
-            other._setDims()
-            return other
+''' ADDITIONAL FUNCTIONS'''
+def hess_order(n):
+    """
+    Returns orders required to evaluate the Hessian matrix for a function with n variables
+    and location of hessian entries in resulting array
+    """
+    A = np.array([a.flatten() for a in np.indices(3*np.ones(n))])
+    A = A[:,A.sum(0)==2]
 
-    def __setitem__(self, key, value):
-        if isinstance(value, (list, np.ndarray)):
-            value = np.asarray(value)
-            value = value.reshape([value.size])
-        else:
-            raise ValueError('y must be a list or numpy array with {} elements'.format(self.N))
+    C = np.zeros([n,n])
+    for i in range(n):
+        for j in range(n):
+            v = np.zeros(n)
+            v[i] += 1
+            v[j] += 1
+            C[i,j] = (v==A.T).all(1).nonzero()[0]
 
-        if value.size != self.N:
-            raise ValueError('val must be a list or numpy array with {} elements'.format(self.N))
-        self.F[key].y = value
-
-    @property
-    def N(self):
-        """  :return: number of nodes """
-        return self.F[self.idx[0]].N
-
-    @property
-    def y(self):
-        """ :return: function values at nodes """
-        y = np.array([self.F[k].y for k in self.idx])
-        return y.reshape(self.Shape)
-
-    @property
-    def c(self):
-        """ :return: interpolation coefficients """
-        c = np.array([self.F[k].c for k in self.idx])
-        return c.reshape(self.Shape)
-
-    @property
-    def x(self):
-        """  :return: interpolation nodes  """
-        return self.F[self.idx[0]].x
-
-    @property
-    def Phi(self):
-        """  :return: interpolation matrix  """
-        return self.F[self.idx[0]].Phi
-
-    @property
-    def d(self):
-        return self.F[self.idx[0]].d
-
-    @y.setter
-    def y(self, value):
-        # todo add assert here
-        for k in self.idx:
-            self.F[k].y = value[k]
-
-    @c.setter
-    def c(self, value):
-        # todo add assert here
-        for k in self.idx:
-            self.F[k].c = value[k]
+    return A, C

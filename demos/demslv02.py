@@ -4,11 +4,9 @@ DEMSLV02 Compute root of Rosencrantz function
 Compute root of f(x1,x2)= [200*x1*(x2-x1 ** 2)+1-x1;100*(x1 ** 2-x2)] using Newton and Broyden
 methods. Initial values generated randomly.  True root is x1=1 x2=1.
 """
-
-import numpy as np
-from numpy.linalg import norm
+from demos.setup import np, tic, toc
 from compecon import NLP
-from compecon.tools import tic, toc
+
 
 
 
