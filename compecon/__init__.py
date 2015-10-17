@@ -5,6 +5,7 @@ much of the functionality is implemented by OOP when possible.
 """
 
 from .basisChebyshev import BasisChebyshev
+from .basisSpline import BasisSpline
 from .basis import Basis, SmolyakGrid
 from .nonlinear import MCP, NLP, LCP
 from .optimize import OP, MLE
