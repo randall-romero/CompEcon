@@ -1,93 +1,52 @@
 from warnings import warn
 import numpy as np
-from .basisChebyshev import BasisChebyshev
 from .tools import gridmake, Options_Container
+import matplotlib.pyplot as plt
+from functools import reduce
+from scipy.sparse import csc_matrix, diags, tril
 
 __author__ = 'Randall'
 
 
-class Basis(object):
+class Basis(Options_Container):
     """
       A multivariate interpolation basis
     """
 
-    def __init__(self, n=None, a=None, b=None, **options):
-        """
-        A multivariate basis
-
-        :param n: number of nodes (d-array)
-        :param a: lower bounds (d-array)
-        :param b: upper bounds (d-vector)
-        :param options: keyword-separated list of additional options (see below)
-
-        Some examples::
-
-                n, a, b = [5, 9], [0, 2], [4, 7]
-                Basis(n, a, b)
-                Basis(n, a, b, type='gaussian', nodetype='lobatto')
-                Basis(n, a, b, type = 'spline', k = 3)
-                Basis(n, a, b, method='smolyak', qn = 3, qp = 3)
-                Basis(n, a, b, labels=['savings','productivity'])
-
-        For more details about the options, see the OptBasis class documentation
-        """
-
-        if n is None:
-            return
-        if type(n) in [Basis, BasisChebyshev]:
-            self.__dict__ = as_basis(n).__dict__
-            return
-
-        n, a, b = np.atleast_1d(n, a, b)  # Convert n, a, and b to np.arrays
-        d = a.size  # dimension of basis
-
-        # todo use same number of nodes in all dimension if n is scalar
-        if not np.all(a < b):
-            raise ValueError('All lower bounds must be less than their corresponding upper bound')
-
-        # Read user options
-        opts = OptBasis(d, **options)
-        # for option, value in options.items():
-        #     if option not in opts.keys:
-        #         warn('Unknown option {} with value {}; ignoring'.format(option, value))
-        #     else:
-        #         setattr(opts, option, value)
-
-        # Validate options for chebyshev basis of several dimensions
-        if opts.type == 'chebyshev':
-            opts.validateChebyshev(n)
-
-        # make list of 1-basis
-
-        if opts.type == 'chebyshev':
-            B1 = [BasisChebyshev(n[i], a[i], b[i],
-                                 **{'nodetype': opts.nodetype,
-                                    'label': opts.labels[i]}) for i in range(d)]
-        else:
-            raise NotImplementedError
-
-        # Pack value in object
-        self.a = a              #: lower bounds
-        self.b = b              #: upper bounds
-        self.n = n              #: number of nodes
-        self.d = d              #: dimension
-        self._B1 = B1           #: list with 1-d bases
-        self.opts = opts        #: OptBasis object, basis options
+    def __init__(self, n, a, b, **kwargs):
+        n, a, b = np.broadcast_arrays(*np.atleast_1d(n, a, b))
+        assert np.all(n > 2), 'n must be at least 3'
+        assert np.all(a < b), 'lower bound must be less than upper bound'
+        self.d = n.size
+        self.n = n
+        self.a = a
+        self.b = b
+        self.opts = BasisOptions(self.d, **kwargs)
+        self.nodes = list()
+        self._diff_operators = [dict() for h in range(self.d)]
         self.opts.expandGrid(n)
-        self.type = opts.type   #: type of basis (chebyshev, spline)
-        self._nodes = np.array([self._B1[k].nodes[self.opts.ix[k]].flatten() for k in range(self.d)]) #: basis nodes
 
-        # Compute interpolation matrix at nodes
-        _Phi = self.interpolation()
-        self._PhiT = _Phi.T
+    ''' This methods are declared here, but implemented in children classes '''
+    def _phi1d(self, i, x=None, order=0):
+        pass
 
-        # Compute inverse if not spline
-        if self.type == 'chebyshev':
-            self._PhiInvT = np.linalg.pinv(_Phi).T
-        else:
-            raise NotImplementedError
+    def _update_diff_operators(self, i, m):
+        pass
 
+    """
+    Method _diff return operators to differentiate/integrate, which are stored in _diff_operators
+    """
 
+    def _diff(self, i, m):
+        """
+        Operator to differentiate
+
+        :param k: order of differentiation
+        :return: operator (matrix)
+        """
+        if m not in self._diff_operators[i].keys():
+            self._update_diff_operators(i, m)
+        return self._diff_operators[i][m]
 
     def interpolation(self, x=None, order=None):
         """Compute the interpolation matrix :math:`\Phi(x)`
@@ -107,30 +66,52 @@ class Basis(object):
         Calling an instance directly (as in the last two lines) is equivalent to calling the interpolation method.
         """
         if self.d == 1:
-            return self._B1[0](x, order)
+            return self._phi1d(0, x, order)
 
         if order is None:
             order = np.zeros([self.d, 1], 'int')
         else:
             order = np.atleast_1d(order)
             if order.ndim == 1:
-                assert (order.size == self.d)
+                assert (order.size == self.d), 'order should have {:d} elements (one per dimension)'.format(self.d)
                 order.shape = (self.d, 1)
             else:
                 assert (order.shape[0] == self.d)
 
         orderIsScalar = order.shape[1] == 1
 
-        # check what type of input x is provided
+        ''' check what type of input x is provided, and get row- and column- indices '''
         if x is None:
-            Phi = self._interp_default(order)
+            x = [None] * self.d
+            r = self.opts.ix
+            c = self.opts.ip
         elif type(x) == list:
-            Phi = self._interp_list(x,order)
+            assert (len(x) == self.d)
+            r = gridmake(*[np.arange(xi.size) for xi in x])
+            c = self.opts.ip
         elif type(x) == np.ndarray:
-            Phi = self._interp_matrix(x,order)
+            assert (x.shape[0] == self.d), 'x must have {:d} columns'.format(self.d)
+            r = [np.arange(x.shape[1])] * self.d
+            c = self.opts.ip
         else:
             raise Exception('wrong x input')
-        return Phi[0] if orderIsScalar else Phi
+
+        ''' Call _phi1d method for each dimension, then reduce the matrix '''
+        oo = np.arange(order.shape[1])
+
+        if self.opts.basistype is 'chebyshev':
+            PHI = (self._phi1d(k, x[k], order[k])[np.ix_(oo, r[k], c[k])] for k in range(self.d))
+            phi = reduce(np.multiply, PHI)
+        else:  # results come in sparse matrices
+            PHI = np.ndarray((oo.size, self.d), dtype=csc_matrix)
+            for k in range(self.d):
+                phitemp = self._phi1d(k, x[k], order[k])
+                for o in oo:
+                    PHI[o, k] = phitemp[o][np.ix_(r[k], c[k])]
+
+            phi = [reduce(lambda A, B: A.multiply(B), PHI[o]) for o in oo]
+
+        return phi[0] if orderIsScalar else phi
 
     def __call__(self, x=None, order=None):
         """
@@ -144,65 +125,16 @@ class Basis(object):
         """
         return self.interpolation(x, order)
 
-    def _interp_default(self, order):
-        """
 
-        :param order:
-        :return:
-        """
-        r = self.opts.ix
-        c = self.opts.ip
-        oo = np.arange(order.shape[1])
 
-        if self.opts.type == 'chebyshev':
-            PHI = [self._B1[k](order=order[k])[np.ix_(oo, r[k], c[k])] for k in range(self.d)]
-        else:
-            raise NotImplemented
-        return np.prod(PHI, 0)
-
-    def _interp_matrix(self, x, order):
-        """
-
-        :param x:
-        :param order:
-        :return:
-        """
-        assert (x.shape[0] == self.d)  # 'In Interpolation, class basis: x must have d columns')
-        r = np.arange(x.shape[1])
-        c = self.opts.ip
-        oo = np.arange(order.shape[1])
-
-        if self.opts.type == 'chebyshev':
-            PHI = [self._B1[k](x[k], order[k])[np.ix_(oo, r, c[k])] for k in range(self.d)]
-        else:
-            raise NotImplemented
-        return np.prod(PHI, 0)
-
-    def _interp_list(self, x, order):
-        """
-
-        :param x:
-        :param order:
-        :return:
-        """
-        assert (len(x) == self.d)
-        r = gridmake(*[np.arange(xi.size) for xi in x])
-        c = self.opts.ip
-        oo = np.arange(order.shape[1])
-
-        if self.opts.type == 'chebyshev':
-            PHI = [self._B1[k](x[k], order[k])[np.ix_(oo, r[k], c[k])] for k in range(self.d)]
-        else:
-            raise NotImplemented
-        return np.product(PHI,0)
-
-    def plot(self):
-        raise NotImplementedError # todo: implement this method
-
-    @property
-    def nodes(self):
-        """Basis nodes"""
-        return self._nodes.flatten() if self.d == 1 else self._nodes
+    @staticmethod
+    def _lookup(table, x):  # required by spline and linear bases
+        # TODO: add parameter endadj -> in Mario's code it always has value=3
+        # Here, I'm assuming that's the only case
+        ind = np.searchsorted(table, x, 'right')
+        ind[ind == 0] = (table == table[0]).sum()
+        ind[ind >= table.size] = ind[-1] - (table == table[-1]).sum()
+        return ind - 1
 
     @property
     def N(self):
@@ -224,12 +156,20 @@ class Basis(object):
         #     return self._B1[0].__repr__()
 
         n, a, b = self.n, self.a, self.b
-        nodetype = self.opts.nodetype
+        nodetype = self.opts.nodetype.capitalize()
+        basistype = self.opts.basistype
         vnames = self.opts.labels
         vnamelen = str(max(len(v) for v in vnames))
 
-        bstr = "A {}-dimension {} basis:  ".format(self.d, self.type.capitalize())
-        bstr += "using {:d} {} nodes and {:d} polynomials".format(self.N, nodetype.capitalize(), self.M)
+        if basistype is 'spline':
+            term = ['linear', 'quadratic', 'cubic']
+            if self.k < 4:
+                basistype = term[self.k - 1] + ' spline'
+            else:
+                basistype = 'order {:d} spline'.format(self.k)
+
+        bstr = "A {}-dimension {} basis:  ".format(self.d, basistype.capitalize())
+        bstr += "using {:d} {} nodes and {:d} polynomials".format(self.N, nodetype, self.M)
         if self.d > 1:
             bstr += ", expanded by {}".format(self.opts.method)
 
@@ -241,55 +181,76 @@ class Basis(object):
         bstr += "WARNING! Class Basis is still work in progress"
         return bstr
 
+    def plot(self, order=0, m=None, i=0, nx=120):
+        """
+        Plots the first k basis functions
 
-class OptBasis(Options_Container):
+        :param order: order of differentiation
+        :param k: number of functions to include in plot
+        :return: a plot
+        """
+        i = min(i, self.d-1)
+
+        a = self.a[i]
+        b = self.b[i]
+
+        assert np.isscalar(order), 'order must be a scalar; plot only works with 1d bases'
+
+        if m is None:
+            m = self.n[i]
+
+        nodes = self.nodes[i]
+        x = np.linspace(a, b, nx)
+        y = self._phi1d(i, x, order)[0][:, :m]
+        if self.opts.basistype is 'spline':
+            y = y.toarray()
+
+        x.resize((x.size, 1))
+        plt.plot(x, y)
+
+        plt.plot(nodes, 0 * nodes, 'ro')
+        plt.xlim(a, b)
+        plt.show()
+
+
+
+class BasisOptions(Options_Container):
     """
     Options for Basis class.
 
     This class stores options for creating a Basis class. It takes care of validating options given by user to Basis constructor.
     """
-    valid_types = ['chebyshev', 'spline', 'linear']
+    valid_basis_types = ['chebyshev', 'spline', 'linear']
     valid_node_types = {'chebyshev': ['gaussian', 'lobatto', 'endpoint'],
                         'spline': ['canonical', 'user'],
                         'linear': ['canonical', 'user']}
-    valid_methods = ['tensor', 'smolyak', 'complete', 'cluster', 'zcluster']
+    valid_methods = {'chebyshev': ['tensor', 'smolyak', 'complete', 'cluster', 'zcluster'],
+                     'spline': ['tensor'],
+                     'linear': ['tensor']}
 
-
-    def __init__(self, d, type='chebyshev', nodetype=None, k=3, method='tensor', qn=None, qp=None, labels=None, ix=[], ip=[]):
+    def __init__(self, d, basistype=None, nodetype=None, method=None, qn=None, qp=None, labels=None):
         """
         Make default options dictionary
         :param int d: dimension of the basis
         :return: an object with default values for Basis.opts
         """
+        assert basistype in self.valid_basis_types, "basistype must be 'chebyshev', 'spline', or 'linear'."
+        assert nodetype in self.valid_node_types[basistype], "nodetype must be one of " + str(self.valid_node_types[basistype])
+
+        method = method if method else self.valid_methods[basistype][0]
+        assert method in self.valid_methods[basistype], "method must be one of " + str(self.valid_methods[basistype])
+
         self.d = d
-        self.type = type if type in self.valid_types else 'chebyshev'
+        self.basistype = basistype
         self.nodetype = nodetype
-        self.k = k
-        self._method = method
-        self._qn = None
-        self._qp = None
-        self._labels = ["V{}".format(dim) for dim in range(d)]
+        self.method = method  # method to expand the basis (tensor, smolyak, cluster, zcluster, complete)
+        self.qn = qn  # node parameter, to guide the selection of node combinations
+        self.qp = qp  # polynomial parameter, to guide the selection of polynomial combinations
+        self.labels = labels if labels else ["V{}".format(dim) for dim in range(d)]
         self._ix = []
         self._ip = []
 
-
-
     ''' Properties'''
-    @property
-    def type(self):
-        """ Basis type (chebyshev, spline)"""
-        return self._type
-
-    @property
-    def nodetype(self):
-        """ type of nodes (gaussian, lobatto, endpoint) """
-        return self._nodetype
-
-    @property
-    def method(self):
-        """ method to expand the basis (tensor, smolyak, cluster, zcluster, complete) """
-        return self._method
-
     @property
     def ix(self):
         """  numpy array with valid combination of nodes """
@@ -307,56 +268,11 @@ class OptBasis(Options_Container):
 
     @property
     def keys(self):
-        """ list of available options in OptBasis """
-        return([name for name in OptBasis.__dict__ if not name.startswith('_')])
+        """ list of available options in BasisOptions """
+        return([name for name in BasisOptions.__dict__ if not name.startswith('_')])
 
-    @property
-    def qn(self):
-        """ node parameter, to guide the selection of node combinations"""
-        return self._qn
-
-    @property
-    def qp(self):
-        """ polynomial parameter, to guide the selection of polynomial combinations"""
-        return self._qp
 
     ''' Setters '''
-    @type.setter
-    def type(self, value):
-        valid = ['chebyshev', 'spline']
-        if value in valid:
-            self._type = value
-        else:
-            raise ValueError('type value must be in ' + str(valid))
-
-    @nodetype.setter
-    def nodetype(self, value):
-        valid_options = self.valid_node_types[self.type]
-        if value:
-            value = value.lower()
-            if value in valid_options:
-                self._nodetype = value
-            else:
-                warn('For a '+ self.type.capitalize() +
-                     ' basis, nodetype value must be in ' +
-                     str(valid_options) + '.\nUsing nodetype = ' +
-                     valid_options[0] + 'instead.')
-                self._nodetype = valid_options[0]
-        else:
-            self._nodetype = valid_options[0]
-
-    @method.setter
-    def method(self, value):
-        valid_options = self.valid_methods
-        value = value.lower()
-        if value in valid_options:
-            self._method = value
-        else:
-            warn('Expansion method must be one of ' +
-                 str(valid_options) + '.\nUsing method = ' +
-                 valid_options[0] + 'instead.')
-            self._method = valid_options[0]
-
     @ix.setter
     def ix(self, value):
         if isinstance(value, np.ndarray) and value.ndim == 2 and value.shape[0] == self.d:
@@ -377,14 +293,6 @@ class OptBasis(Options_Container):
             self._labels = value
         else:
             raise ValueError('labels must be a list of {} strings'.format(self.d))
-
-    @qn.setter
-    def qn(self, value):
-        self._qn = value
-
-    @qp.setter
-    def qp(self, value):
-        self._qp = value
 
     def validateChebyshev(self, n):
         """ Validates the options given for a Chebyshev Basis """
@@ -449,7 +357,7 @@ class OptBasis(Options_Container):
             self.ix, self.ip = SmolyakGrid(n, self.qn, self.qp)
 
         ''' All other methods'''
-        degs = n - 1 # degree of polynomials
+        degs = n - 1  # degree of polynomials
         ldeg = [np.arange(degs[ni] + 1) for ni in range(self.d)]
 
         idxAll = gridmake(*ldeg)   # degree of polynomials = index
@@ -564,10 +472,4 @@ def ndgrid2(Indices, indSum, newDim, q, qk):
     NewIndices = np.vstack((Indices[:, idxv[0]], newDim[idxv[1]]))
     return NewIndices, NewSum
 
-
-def as_basis(B):
-    if type(B) == Basis:
-        return B
-    elif type(B) == BasisChebyshev:
-        return Basis(B.n, B.a, B.b, type='chebyshev')
 
