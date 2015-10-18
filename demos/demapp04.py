@@ -1,6 +1,6 @@
 from demos.setup import np, plt
 from numpy.linalg import norm, cond
-from compecon import Basis, Interpolator
+from compecon import BasisChebyshev
 import warnings
 
 warnings.simplefilter('ignore')
@@ -48,10 +48,9 @@ for i in range(nn):
     conunif[i] = np.log10(cond(phi, 2))
 
     # Chebychev-node Chebychev-basis approximant
-    basis =  Basis(n[i], a, b, type='chebyshev')
-    yapprox = Interpolator(basis, f=runge)
-    yfit = yapprox(x)[0]  # index zero is to eliminate one dimension
-    phi = yapprox.B.interpolation()
+    yapprox = BasisChebyshev(n[i], a, b, f=runge)
+    yfit = yapprox(x)  # [0] no longer needed?  # index zero is to eliminate one dimension
+    phi = yapprox.Phi()
     errcheb[i] = yfit - y
     nrmcheb[i] = np.log10(norm(yfit - y, np.inf))
     concheb[i] = np.log10(cond(phi, 2))

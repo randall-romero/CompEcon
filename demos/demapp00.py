@@ -1,5 +1,5 @@
 from demos.setup import np, plt
-from compecon import Basis, Interpolator
+from compecon import BasisChebyshev
 from compecon.tools import nodeunif
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
@@ -14,7 +14,7 @@ d1 = lambda x: -2 * np.exp(-2 * x)
 
 # Fit approximant
 n, a, b = 10, -1, 1
-f1fit = Interpolator(Basis(n, a, b), f=f1)
+f1fit = BasisChebyshev(n, a, b, f=f1)
 
 
 # Graph approximation error for function and derivative
@@ -25,22 +25,21 @@ fig = plt.figure(figsize=[12, 6])
 ax1 = fig.add_subplot(121, title='Function approximation error', **axopts)
 ax1.axhline(linestyle='--', color='gray', linewidth=2)
 ax1.plot(f1fit.nodes, np.zeros_like(f1fit.nodes), 'ro', markersize=12)
-ax1.plot(x, (f1fit(x) - f1(x))[0])
+ax1.plot(x, f1fit(x) - f1(x))
 
 ax2 = fig.add_subplot(122, title='Derivative approximation error', **axopts)
 ax2.plot(x, np.zeros_like(x), '--', color='gray', linewidth=2)
 ax2.plot(f1fit.nodes, np.zeros_like(f1fit.nodes), 'ro', markersize=12)
-ax2.plot(x, (f1fit(x, 1)[0] - d1(x))[0])
+ax2.plot(x, f1fit(x, 1) - d1(x))
 
-plt.show()
 
 ''' Bivariate Interpolation '''
 # Define function
 f2 = lambda x: np.cos(x[0]) / np.exp(x[1])
 
 # Set degree and domain interpolation
-n, a, b = [7, 7], [0, 0], [1, 1]
-f2fit = Interpolator(Basis(n, a, b), f=f2)
+n, a, b = 7, [0, 0], [1, 1]
+f2fit = BasisChebyshev(n, a, b, f=f2)
 
 # Nice plot of function approximation error
 nplot = [101, 101]
@@ -68,8 +67,6 @@ f22 = f2fit(x, [0, 2])
 
 # convert to scalars
 fvalues = [np.asscalar(k) for k in [f1, f2, f11, f12, f22]]
-
-
 
 print('x = [0.5, 0.5]\nf1  = {:7.4f}\nf2  = {:7.4f}\nf11 = {:7.4f}\nf12 = {:7.4f}\nf22 = {:7.4f}'.format(
     *fvalues))
