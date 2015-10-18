@@ -10,7 +10,7 @@ __author__ = 'Randall'
 
 
 class BasisChebyshev(Basis):
-    def __init__(self, n=5, a=-1.0, b=1.0, **kwargs):
+    def __init__(self, n, a, b, y=None, c=None, f=None, s=None, **kwargs):
         """
         Creates an instance of a BasisChebyshev object
 
@@ -21,8 +21,8 @@ class BasisChebyshev(Basis):
         :param str varName: a string to name the variable
         """
 
-        kwargs['basistype'] = 'gaussian'
-        super().__init__(n, a, b, **kwargs)
+        kwargs['basistype'] = 'chebyshev'
+        super().__init__(n, a, b, y, c, f, s, **kwargs)
         self._set_nodes()
 
     def _set_nodes(self):
@@ -50,7 +50,8 @@ class BasisChebyshev(Basis):
 
             x *= (b - a) / 2
             x += (b + a) / 2
-            self.nodes.append(x)
+            self._nodes.append(x)
+        self._expand_nodes()
 
     def _rescale201(self, i, x):
         """
@@ -74,13 +75,14 @@ class BasisChebyshev(Basis):
         :param order: order of required derivative
         :return: None
         """
-        if order in self._diff_operators.keys() or order == 0:
+        keys = set(self._diff_operators[i].keys())
+
+        if (order in keys) or (order == 0):
             return  # Use previously stored values if available
 
         n = self.n[i]
         a = self.a[i]
         b = self.b[i]
-        keys = set(self._diff_operators[i].keys())
 
         if order > 0:
             if order > n - 2:
@@ -147,11 +149,14 @@ class BasisChebyshev(Basis):
                 n, a, b = 5, 0, 4
                 x = numpy.linspace(a,b, 20)
                 Phi = BasisChebyshev(n, a, b)
-                Phi.interpolation(x)
+                Phi.Phi(x)
                 Phi(x)
 
         Calling an instance directly (as in the last line) is equivalent to calling the interpolation method.
         """
+        if order is None:
+            order = 0
+
         orderIsScalar = np.isscalar(order)
         order = np.atleast_1d(order).flatten()
 
@@ -160,7 +165,7 @@ class BasisChebyshev(Basis):
 
         # Check for x argument
         xIsProvided = (x is not None)
-        x = x.flatten() if xIsProvided else self.nodes[i]
+        x = x.flatten() if xIsProvided else self._nodes[i]
         nx = x.size
 
         # Compute order 0 interpolation matrix
@@ -178,7 +183,7 @@ class BasisChebyshev(Basis):
             if ii == 0:
                 Phidict[ii] = bas
             else:
-                Phidict[ii] = np.dot(bas[:, :n - ii], self._diff(i, ii))
+                Phidict[ii] = bas[:, :n - ii] * self._diff(i, ii)  # as matrix multiplication, because diff is sparse
 
         Phi = np.array([Phidict[k] for k in order])
         return Phi

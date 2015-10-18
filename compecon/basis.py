@@ -1,19 +1,21 @@
 from warnings import warn
 import numpy as np
+import scipy as sp
 from .tools import gridmake, Options_Container
 import matplotlib.pyplot as plt
 from functools import reduce
-from scipy.sparse import csc_matrix, diags, tril
+from scipy.sparse import csc_matrix
+import copy
 
 __author__ = 'Randall'
 
 
 class Basis(Options_Container):
     """
-      A multivariate interpolation basis
+      A multivariate Phi basis
     """
 
-    def __init__(self, n, a, b, **kwargs):
+    def __init__(self, n, a, b, y, c, f, s, **kwargs):
         n, a, b = np.broadcast_arrays(*np.atleast_1d(n, a, b))
         assert np.all(n > 2), 'n must be at least 3'
         assert np.all(a < b), 'lower bound must be less than upper bound'
@@ -22,9 +24,24 @@ class Basis(Options_Container):
         self.a = a
         self.b = b
         self.opts = BasisOptions(self.d, **kwargs)
-        self.nodes = list()
-        self._diff_operators = [dict() for h in range(self.d)]
         self.opts.expandGrid(n)
+        self.N = self.opts.ix.shape[1]  # Total number of nodes
+        self.M = self.opts.ip.shape[1]  # Total number of polynomials
+
+        self._nodes = list()
+        self._diff_operators = [dict() for h in range(self.d)]
+        self._PhiT = None
+
+        ''' add data '''
+        nfunckw = sum([z is not None for z in [y, c, f, s]])
+
+        assert nfunckw < 2, 'To specify the function, only one keyword from [y, c, f, s] should be used.'
+
+        if nfunckw == 0:
+            s = 1
+
+        self._initial_func = {'f':f, 's':s, 'c':c, 'y':y}
+
 
     ''' This methods are declared here, but implemented in children classes '''
     def _phi1d(self, i, x=None, order=0):
@@ -37,6 +54,45 @@ class Basis(Options_Container):
     Method _diff return operators to differentiate/integrate, which are stored in _diff_operators
     """
 
+    def _set_function_values(self):
+        self._y = None
+        self._c = None
+        self._yIsOutdated = None
+        self._cIsOutdated = None
+
+        y, s, f, c = [self._initial_func[k] for k in ['y', 's', 'f', 'c']]
+
+        if y is not None:
+            self.y = np.atleast_2d(y)
+        elif c is not None:
+            self.c = c
+        elif callable(f):
+            self.y = f(self.nodes)
+        else:
+            if type(s) is int:
+                s = [s]
+            elif type(s) is np.ndarray:
+                s = s.tolist()
+            s.append(self.N)
+            self.y = np.zeros(s)
+
+        self._initial_func = None
+
+    def _expand_nodes(self):
+        ix = self.opts.ix
+        self.nodes = np.array([self._nodes[k][ix[k]] for k in range(self.d)])
+        phi = self.Phi()
+        self._PhiT = phi.T
+        if self.opts.basistype is 'chebyshev':
+            self._PhiInvT = np.linalg.pinv(phi).T
+        else:
+            self._PhiInvT = sp.sparse.linalg.inv(phi).T
+        self._set_function_values()
+
+    @property
+    def _Phi(self):
+        return self._PhiT.T
+
     def _diff(self, i, m):
         """
         Operator to differentiate
@@ -48,7 +104,7 @@ class Basis(Options_Container):
             self._update_diff_operators(i, m)
         return self._diff_operators[i][m]
 
-    def interpolation(self, x=None, order=None):
+    def Phi(self, x=None, order=None, dropdim=True):
         """Compute the interpolation matrix :math:`\Phi(x)`
 
         :param np.array x: evaluation points
@@ -59,14 +115,14 @@ class Basis(Options_Container):
 
                 n, a, b = [9, 9], [0, 0], [5, 7]
                 Phi = Basis(n, a, b, method='smolyak', qn = 3, qp = 3)
-                Phi.interpolation()
+                Phi.Phi()
                 Phi()                                       # same as previous line
                 Phi(order = [[2, 1, 1, 0], [0, 1, 1, 2]])   # Hessian of interpolation matrix
 
         Calling an instance directly (as in the last two lines) is equivalent to calling the interpolation method.
         """
-        if self.d == 1:
-            return self._phi1d(0, x, order)
+        if (x is None) and (order is None) and (self._PhiT is not None):
+            return self._Phi
 
         if order is None:
             order = np.zeros([self.d, 1], 'int')
@@ -79,6 +135,10 @@ class Basis(Options_Container):
                 assert (order.shape[0] == self.d)
 
         orderIsScalar = order.shape[1] == 1
+
+        if self.d == 1:
+            phi = self._phi1d(0, x, order)
+            return phi[0] if (orderIsScalar and dropdim) else phi
 
         ''' check what type of input x is provided, and get row- and column- indices '''
         if x is None:
@@ -111,20 +171,7 @@ class Basis(Options_Container):
 
             phi = [reduce(lambda A, B: A.multiply(B), PHI[o]) for o in oo]
 
-        return phi[0] if orderIsScalar else phi
-
-    def __call__(self, x=None, order=None):
-        """
-        Equivalent to self.interpolation(x, order)
-
-        Example: If V is a Basis instance, the following to lines are equivalent::
-
-                V.interpolation(x, order)
-                V(x, order)
-
-        """
-        return self.interpolation(x, order)
-
+        return phi[0] if (orderIsScalar and dropdim) else phi
 
 
     @staticmethod
@@ -135,21 +182,6 @@ class Basis(Options_Container):
         ind[ind == 0] = (table == table[0]).sum()
         ind[ind >= table.size] = ind[-1] - (table == table[-1]).sum()
         return ind - 1
-
-    @property
-    def N(self):
-        """ Total number of nodes"""
-        return self.opts.ix.shape[-1]
-
-    @property
-    def M(self):
-        """ Total number of polynomials"""
-        return self.opts.ip.shape[-1]
-
-    @property
-    def Phi(self):
-        """ Interpolation matrix """
-        return self._PhiT.T
 
     def __repr__(self):
         # if self.d == 1:
@@ -199,7 +231,7 @@ class Basis(Options_Container):
         if m is None:
             m = self.n[i]
 
-        nodes = self.nodes[i]
+        nodes = self._nodes[i]
         x = np.linspace(a, b, nx)
         y = self._phi1d(i, x, order)[0][:, :m]
         if self.opts.basistype is 'spline':
@@ -210,7 +242,180 @@ class Basis(Options_Container):
 
         plt.plot(nodes, 0 * nodes, 'ro')
         plt.xlim(a, b)
+        plt.xlabel(self.opts.labels[i])
+
+
+        basistype = self.opts.basistype
+        if basistype is 'spline':
+            if self.k < 4:
+                basistype = ['linear', 'quadratic', 'cubic'][self.k - 1] + ' spline'
+            else:
+                basistype = 'order {:d} spline'.format(self.k)
+
+        plt.title('A {:s} basis with {:d} nodes'.format(basistype.title(), self.n[i]))
         plt.show()
+
+    ''' <<<<<<<<<<<<<<<<<<<<<<<<REVISAR DESDE AQUI >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'''
+
+    @property
+    def x(self):
+        """  :return: interpolation nodes  """
+        return self.nodes
+
+    def update_y(self):
+        if self.opts.basistype is 'chebyshev':
+            self._y = np.dot(self._c, self._PhiT)
+        else:
+            self._y = self._c * self._PhiT
+        self._yIsOutdated = False
+
+    def update_c(self):
+        if self.opts.basistype is 'chebyshev':
+            self._c = np.dot(self._y, self._PhiInvT)
+        else:
+            self._c = self._y * self._PhiInvT
+        self._cIsOutdated = False
+
+    @property
+    def shape(self):
+        if self._yIsOutdated:
+            return self._c.shape[:-1]
+        else:
+            return self._y.shape[:-1]
+
+    @property
+    def size(self):
+        return np.prod(self.shape)
+
+    @property
+    def ndim(self):
+        return len(self.shape) - 1
+
+    @property
+    def shape_N(self):
+        temp = list(self.shape)
+        temp.append(self.N)
+        return temp
+
+    def copy(self):
+        return copy.copy(self)
+
+    @property
+    def y(self):
+        """ :return: function values at nodes """
+        if self._yIsOutdated:
+            self.update_y()
+        return self._y
+
+    @property
+    def c(self):
+        """ :return: interpolation coefficients """
+        if self._cIsOutdated:
+            self.update_c()
+        return self._c
+
+    @y.setter
+    def y(self, val):
+        val = np.atleast_2d(np.asarray(val))
+        if val.shape[-1] != self.N:
+            raise ValueError('y must be an array with {} elements in its last dimension.'.format(self.N))
+        self._y = val
+        self._yIsOutdated = False
+        self._cIsOutdated = True
+
+    @c.setter
+    def c(self, val):
+        val = np.atleast_2d(np.asarray(val))
+        if val.shape[-1] != self.M:
+            raise ValueError('c must be an array with {} elements in its last dimension.'.format(self.M))
+        self._c = val
+        self._cIsOutdated = False
+        self._yIsOutdated = True
+
+    """  Interpolation method """
+    def __call__(self, x=None, order=None, dropdim=True):
+
+        d = self.d
+
+        if type(order) is str:
+            if order is 'jac':
+                order_array = np.identity(d, int)
+            elif order is 'hess':
+                order_array, mapping = hess_order(d)
+            elif order is 'all':
+                order_array, mapping = hess_order(d)
+                order_array = np.hstack([np.zeros([d, 1],int), np.identity(d,int), order_array])
+                mapping += 1 + d
+            else:
+                raise NotImplementedError
+        else:
+            order_array = order
+            order = 'none' if (order is None) else 'provided'
+
+        Phix = self.Phi(x, order_array, False)
+        # if Phix.ndim == 2:
+        #     Phix = Phix[np.newaxis]
+
+        if self.opts.basistype is 'chebyshev':
+            cPhix = np.array([np.dot(self.c, phix.T) for phix in Phix])
+        else:
+            cPhix = np.array([self.c * phix.T for phix in Phix])
+
+        def clean(A):
+            return np.squeeze(A) if dropdim else A
+
+
+        if order in ['none', 'provided', 'jac']:
+            return clean(cPhix)
+        elif order in ['hess', 'all']:
+            new_shape = [d, d] + list(cPhix.shape[1:])
+            Hess = np.zeros(new_shape)
+            for i in range(d):
+                for j in range(d):
+                    Hess[i,j] = cPhix[mapping[i,j]]
+            if order is 'hess':
+                return clean(Hess)
+            else:
+                return clean(cPhix[0]), clean(cPhix[1:(1 + d)]), clean(Hess)
+        else:
+            raise ValueError
+
+
+
+
+
+
+
+''' ADDITIONAL FUNCTIONS'''
+def hess_order(n):
+    """
+    Returns orders required to evaluate the Hessian matrix for a function with n variables
+    and location of hessian entries in resulting array
+    """
+    A = np.array([a.flatten() for a in np.indices(3*np.ones(n))])
+    A = A[:,A.sum(0)==2]
+
+    C = np.zeros([n,n])
+    for i in range(n):
+        for j in range(n):
+            v = np.zeros(n)
+            v[i] += 1
+            v[j] += 1
+            C[i,j] = (v==A.T).all(1).nonzero()[0]
+
+    return A, C
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -234,10 +439,12 @@ class BasisOptions(Options_Container):
         :param int d: dimension of the basis
         :return: an object with default values for Basis.opts
         """
+        method = method if method else self.valid_methods[basistype][0]
+        nodetype = nodetype if nodetype else self.valid_node_types[basistype][0]
+
+
         assert basistype in self.valid_basis_types, "basistype must be 'chebyshev', 'spline', or 'linear'."
         assert nodetype in self.valid_node_types[basistype], "nodetype must be one of " + str(self.valid_node_types[basistype])
-
-        method = method if method else self.valid_methods[basistype][0]
         assert method in self.valid_methods[basistype], "method must be one of " + str(self.valid_methods[basistype])
 
         self.d = d

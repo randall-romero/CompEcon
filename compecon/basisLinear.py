@@ -8,7 +8,7 @@ __author__ = 'Randall'
 
 
 class BasisLinear(Basis):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, y=None, c=None, f=None, s=None, **kwargs):
 
         nargs = len(args)
         if nargs == 1:
@@ -36,7 +36,7 @@ class BasisLinear(Basis):
 
         ''' Make instance '''
         kwargs['basistype'] = 'linear'
-        super().__init__(n, a, b, **kwargs)
+        super().__init__(n, a, b, y, c, f, s, **kwargs)
         self.breaks = breaks
         self._set_nodes()
 
@@ -46,10 +46,11 @@ class BasisLinear(Basis):
 
             :return: None
             """
-            self.nodes = list()
+            self._nodes = list()
 
             for i in range(self.d):
-                self.nodes.append(self.breaks[i])
+                self._nodes.append(self.breaks[i])
+            self._expand_nodes()
 
     def _augbreaks(self, i, m,):
         aa = np.repeat(self.a[i], m)
@@ -126,7 +127,7 @@ class BasisLinear(Basis):
                 n, a, b = 5, 0, 4
                 x = numpy.linspace(a,b, 20)
                 Phi = BasisSpline(n, a, b)
-                Phi.interpolation(x)
+                Phi.Phi(x)
                 Phi(x)
 
         Calling an instance directly (as in the last line) is equivalent to calling the interpolation method.
@@ -136,6 +137,9 @@ class BasisLinear(Basis):
         b = self.b[i]
         breaks = self.breaks[i]
 
+        if order is None:
+            order = 0
+
         orderIsScalar = np.isscalar(order)
         order = np.atleast_1d(order).flatten()
 
@@ -143,7 +147,7 @@ class BasisLinear(Basis):
 
         # Check for x argument
         xIsProvided = (x is not None)
-        x = x.flatten() if xIsProvided else self.nodes[i]
+        x = x.flatten() if xIsProvided else self._nodes[i]
         nx = x.size
 
         # Determine the maximum index of the breakpoints that are less than or equal to x,

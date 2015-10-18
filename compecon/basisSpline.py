@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.sparse import csc_matrix, diags, tril
-from compecon import Basis
+from .basis import Basis
 
 __author__ = 'Randall'
 # TODO: complete this class
@@ -8,7 +8,7 @@ __author__ = 'Randall'
 
 
 class BasisSpline(Basis):
-    def __init__(self, *args, k=3, **kwargs):
+    def __init__(self, *args, k=3, y=None, c=None, f=None, s=None, **kwargs):
 
         nargs = len(args)
         if nargs == 1:
@@ -38,26 +38,26 @@ class BasisSpline(Basis):
 
         ''' Make instance '''
         kwargs['basistype'] = 'spline'
-        super().__init__(n, a, b, **kwargs)
+        super().__init__(n, a, b, y, c, f, s, **kwargs)
         self.k = k
         self.breaks = breaks
         self._set_nodes()
 
     def _set_nodes(self):
-            """
+        """
             Sets the basis nodes
-
             :return: None
-            """
-            n, a, b, k = self['n', 'a', 'b', 'k']
-            self.nodes = list()
+        """
+        n, a, b, k = self['n', 'a', 'b', 'k']
+        self._nodes = list()
 
-            for i in range(self.d):
-                x = np.cumsum(self._augbreaks(i, k))
-                x = (x[k : n[i] + k] - x[:n[i]]) / k
-                x[0] = a[i]
-                x[-1] = b[i]
-                self.nodes.append(x)
+        for i in range(self.d):
+            x = np.cumsum(self._augbreaks(i, k))
+            x = (x[k : n[i] + k] - x[:n[i]]) / k
+            x[0] = a[i]
+            x[-1] = b[i]
+            self._nodes.append(x)
+        self._expand_nodes()
 
     def _augbreaks(self, i, m,):
         aa = np.repeat(self.a[i], m)
@@ -137,7 +137,7 @@ class BasisSpline(Basis):
                 n, a, b = 5, 0, 4
                 x = numpy.linspace(a,b, 20)
                 Phi = BasisSpline(n, a, b)
-                Phi.interpolation(x)
+                Phi.Phi(x)
                 Phi(x)
 
         Calling an instance directly (as in the last line) is equivalent to calling the interpolation method.
@@ -145,6 +145,8 @@ class BasisSpline(Basis):
         n = self.n[i]
         k = self.k
 
+        if order is None:
+            order = 0
 
         order = np.atleast_1d(order).flatten()
         assert np.max(order) < k, 'Derivatives defined for order less than k'
@@ -153,7 +155,7 @@ class BasisSpline(Basis):
 
         # Check for x argument
         xIsProvided = (x is not None)
-        x = x.flatten() if xIsProvided else self.nodes[i]
+        x = x.flatten() if xIsProvided else self._nodes[i]
         nx = x.size
 
         minorder = np.min(order)
