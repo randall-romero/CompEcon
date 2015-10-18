@@ -54,15 +54,15 @@ print('Interpolation coeff =\n ', F.c)
 x = np.zeros([2, 1])  # first dimension should match the basis dimension
 y = F(x)
 print('The exact and approximate value of f at x=[0 0] are')
-print('{:4.0f}  {:20.15f}\n'.format(0, np.asscalar(y)))
+print('{:4.0f}  {:20.15f}\n'.format(0, y))
 
 # ... one may also evaluate the approximant's first partial derivatives at x:
 d1 = F(x, [1, 0])
 d2 = F(x, [0, 1])
 print('The exact and approximate partial derivatives of f w.r.t. x1 at x=[0 0] are')
-print('{:4.0f}  {:20.15f}\n'.format(1, np.asscalar(d1)))
+print('{:4.0f}  {:20.15f}\n'.format(1, d1))
 print('The exact and approximate partial derivatives of f w.r.t. x2 at x=[0 0] are')
-print('{:4.0f}  {:20.15f}\n'.format(0, np.asscalar(d2)))
+print('{:4.0f}  {:20.15f}\n'.format(0, d2))
 
 # ... one may also evaluate the approximant's second own partial and cross
 # partial derivatives at x:
@@ -70,11 +70,11 @@ d11 = F(x, [2, 0])
 d22 = F(x, [0, 2])
 d12 = F(x, [1, 1])
 print('The exact and approximate second partial derivatives of f w.r.t. x1 at x=[0 0] is')
-print('{:4.0f}  {:20.15f}\n'.format(0, np.asscalar(d11)))
+print('{:4.0f}  {:20.15f}\n'.format(0, d11))
 print('The exact and approximate second partial derivatives of f w.r.t. x2 at x=[0 0] is')
-print('{:4.0f}  {:20.15f}\n'.format(0, np.asscalar(d22)))
+print('{:4.0f}  {:20.15f}\n'.format(0, d22))
 print('The exact and approximate second cross partial derivatives of f at x=[0 0] is')
-print('{:4.0f}  {:20.15f}\n'.format(-1, np.asscalar(d12)))
+print('{:4.0f}  {:20.15f}\n'.format(-1, d12))
 
 # One may evaluate the accuracy of the Chebychev polynomial approximant by computing the approximation error on a
 # highly refined grid of points:

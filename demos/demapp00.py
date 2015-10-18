@@ -66,8 +66,7 @@ f12 = f2fit(x, [1, 1])
 f22 = f2fit(x, [0, 2])
 
 # convert to scalars
-fvalues = [np.asscalar(k) for k in [f1, f2, f11, f12, f22]]
 
 print('x = [0.5, 0.5]\nf1  = {:7.4f}\nf2  = {:7.4f}\nf11 = {:7.4f}\nf12 = {:7.4f}\nf22 = {:7.4f}'.format(
-    *fvalues))
+    f1, f2, f11, f12, f22))
 
