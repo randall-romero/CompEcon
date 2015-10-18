@@ -1,120 +1,89 @@
-import warnings
 import numpy as np
 from scipy.sparse import csc_matrix, diags, tril
-from numba import jit, float64, void
-import matplotlib.pyplot as plt
-from compecon.tools import Options_Container
+from compecon import Basis
 
 __author__ = 'Randall'
 # TODO: complete this class
 # todo: compare performance of csr_matrix and csc_matrix to deal with sparse interpolation operators
 
 
-class OptionsSpline(Options_Container):
-    NodeTypes = ['cardinal', 'user']
-
-    def __init__(self, k=3, nodetype='cardinal', label='V0', tol=0.02, warn=True):
-        self.k = k
-        self.nodetype = nodetype.lower()
-        self.label = label
-        self.tol = tol
-        self.warn = warn
-
-
-class BasisSpline(Options_Container):
-    def __init__(self, *args, **kwargs):
-        self.opts = OptionsSpline(**kwargs)
+class BasisSpline(Basis):
+    def __init__(self, *args, k=3, **kwargs):
 
         nargs = len(args)
         if nargs == 1:
-            breaks = np.array(args[0])
-            breaks.sort()
-            assert breaks.size > 1, 'breakpoint sequence must contain at least two elements'
-            self.breaks = breaks
-            self.opts.nodetype = 'user'
+            if isinstance(args[0], tuple):
+                breaks = [np.sort(br) for br in args[0]]
+                n = np.array([br.size + k - 1 for br in breaks])
+                a = np.array([br[0] for br in breaks])
+                b = np.array([br[-1] for br in breaks])
+                kwargs['nodetype'] = 'user'
+            else:
+                raise ValueError("If only 1 positional argument is provided, it must be a tuple of 'd' array-like, " +
+                                 "each of them containing the breaks for one dimension.")
         elif nargs == 3:
-            n, a, b = args
-            k = self.opts.k
-            assert a < b, 'lower bound must be less than upper bound'
-            assert n > k, 'number of nodes must exceed order of spline'
-            self.breaks = np.linspace(a, b, n + 1 - k)
+            n, a, b = np.broadcast_arrays(*np.atleast_1d(*args))
+            breaks = [np.linspace(aa, bb, nn + 1 - k) for aa, bb, nn in zip(a, b, n)]
+            kwargs['nodetype'] = 'canonical'
         else:
             txt = 'Either 1 or 3 positional arguments must be provided\n'
             txt += '\t1 argument -> break points\n'
             txt += '\t3 argument -> n, a, b'
             raise ValueError(txt)
 
-        self._reset()
+        ''' Check inputs '''
+        assert ((k > 0) and type(k) is int), 'k must be a positive integer'
+        assert np.all(n > k), 'number of nodes must exceed order of spline'
+        assert np.all([(br.size > 1) for br in breaks]), 'breakpoint sequence must contain at least two elements'
 
-    @property
-    def a(self):
-        return self.breaks[0]
+        ''' Make instance '''
+        kwargs['basistype'] = 'spline'
+        super().__init__(n, a, b, **kwargs)
+        self.k = k
+        self.breaks = breaks
+        self._set_nodes()
 
-    @property
-    def b(self):
-        return self.breaks[-1]
-
-    @property
-    def k(self):
-        return self.opts.k
-
-    @property
-    def n(self):
-        return self.breaks.size + self.k - 1
-
-    def _setNodes(self):
+    def _set_nodes(self):
             """
             Sets the basis nodes
 
             :return: None
             """
             n, a, b, k = self['n', 'a', 'b', 'k']
-            x = np.cumsum(self._augbreaks(k))
-            x = (x[k : n + k] - x[:n]) / k
-            x[0] = a
-            x[-1] = b
-            self.nodes = x
+            self.nodes = list()
 
-    def _reset(self):
-        # self._validate()
-        self._setNodes()
-        self._Diff = dict()
+            for i in range(self.d):
+                x = np.cumsum(self._augbreaks(i, k))
+                x = (x[k : n[i] + k] - x[:n[i]]) / k
+                x[0] = a[i]
+                x[-1] = b[i]
+                self.nodes.append(x)
 
-    """
-    Method Diff return operators to differentiate/integrate, which are stored in _Diff
-    """
+    def _augbreaks(self, i, m,):
+        aa = np.repeat(self.a[i], m)
+        bb = np.repeat(self.b[i], m)
+        return np.concatenate((aa, self.breaks[i], bb))
 
-    def _augbreaks(self, m):
-        aa, bb = [np.repeat(h, m) for h in self['a', 'b']]
-        return np.concatenate((aa, self.breaks, bb))
-
-
-    def _Diff_(self, k):
-        """
-        Operator to differentiate
-
-        :param k: order of differentiation
-        :return: operator (matrix)
-        """
-        if k not in self._Diff.keys():
-            self._update_Diff(k)
-        return self._Diff[k]
-
-    def _update_Diff(self, order=1):
+    def _update_diff_operators(self, i, order):
         """
         Updates the list _D of differentiation operators
 
         :param order: order of required derivative
         :return: None
         """
-        if order in self._Diff.keys() or order == 0:
+        keys = set(self._diff_operators[i].keys())
+
+        if (order in keys) or (order == 0):
             return  # Use previously stored values if available
 
-        n, a, b, k = self['n', 'a', 'b', 'k']
+        n = self.n[i]
+        a = self.a[i]
+        b = self.b[i]
+        k = self.k
+
         assert order <= k, 'order must be less or equal to k'
-        keys = set(self._Diff.keys())
         kk = k - 1 - min(order, 0)
-        augbreaks = self._augbreaks(kk)
+        augbreaks = self._augbreaks(i, kk)
 
         if order > 0:
             def sptemp(j):
@@ -124,14 +93,14 @@ class BasisSpline(Options_Container):
             missing_keys = set(range(1, order + 1)) - keys
 
             if 1 in missing_keys:
-                self._Diff[1] = sptemp(1)
+                self._diff_operators[i][1] = sptemp(1)
                 missing_keys -= {1}
 
             missing_keys = list(missing_keys)
             missing_keys.sort(reverse=True)
             while missing_keys:
                 j = missing_keys.pop()
-                self._Diff[j] = np.dot(sptemp(j), self._Diff[j - 1])
+                self._diff_operators[i][j] = np.dot(sptemp(j), self._diff_operators[i][j - 1])
         else:
             def sptemp(j):
                 temp = (augbreaks[(kk + 1):(kk + n - j)] -
@@ -142,28 +111,20 @@ class BasisSpline(Options_Container):
             missing_keys = set(range(order, 0)) - keys
 
             if -1 in missing_keys:
-                self._Diff[-1] = sptemp(-1)
+                self._diff_operators[i][-1] = sptemp(-1)
                 missing_keys -= {-1}
 
             missing_keys = list(missing_keys)
             missing_keys.sort(reverse=False)
             while missing_keys:
                 j = missing_keys.pop()
-                self._Diff[j] = sptemp(j) * self._Diff[j + 1]
+                self._diff_operators[i][j] = sptemp(j) * self._diff_operators[i][j + 1]
 
-    @staticmethod
-    def lookup(table, x):
-        # TODO: add parameter endadj -> in Mario's code it always has value=3
-        # Here, I'm assuming that's the only case
-        ind = np.searchsorted(table, x, 'right')
-        ind[ind == 0] = (table == table[0]).sum()
-        ind[ind >= table.size] = ind[-1] - (table == table[-1]).sum()
-        return ind - 1
 
     """
         Interpolation methods
     """
-    def interpolation(self, x=None, order=0):
+    def _phi1d(self, i, x=None, order=0):
         """
         Computes interpolation matrices for given data x and order of differentiation 'order' (integration if negative)
 
@@ -181,29 +142,30 @@ class BasisSpline(Options_Container):
 
         Calling an instance directly (as in the last line) is equivalent to calling the interpolation method.
         """
-        n, a, b, k = self['n', 'a', 'b', 'k']
+        n = self.n[i]
+        k = self.k
 
-        orderIsScalar = np.isscalar(order)
+
         order = np.atleast_1d(order).flatten()
         assert np.max(order) < k, 'Derivatives defined for order less than k'
 
-        nn = n + np.maximum(0, -np.min(order))
+        nn = n + np.maximum(0, -np.min(order))  # todo review why nn is not used, weird
 
         # Check for x argument
         xIsProvided = (x is not None)
-        x = x.flatten() if xIsProvided else self.nodes
+        x = x.flatten() if xIsProvided else self.nodes[i]
         nx = x.size
 
         minorder = np.min(order)
         kaug = k - minorder
-        augbreaks = self._augbreaks(kaug)
-        ind = self.lookup(augbreaks, x)
+        augbreaks = self._augbreaks(i, kaug)
+        ind = self._lookup(augbreaks, x)
 
         # Recursively determine the values of a k-order basis matrix.
         # This is placed in an (m x k+1-order) matrix
         bas = np.zeros((kaug + 1, nx))
         bas[0] = 1
-        Phi = np.array([csc_matrix((nx, n), dtype=np.float) for h in range(order.size)])
+        Phidict = dict()
 
         for j in range(1, kaug + 1):
             for jj in range(j, 0, -1):
@@ -223,61 +185,13 @@ class BasisSpline(Options_Container):
                     c = np.atleast_2d(np.arange(oi - k, 1)).T + np.atleast_2d(ind)
                     c = (c - (oi - minorder)).flatten()
                     data = bas[:k - oi + 1].flatten()
-                    Phi[ii] = csc_matrix((data, (r, c)), (nx, n-oi))
+                    Phidict[oi] = csc_matrix((data, (r, c)), (nx, n-oi))
 
                     if oi:
                         # If needed compute derivative or anti-derivative
-                        Phi[ii] = np.dot(Phi[ii], self._Diff_(oi))
+                        Phidict[oi] = np.dot(Phidict[oi], self._diff(i, oi))
 
-        if orderIsScalar:
-            return Phi[0]
-        else:
-            return Phi
+        # todo: review, i think this will return only unique values
 
-
-
-
-    """
-    Display output for the basis
-    """
-
-    def __repr__(self):
-        """
-        Creates a description of the basis
-        :return: string (description)
-        """
-        n, a, b = self['n', 'a', 'b']
-        bstr = "A Spline basis function of order {:d}:  ".format(self.k)
-        bstr += "using {:d} {} nodes in [{:.2f}, {:.2f}]".format(n, self.opts.nodetype.upper(), a, b)
-        return bstr
-
-    def plot(self, order=0, m=None):
-        """
-        Plots the first k basis functions
-
-        :param order: order of differentiation
-        :param k: number of functions to include in plot
-        :return: a plot
-        """
-        a, b, = self['a', 'b']
-        if m is None:
-            m = self.n
-
-        nodes = self.nodes
-        x = np.linspace(a, b, 120)
-        y = self(x, order)[:, :m].toarray()
-        x.resize((x.size, 1))
-        plt.plot(x, y)
-
-        plt.plot(nodes, 0 * nodes, 'ro')
-        plt.xlim(a, b)
-        plt.show()
-
-    """
-    Calling the basis directly returns the interpolation matrix
-    """
-    def __call__(self, x=None, order=0):
-        """
-        Equivalent to self.interpolation(x, order)
-        """
-        return self.interpolation(x, order)
+        Phi = np.array([Phidict[k] for k in order])
+        return Phi

@@ -2,24 +2,14 @@ import warnings
 import numpy as np
 from scipy.sparse import csc_matrix
 from numba import jit, float64, void
-import matplotlib.pyplot as plt
-from compecon.tools import Options_Container
+from compecon import Basis
 
 __author__ = 'Randall'
 # TODO: complete this class
 # todo: compare performance of csr_matrix and csc_matrix to deal with sparse interpolation operators
 
 
-class OptionsChebyshev(Options_Container):
-    NodeTypes = ['gaussian', 'lobatto', 'endpoint']
-
-    def __init__(self, nodetype='gaussian', label='V0', tol=0.02, warn=True):
-        self.nodetype = nodetype.lower()
-        self.label = label
-        self.tol = tol
-        self.warn = warn
-
-class BasisChebyshev(Options_Container):
+class BasisChebyshev(Basis):
     def __init__(self, n=5, a=-1.0, b=1.0, **kwargs):
         """
         Creates an instance of a BasisChebyshev object
@@ -31,107 +21,66 @@ class BasisChebyshev(Options_Container):
         :param str varName: a string to name the variable
         """
 
-        self._n, self._a, self._b = n, a, b
-        self.opts = OptionsChebyshev(**kwargs)
-        self._nodes = np.array(n)
-        self._Diff = dict()
-        self._reset()
+        kwargs['basistype'] = 'gaussian'
+        super().__init__(n, a, b, **kwargs)
+        self._set_nodes()
 
-    def _reset(self):
-        self._validate()
-        self._setNodes()
-        self._Diff = dict()
-
-    def _validate(self):
-        """
-        Validates values of n, a, b, nodetype
-
-        :return: None
-        """
-        if not self._n > 2:
-            raise Exception('n must be at least 3')
-        if not self._a < self._b:
-            raise Exception('a must be less than b')
-        if self.opts.nodetype not in self.opts.NodeTypes:
-            raise Exception('nodetype must be one of ' + str(self.opts.NodeTypes))
-
-    def _setNodes(self):
+    def _set_nodes(self):
         """
         Sets the basis nodes
 
         :return: None
         """
-        n = self._n
         nodetype = self.opts.nodetype
 
-        if nodetype in ['gaussian', 'endpoint']:
-            x = np.array([-np.cos(np.pi * k / (2 * n)) for k in range(1, 2 * n, 2)])
-        elif nodetype == 'lobatto':
-            x = np.array([-np.cos(np.pi * k / (n - 1)) for k in range(n)])
-        else:
-            raise Exception('Unknown node type')
+        for i in range(self.d):
+            n = self.n[i]
+            a = self.a[i]
+            b = self.b[i]
 
-        if nodetype == 'endpoint':
-            x /= x[-1]
+            if nodetype in ['gaussian', 'endpoint']:
+                x = np.array([-np.cos(np.pi * k / (2 * n)) for k in range(1, 2 * n, 2)])
+            elif nodetype == 'lobatto':
+                x = np.array([-np.cos(np.pi * k / (n - 1)) for k in range(n)])
+            else:
+                raise Exception('Unknown node type')
 
-        self._nodes = self._rescale2ab(x)
+            if nodetype == 'endpoint':
+                x /= x[-1]
 
-    """
-        Methods to standardize and rescale the nodes
-    """
+            x *= (b - a) / 2
+            x += (b + a) / 2
+            self.nodes.append(x)
 
-    def _rescale2ab(self, x):
-        """
-        Rescales nodes from [-1,1] domain to [a,b] domain
-
-        :param x: nodes in [-1,1] domain (array)
-        :return: nodes in [a, b] domain
-        """
-        n, a, b = self['n', 'a', 'b']
-        if n != len(x) or min(x) < -1 or max(x) > 1:
-            raise Exception('x must have {} nodes between -1 and 1.'.format(n))
-
-        return (a + b + (b - a) * x) / 2
-
-    def _rescale201(self, x):
+    def _rescale201(self, i, x):
         """
         Rescales nodes from [a, b] domain to [-1, 1] domain
 
         :param x: nodes in [a, b] domain (array)
         :return: nodes in [-1, 1] domain
         """
-        n, a, b = self['n', 'a', 'b']
+        n = self.n[i]
+        a = self.a[i]
+        b = self.b[i]
+
         # if not(a <= min(x) <= max(x) <= b):
         # warnings.warn('x values must be between a and b.')
         return (2 / (b - a)) * (x - (a + b) / 2)
 
-    """
-    Method Diff return operators to differentiate/integrate, which are stored in _Diff
-    """
-
-    def _Diff_(self, k):
-        """
-        Operator to differentiate
-
-        :param k: order of differentiation
-        :return: operator (matrix)
-        """
-        if k not in self._Diff.keys():
-            self._update_Diff(k)
-        return self._Diff[k]
-
-    def _update_Diff(self, order=1):
+    def _update_diff_operators(self, i, order):
         """
         Updates the list _D of differentiation operators
 
         :param order: order of required derivative
         :return: None
         """
-        if order in self._Diff.keys() or order == 0:
+        if order in self._diff_operators.keys() or order == 0:
             return  # Use previously stored values if available
 
-        n, a, b = self['n', 'a', 'b']
-        keys = set(self._Diff.keys())
+        n = self.n[i]
+        a = self.a[i]
+        b = self.b[i]
+        keys = set(self._diff_operators[i].keys())
 
         if order > 0:
             if order > n - 2:
@@ -149,16 +98,16 @@ class BasisChebyshev(Options_Container):
                 d[0, :] = d[0, :] / 2
                 # todo: convert d to sparse matrix
                 d = csc_matrix(d[:-1, :])
-                self._Diff[1] = d
+                self._diff_operators[i][1] = d
                 missing_keys -= {1}
             else:
-                d = self._Diff[1]
+                d = self._diff_operators[i][1]
 
             missing_keys = list(missing_keys)
             missing_keys.sort(reverse=True)
             while missing_keys:
                 k = missing_keys.pop()
-                self._Diff[k] = d[:n - k, :n - k + 1] * self._Diff[k - 1]
+                self._diff_operators[i][k] = d[:n - k, :n - k + 1] * self._diff_operators[i][k - 1]
         else:
 
             nn = n - order
@@ -173,19 +122,19 @@ class BasisChebyshev(Options_Container):
             missing_keys = set(range(order, 0)) - keys
 
             if -1 in missing_keys:
-                self._Diff[-1] = dd[:n + 1, :n]
+                self._diff_operators[i][-1] = dd[:n + 1, :n]
                 missing_keys -= {-1}
 
             missing_keys = list(missing_keys)
             missing_keys.sort(reverse=False)
             while missing_keys:
                 k = missing_keys.pop()
-                self._Diff[k] = dd[:n - k, :n - k - 1] * self._Diff[k + 1]
+                self._diff_operators[i][k] = dd[:n - k, :n - k - 1] * self._diff_operators[i][k + 1]
 
     """
         Interpolation methods
     """
-    def interpolation(self, x=None, order=None):
+    def _phi1d(self, i, x=None, order=0):
         """
         Computes interpolation matrices for given data x and order of differentiation 'order' (integration if negative)
 
@@ -203,24 +152,21 @@ class BasisChebyshev(Options_Container):
 
         Calling an instance directly (as in the last line) is equivalent to calling the interpolation method.
         """
-        if order is None:  # REVISAR ESTO!!!
-            order = 0
-
         orderIsScalar = np.isscalar(order)
         order = np.atleast_1d(order).flatten()
 
-        n, a, b = self['n', 'a', 'b']
+        n = self.n[i]
         nn = n + np.maximum(0, -np.min(order))
 
         # Check for x argument
         xIsProvided = (x is not None)
-        x = x.flatten() if xIsProvided else self._nodes
+        x = x.flatten() if xIsProvided else self.nodes[i]
         nx = x.size
 
         # Compute order 0 interpolation matrix
         if xIsProvided:
             bas = np.zeros([nx, nn])
-            z = self._rescale201(x)
+            z = self._rescale201(i, x)
             cheby_polynomials(z, bas)
         else:
             z = np.atleast_2d(np.arange(n - 0.5, -0.5, -1)).T
@@ -232,105 +178,10 @@ class BasisChebyshev(Options_Container):
             if ii == 0:
                 Phidict[ii] = bas
             else:
-                Phidict[ii] = np.asmatrix(bas[:, :n - ii]) * self._Diff_(ii)
+                Phidict[ii] = np.dot(bas[:, :n - ii], self._diff(i, ii))
 
         Phi = np.array([Phidict[k] for k in order])
-
-        if orderIsScalar:
-                return Phi[0]
-        else:
-            return Phi
-
-    """
-        SETTERS AND GETTERS:  these methods update the basis if n,a,b or nodetype are changed
-    """
-
-    @property
-    def n(self):
-        """ number of nodes (int)"""
-        return self._n
-
-    @property
-    def a(self):
-        """ lower bound (float)"""
-        return self._a
-
-    @property
-    def b(self):
-        """ upper bound (float)"""
-        return self._b
-
-    @property
-    def nodes(self):
-        """ basis nodes """
-        return self._nodes
-
-    @property
-    def nodetype(self):
-        """ type of node ('gaussian','lobatto','endpoint')"""
-        return self.opts.nodetype
-
-    @n.setter
-    def n(self, val):
-        self._n = val
-        self._reset()
-
-    @a.setter
-    def a(self, val):
-        self._a = val
-        self._reset()
-
-    @b.setter
-    def b(self, val):
-        self._b = val
-        self._reset()
-
-    @nodetype.setter
-    def nodetype(self, val):
-        self.opts.nodetype = val.lower()
-        self._reset()
-
-    """
-    Display output for the basis
-    """
-
-    def __repr__(self):
-        """
-        Creates a description of the basis
-        :return: string (description)
-        """
-        n, a, b = self['n', 'a', 'b']
-        bstr = "A Chebyshev basis function:  "
-        bstr += "using {:d} {} nodes in [{:6.2f}, {:6.2f}]".format(n, self.opts.nodetype.upper(), a, b)
-        return bstr
-
-    def plot(self, order=0, k=5):
-        """
-        Plots the first k basis functions
-
-        :param order: order of differentiation
-        :param k: number of functions to include in plot
-        :return: a plot
-        """
-        a, b, = self._a, self._b
-        nodes = self._nodes
-        x = np.linspace(a, b, 120)
-        y = self(x, order)
-        x.resize((x.size, 1))
-        plt.plot(x, y[:, :k])
-
-        plt.plot(nodes, 0 * nodes, 'ro')
-        plt.xlim(a, b)
-        plt.show()
-
-    """
-    Calling the basis directly returns the interpolation matrix
-    """
-    def __call__(self, x=None, order=0):
-        """
-        Equivalent to self.interpolation(x, order)
-        """
-        return self.interpolation(x, order)
+        return Phi
 
 
 @jit(void(float64[:], float64[:, :]), nopython=True)
