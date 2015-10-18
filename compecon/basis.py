@@ -362,7 +362,8 @@ class Basis(Options_Container):
             cPhix = np.array([self.c * phix.T for phix in Phix])
 
         def clean(A):
-            return np.squeeze(A) if dropdim else A
+            A = np.squeeze(A) if dropdim else A
+            return np.asscalar(A) if A.size == 1 else A
 
 
         if order in ['none', 'provided', 'jac']:
