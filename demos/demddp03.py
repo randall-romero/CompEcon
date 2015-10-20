@@ -1,6 +1,6 @@
 __author__ = 'Randall'
 
-from demos.setup import np, plt
+from demos.setup import np, plt, demofigure
 from compecon import DDPmodel
 from compecon.tools import gridmake, getindex
 
@@ -19,24 +19,23 @@ S  = gridmake(s1,s2)     	# combined state grid
 S1, S2 = S
 n = S1.size                  	# total number of states
 
-# Action Space (no action=1, service=2, replace=3)
-X = np.arange(1, 4)        	# vector of actions
-m = X.size              	# number of actions
+# Action Space
+X = ['no action', 'service', 'replace']	 # vector of actions
+m = len(X)              	# number of actions
 
 # Reward Function
-f = np.zeros((n, m))
+f = np.zeros((m, n))
 q = 50 - 2.5 * S1 - 2.5 * S1 ** 2
-f[:, 0] = q * np.minimum(1, 1 - (S1 - S2) / maxage)
-f[:, 1] = q * np.minimum(1, 1 - (S1 - S2 - 1) / maxage) - mancost
-f[:, 2] = 50 - repcost
+f[0] = q * np.minimum(1, 1 - (S1 - S2) / maxage)
+f[1] = q * np.minimum(1, 1 - (S1 - S2 - 1) / maxage) - mancost
+f[2] = 50 - repcost
 
 
 # State Transition Function
-g = np.c_[
-    getindex(np.c_[S1 + 1, S2], S),
-    getindex(np.c_[S1 + 1, S2 + 1], S),
-    np.repeat(getindex(np.c_[1, 0], S), n)
-]
+g = np.empty_like(f)
+g[0] = getindex(np.c_[S1 + 1, S2], S)
+g[1] = getindex(np.c_[S1 + 1, S2 + 1], S)
+g[2] = getindex(np.c_[1, 0], S)
 
 # Model Structure
 model = DDPmodel(f, g, delta)
@@ -52,16 +51,12 @@ nyrs = 12
 t = np.arange(nyrs + 1)
 spath, xpath = model.simulate(sinit, nyrs)
 
-
 # Plot State Path (Age)
-plt.figure()
-plt.axes(title='Optimal State Path', xlabel='Year', ylabel='Age of Asset', xlim=[0, 12])
+demofigure('Optimal State Path', 'Year', 'Age of Asset', [0, 12])
 plt.plot(t, S1[spath])
 
 # Plot State Path (Servicings)
-plt.figure()
-plt.axes(title='Optimal State Path', xlabel='Year', ylabel='Number of Servicings',
-         xlim=[0, 12], ylim=[0, 2.25])
+demofigure('Optimal State Path', 'Year', 'Number of Servicings', [0, 12], [0, 2.25])
 plt.plot(t, S2[spath])
 
 plt.show()

@@ -1,10 +1,7 @@
 __author__ = 'Randall'
 
-from demos.setup import np, plt
+from demos.setup import np, plt, demofigure
 from compecon import DDPmodel
-from compecon.tools import gridmake, getindex
-
-
 
 # DEMDDP04 Binomial American put option model
 
@@ -27,11 +24,12 @@ price = p0 * u ** np.arange(-N, N+1)      # asset prices
 n = price.size        # number of states
 
 # Action Space (hold=1, exercise=2)
-X = np.array([1, 2])                	# vector of actions
-m = X.size               	# number of actions
+X = ['hold', 'exercise']   	# vector of actions
+m = len(X)               	# number of actions
 
 # Reward Function
-f = np.c_[np.zeros(n), strike - price]
+f = np.zeros((m,n))
+f[1] = strike - price
 
 # State Transition Probability Matrix
 P = np.zeros((m, n, n))
@@ -49,17 +47,12 @@ model.solve()
 # Plot Optimal Exercise Boundary
 i, j = np.where(np.diff(model.policy[:-1], 1))
 temp = (i * tau)[::-1]
-plt.figure()
-plt.axes(title='Put Option Optimal Exercise Boundary', xlabel='Time to Maturity', ylabel='Asset Price')
+demofigure('Put Option Optimal Exercise Boundary', 'Time to Maturity', 'Asset Price')
 plt.plot(temp, price[j])
 
-
-
 # Plot Option Premium vs. Asset Price
-plt.figure()
-plt.axes(title='Put Option Value', xlabel='Asset Price', ylabel='Premium', xlim=[0, 2 * strike])
+demofigure('Put Option Value', 'Asset Price', 'Premium', [0, 2 * strike])
 plt.plot([0, strike],[strike, 0], 'k--', lw=2)
 plt.plot(price, model.value[0], lw=3)
-plt.show()
 
-print(model.value.shape)
+plt.show()

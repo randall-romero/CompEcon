@@ -1,6 +1,6 @@
 __author__ = 'Randall'
 
-from demos.setup import np, plt
+from demos.setup import np, plt, demofigure
 from compecon import DDPmodel
 from compecon.tools import gridmake, getindex
 
@@ -26,10 +26,9 @@ X = np.arange(1 + maxcap)    # vector of actions
 m = X.size                   # number of actions
 
 # Reward Function
-f = np.full((n, m), -np.inf)
-for i in range(n):
-    k = i + 1
-    f[i, :k] = alpha1 * X[:k] ** beta1 + alpha2 * (S[i] - X[:k]) ** beta2
+f = np.full((m, n), -np.inf)
+for k in range(m):
+    f[k, k:] = alpha1 * X[k] ** beta1 + alpha2 * (S[k:] - X[k]) ** beta2
 
 
 # State Transition Probability Matrix
@@ -50,14 +49,11 @@ model.solve()
 ## Analysis
 
 # Plot Optimal Policy
-plt.figure()
-plt.axes(title='Optimal Irrigation Policy', xlabel='Water Level', ylabel='Irrigation',
-         xlim=[-1, 31], ylim=[0, 6])
+demofigure('Optimal Irrigation Policy', 'Water Level', 'Irrigation', [-1, 31], [0, 6])
 plt.plot(S, X[model.policy], '*')
 
 # Plot Value Function
-plt.figure()
-plt.axes(title='Optimal Value Function', xlabel='Water Level', ylabel='Value')
+demofigure('Optimal Value Function', 'Water Level', 'Value')
 plt.plot(S, model.value)
 
 # Simulate Model
@@ -67,21 +63,17 @@ t = np.arange(1 + nyrs)
 spath, xpath = model.simulate(sinit, nyrs)
 
 # Plot State Path
-plt.figure()
-plt.axes(title='Optimal State Path', xlabel='Year', ylabel='Water Level')
+demofigure('Optimal State Path', 'Year', 'Water Level')
 plt.plot(t, S[spath].mean(1))
 
 
 # Compute Steady-State Distribution of Water Level
 pi = model.markov()
-plt.figure()
-plt.axes(title='Steady State Distribution', xlabel='Water Level', ylabel='Probability',
-         xlim=[-1, 31], ylim=[0, 0.16])
+demofigure('Steady State Distribution', 'Water Level', 'Probability', [-1, 31], [0, 0.16])
 plt.bar(S, pi, 1)
 
 plt.show()
 
 # Compute Steady-State Mean Water Level
-# avgstock = pi*S
-# fprintf(\nSteady-state Stock        #8.2f\n,avgstock)
-
+avgstock = np.inner(pi.flatten(), S)
+print('\nSteady-state Stock        {:8.2f}\n'.format(avgstock))

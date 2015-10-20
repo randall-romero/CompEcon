@@ -1,7 +1,7 @@
 __author__ = 'Randall'
 
 
-from demos.setup import np, plt
+from demos.setup import np, plt, demofigure
 from compecon import DDPmodel
 
 
@@ -14,23 +14,23 @@ delta   = 0.9                # discount factor
 
 # State Space
 S = np.arange(1, 1 + maxage)  # machine age
-n = S.size                	# number of states
+n = S.size                	  # number of states
 
 # Action Space (keep=1, replace=2)
-X = np.array([1,2])     	# vector of actions
-m = X.size               	# number of actions
-
+X = ['keep', 'replace']     	# vector of actions
+m = len(X)                  	# number of actions
 
 
 # Reward Function
-f = np.c_[50 - 2.5 * S - 2.5 * S ** 2, np.repeat(50 - repcost, n)]
-f[-1, 0] = -np.inf
+f = np.zeros((m, n))
+f[0] = 50 - 2.5 * S - 2.5 * S ** 2
+f[1] = 50 - repcost
+f[0, -1] = -np.inf
 
 # State Transition Function
-g = np.empty_like(f)
-for i in range(n):
-    g[i] = np.minimum(1 + i, n - 1), 0  # keep, replace
-
+g = np.zeros_like(f)
+g[0] = np.arange(1, n + 1)
+g[0, -1] = n - 1  # adjust last state so it doesn't go out of bounds
 
 # Model Structure
 model = DDPmodel(f, g, delta)
@@ -39,18 +39,17 @@ model.solve()
 
 ## Analysis
 
-# Plot Optimal Value
-plt.figure()
-plt.axes(title='Optimal Value Function', xlabel='Age of Machine', ylabel='Value')
-plt.plot(S, model.value)
-
 # Simulate Model
 sinit, nyrs = S.min() - 1, 12
 t = np.arange(1 + nyrs)
 spath, xpath = model.simulate(sinit, nyrs)
 
+# Plot Optimal Value
+demofigure('Optimal Value Function', 'Age of Machine', 'Value')
+plt.plot(S, model.value)
+
 # Plot State Path
-plt.figure()
-plt.axes(title='Optimal State Path', xlabel='Year', ylabel='Age of Machine', xlim=[0, 12])
+demofigure('Optimal State Path', 'Year', 'Age of Machine', [0, 12])
 plt.plot(t, S[spath])
+
 plt.show()
