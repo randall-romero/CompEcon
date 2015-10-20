@@ -14,3 +14,15 @@ rcParams['savefig.directory'] = '/figures/'
 rcParams['savefig.format'] = 'pdf'
 
 from compecon import tic, toc
+
+
+def demoaxes(title, xlab, ylab, xlim=None, ylim=None):
+    plt.axes(title=title, xlabel=xlab, ylabel=ylab)
+    if xlim is not None:
+        plt.xlim(xlim)
+    if ylim is not None:
+        plt.ylim(ylim)
+
+def demofigure(title, xlab, ylab, xlim=None, ylim=None):
+    plt.figure()
+    demoaxes(title, xlab, ylab, xlim, ylim)
