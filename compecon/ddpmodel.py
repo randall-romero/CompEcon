@@ -29,8 +29,8 @@ class DDPoptions(Options_Container):
     def print_header(self, method, horizon):
         horizon = 'infinite' if np.isinf(horizon) else 'finite'
         if self.print:
-            print('Solving %s-horizon model collocation equation by %s method' % (horizon, method))
-            print('{:4s} {:12s} {8s}'.format('iter', 'change', 'time'))
+            print('Solving %s-horizon discrete model by %s method' % (horizon, method))
+            print('{:4s} {:12s} {:8s}'.format('iter', 'change', 'time'))
             print('-' * 30)
 
     def print_current_iteration(self, it, change, t0):
@@ -45,7 +45,7 @@ class DDPoptions(Options_Container):
           prints output to screen
         """
         if self.print:
-            print('{:4i}  {:12.1e}  {:8.4f}'.format(it, change, toc(t0)))
+            print('{:4d}  {:12.1e}  {:8.4f}'.format(it, change, toc(t0)))
 
     def print_last_iteration(self, t0, change):
         """ Prints summary of last iteration in solve method
@@ -72,9 +72,9 @@ class DDPdims(Options_Container):
     """
     description = "Dimensions of a DPmodel object"
 
-    def __init__(self, n, m):
-        self.n = n
+    def __init__(self, m, n):
         self.m = m
+        self.n = n
 
 
 class DDPmodel(object):
@@ -92,13 +92,13 @@ class DDPmodel(object):
         self.horizon = horizon
         self.opts = DDPoptions(**kwargs)
 
-        n, m = self.dims['n', 'm']
+        n = self.dims.n
 
         self._infinite_horizon = np.isinf(horizon)
 
         if self._infinite_horizon:
             self.value = np.zeros(n)
-            self.policy = np.zeros((n), dtype=int)
+            self.policy = np.zeros(n, dtype=int)
             self.transition = np.zeros((n, n))
         else:
             T = horizon
@@ -111,9 +111,7 @@ class DDPmodel(object):
         assert dynamics.ndim in [2, 3], txt
         self._is_deterministic = dynamics.ndim == 2
 
-        self.P = dynamics.astype(int) if self._is_deterministic else np.swapaxes(dynamics, 0, 1)
-        self.S = np.arange(n) if S is None else S
-        self.X = np.arange(m) if X is None else X
+        self.P = dynamics.astype(int) if self._is_deterministic else dynamics
 
     def __valmax(self, v):
         if self._is_deterministic:
@@ -122,19 +120,19 @@ class DDPmodel(object):
             Pv = np.dot(self.P, v).squeeze()
 
         v = self.reward + self.discount * Pv
-        x = np.argmax(v, 1)
-        return v[np.arange(self.dims.n), x], x
+        x = np.argmax(v, 0)
+        return v[x, np.arange(self.dims.n)], x
 
     def __valpol(self, x):
         n = self.dims.n
         nn = np.arange(n, dtype=int)
         if self._is_deterministic:
-            snext = self.P[nn, x]
+            snext = self.P[x, nn]
             pstar = csc_matrix((np.ones(n), (nn, snext)), (n, n)).toarray()
         else:
-            pstar = self.P[nn, x]
+            pstar = self.P[x, nn]
 
-        fstar = self.reward[nn, x]
+        fstar = self.reward[x, nn]
         return pstar, fstar
 
     def solve(self, **kwargs):
@@ -156,6 +154,7 @@ class DDPmodel(object):
             self.__solve_backwards()
         else:
             raise ValueError('Unknown algorithm')
+        return self
 
     def __solve_backwards(self):
         self.opts.print_header('backward recursion', self.horizon)
@@ -218,15 +217,6 @@ class DDPmodel(object):
 
         xpath = self.policy[spath]
         return spath.squeeze(), xpath.squeeze()
-
-    def plot_value(self):
-        # todo finish this method
-        plt.figure()
-        plt.plot(self.S, self.value)
-        plt.title('Optimal Value Function')
-        plt.xlabel('Age of Machine')
-        plt.ylabel('Value')
-
 
     def markov(self):
         p = self.transition
