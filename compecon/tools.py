@@ -78,7 +78,7 @@ def nodeunif(n, a, b, lst = False):
      vector of n(k) uniform nodes spanning the interval [a(k),b(k)] also returns prod(n) by d matrix x of
      grid points created by forming Cartesian product of  vectors in xcoord.
     """
-    n, a, b = np.atleast_1d(n, a, b)  # Convert n, a, and b to np.arrays
+    n, a, b = np.broadcast_arrays(*np.atleast_1d(n, a, b))
     d = n.size  # dimension of basis
 
     if d == 1:
@@ -111,6 +111,7 @@ def jacobian(func, x, *args, **kwargs):
     else:
         F = lambda x: func(x, *args, **kwargs)
 
+    x = x.flatten()
     dx = x.size
     f = F(x)
     df = f.size
@@ -247,3 +248,24 @@ def example(page):
 def exercise(number):
     print('\n' + '=' * 72)
     print('Exercise {:s}\n'.format(number))
+
+
+# def getindex(values, array):
+#     return np.abs(np.subtract.outer(array, values)).argmin(0)
+
+
+def getindex(s, S):
+    S, s = np.atleast_2d(S, s)
+    d, n = S.shape
+    d2, p = s.shape
+
+    if (p == d) and (d2 != d):
+        s = s.T
+        d2, p = p, d2
+
+    assert d == d2, 's and S must have same number of rows'
+
+    return np.array([np.abs(S.T - k).sum(1).argmin() for k in s.T])
+
+
+
