@@ -62,7 +62,6 @@ ax2.axhline(color='gray', linestyle='--')
 ax2.plot(x, errcheb[4], label='Chebychev Nodes')
 ax2.plot(x, errunif[4], label='Uniform Nodes')
 ax2.legend(loc='upper center', frameon=False)
-plt.show()
 
 
 # Plot approximation error per degree of approximation

@@ -38,8 +38,8 @@ ax2.plot(x, f1fit(x, 1) - d1(x))
 f2 = lambda x: np.cos(x[0]) / np.exp(x[1])
 
 # Set degree and domain interpolation
-n, a, b = 7, [0, 0], [1, 1]
-f2fit = BasisChebyshev(n, a, b, f=f2)
+n, a, b = 7, 0.0, 1.0
+f2fit = BasisChebyshev([n, n], a, b, f=f2)
 
 # Nice plot of function approximation error
 nplot = [101, 101]
@@ -59,14 +59,9 @@ plt.show()
 
 # Compute partial Derivatives
 x = np.array([[0.5], [0.5]])
-f1 = f2fit(x, [1, 0])
-f2 = f2fit(x, [0, 1])
-f11 = f2fit(x, [2, 0])
-f12 = f2fit(x, [1, 1])
-f22 = f2fit(x, [0, 2])
+order = [[1, 0, 2, 1, 0],
+         [0, 1, 0, 1, 2]]
 
-# convert to scalars
+ff = f2fit(x, order)
 
-print('x = [0.5, 0.5]\nf1  = {:7.4f}\nf2  = {:7.4f}\nf11 = {:7.4f}\nf12 = {:7.4f}\nf22 = {:7.4f}'.format(
-    f1, f2, f11, f12, f22))
-
+print('x   = [0.5, 0.5]\nf1  = {:7.4f}\nf2  = {:7.4f}\nf11 = {:7.4f}\nf12 = {:7.4f}\nf22 = {:7.4f}'.format(*ff))

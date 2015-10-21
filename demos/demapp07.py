@@ -1,4 +1,4 @@
-from demos.setup import np, plt
+from demos.setup import np, plt, demofigure
 from compecon import BasisChebyshev, NLP
 from compecon.tools import nodeunif
 
@@ -39,43 +39,30 @@ cournot = NLP(resid, c0, Q, p, alpha, eta, tol=1e-12)
 Q.c = cournot.broyden()
 
 # Plot demand and effective supply for m=5 firms
-plt.figure()
 pplot = nodeunif(501, a, b)
 splot = Q(pplot)
 dplot = pplot ** -eta
-plt.plot(5 * splot, pplot, dplot, pplot)
-plt.xlim([0, 4])
-plt.ylim([0.5, 2])
+demofigure('Cournot Effective Firm Supply Function', 'Quantity', 'Price', [0, 4], [0.5, 2])
 plt.legend(('Supply','Demand'))
-plt.title('Cournot Effective Firm Supply Function')
-plt.xlabel('Quantity')
-plt.ylabel('Price')
+plt.plot(5 * splot, pplot, dplot, pplot)
 
 
 
 # Plot residual
-plt.figure()
 rplot = resid(Q.c, Q, pplot, alpha, eta)
-plt.plot(pplot, rplot)
+demofigure('Residual Function for Cournot Problem', 'Quantity', 'Residual')
 plt.plot(pplot, np.zeros_like(pplot), 'k--', lw=2)
-plt.title('Residual Function for Cournot Problem')
-plt.xlabel('Quantity')
-plt.ylabel('Residual')
+plt.plot(pplot, rplot)
 
 
 # Plot demand and effective supply for m=1,3,5,10,15,20 firms
-plt.figure()
 m = np.array([1, 3, 5, 10, 15, 20])
+demofigure('Industry Supply and Demand Functions', 'Quantity', 'Price', [0, 13])
 plt.plot(np.outer(splot, m), pplot, dplot, pplot)
-plt.title('Industry Supply and Demand Functions')
-plt.xlabel('Quantity')
-plt.ylabel('Price')
-plt.legend(['m=1','m=3','m=5','m=10','m=15','m=20'])
-plt.xlim([0, 13])
+plt.legend(['m=1', 'm=3', 'm=5', 'm=10', 'm=15', 'm=20'])
 
 
 # Plot equilibrium price as a function of number of firms m
-plt.figure()
 pp = (b + a) / 2
 dp = (b - a) / 2
 m  = np.arange(1, 26)
@@ -83,9 +70,7 @@ for i in range(50):
     dp /= 2
     pp = pp - np.sign(Q(pp) * m - pp ** (-eta)) * dp
 
+demofigure('Cournot Equilibrium Price as Function of Industry Size', 'Number of Firms', 'Price')
 plt.plot(m, pp)
-plt.title('Cournot Equilibrium Price as Function of Industry Size')
-plt.xlabel('Number of Firms')
-plt.ylabel('Price')
 
 plt.show()
