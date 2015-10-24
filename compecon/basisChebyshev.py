@@ -10,7 +10,7 @@ __author__ = 'Randall'
 
 
 class BasisChebyshev(Basis):
-    def __init__(self, n, a, b, y=None, c=None, f=None, s=None, **kwargs):
+    def __init__(self, n, a, b, y=None, c=None, f=None, s=None, l=None, **kwargs):
         """
         Creates an instance of a BasisChebyshev object
 
@@ -22,7 +22,7 @@ class BasisChebyshev(Basis):
         """
 
         kwargs['basistype'] = 'chebyshev'
-        super().__init__(n, a, b, y, c, f, s, **kwargs)
+        super().__init__(n, a, b, y, c, f, s, l, **kwargs)
         self._set_nodes()
 
     def _set_nodes(self):
@@ -42,6 +42,8 @@ class BasisChebyshev(Basis):
                 x = np.array([-np.cos(np.pi * k / (2 * n)) for k in range(1, 2 * n, 2)])
             elif nodetype == 'lobatto':
                 x = np.array([-np.cos(np.pi * k / (n - 1)) for k in range(n)])
+            elif nodetype == 'uniform':
+                x = np.linspace(-1, 1, n)
             else:
                 raise Exception('Unknown node type')
 
@@ -165,7 +167,7 @@ class BasisChebyshev(Basis):
 
         # Check for x argument
         xIsProvided = (x is not None)
-        x = x.flatten() if xIsProvided else self._nodes[i]
+        x = np.asarray(x).flatten() if xIsProvided else self._nodes[i]
         nx = x.size
 
         # Compute order 0 interpolation matrix

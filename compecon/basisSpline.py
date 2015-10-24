@@ -8,7 +8,7 @@ __author__ = 'Randall'
 
 
 class BasisSpline(Basis):
-    def __init__(self, *args, k=3, y=None, c=None, f=None, s=None, **kwargs):
+    def __init__(self, *args, k=3, y=None, c=None, f=None, s=None, l=None, **kwargs):
 
         nargs = len(args)
         if nargs == 1:
@@ -38,7 +38,7 @@ class BasisSpline(Basis):
 
         ''' Make instance '''
         kwargs['basistype'] = 'spline'
-        super().__init__(n, a, b, y, c, f, s, **kwargs)
+        super().__init__(n, a, b, y, c, f, s, l, **kwargs)
         self.k = k
         self.breaks = breaks
         self._set_nodes()
@@ -48,14 +48,16 @@ class BasisSpline(Basis):
             Sets the basis nodes
             :return: None
         """
-        n, a, b, k = self['n', 'a', 'b', 'k']
+        n = self.n
+        k = self.k
+
         self._nodes = list()
 
         for i in range(self.d):
             x = np.cumsum(self._augbreaks(i, k))
             x = (x[k : n[i] + k] - x[:n[i]]) / k
-            x[0] = a[i]
-            x[-1] = b[i]
+            x[0] = self.a[i]
+            x[-1] = self.b[i]
             self._nodes.append(x)
         self._expand_nodes()
 
@@ -191,7 +193,7 @@ class BasisSpline(Basis):
 
                     if oi:
                         # If needed compute derivative or anti-derivative
-                        Phidict[oi] = np.dot(Phidict[oi], self._diff(i, oi))
+                        Phidict[oi] = Phidict[oi] * self._diff(i, oi)
 
         # todo: review, i think this will return only unique values
 

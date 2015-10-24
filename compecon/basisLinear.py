@@ -8,7 +8,7 @@ __author__ = 'Randall'
 
 
 class BasisLinear(Basis):
-    def __init__(self, *args, y=None, c=None, f=None, s=None, **kwargs):
+    def __init__(self, *args, y=None, c=None, f=None, s=None, l=None, **kwargs):
 
         nargs = len(args)
         if nargs == 1:
@@ -36,7 +36,7 @@ class BasisLinear(Basis):
 
         ''' Make instance '''
         kwargs['basistype'] = 'linear'
-        super().__init__(n, a, b, y, c, f, s, **kwargs)
+        super().__init__(n, a, b, y, c, f, s, l, **kwargs)
         self.breaks = breaks
         self._set_nodes()
 

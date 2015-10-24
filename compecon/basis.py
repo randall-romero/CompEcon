@@ -10,12 +10,12 @@ import copy
 __author__ = 'Randall'
 
 
-class Basis(Options_Container):
+class Basis(object):
     """
       A multivariate Phi basis
     """
 
-    def __init__(self, n, a, b, y, c, f, s, **kwargs):
+    def __init__(self, n, a, b, y, c, f, s, l, **kwargs):
         n, a, b = np.broadcast_arrays(*np.atleast_1d(n, a, b))
         assert np.all(n > 2), 'n must be at least 3'
         assert np.all(a < b), 'lower bound must be less than upper bound'
@@ -40,7 +40,7 @@ class Basis(Options_Container):
         if nfunckw == 0:
             s = 1
 
-        self._initial_func = {'f':f, 's':s, 'c':c, 'y':y}
+        self._initial_func = {'f': f, 's': s, 'c': c, 'y': y, 'l': l}
 
 
     ''' This methods are declared here, but implemented in children classes '''
@@ -55,26 +55,37 @@ class Basis(Options_Container):
     """
 
     def _set_function_values(self):
-        self._y = None
-        self._c = None
-        self._yIsOutdated = None
-        self._cIsOutdated = None
 
-        y, s, f, c = [self._initial_func[k] for k in ['y', 's', 'f', 'c']]
+        y, s, f, c, l = [self._initial_func[k] for k in ['y', 's', 'f', 'c', 'l']]
 
-        if y is not None:
-            self.y = np.atleast_2d(y)
-        elif c is not None:
-            self.c = c
+        y_provided = True
+
+        if c is not None:
+            c = np.atleast_2d(c)
+            y_provided = False
         elif callable(f):
-            self.y = f(self.nodes)
+            y = np.atleast_2d(f(self.nodes))
+        elif y is not None:
+            y = np.atleast_2d(y)
+        elif l is not None:
+            s = [len(a) for a in l]  # assumes that l is a list of list or tuples
+            s = np.r_[np.atleast_1d(s), self.N]
+            y = np.zeros(s)
+            self.opts.ylabels = l
         else:
-            if type(s) is int:
-                s = [s]
-            elif type(s) is np.ndarray:
-                s = s.tolist()
-            s.append(self.N)
-            self.y = np.zeros(s)
+            s = np.r_[np.atleast_1d(s), self.N]
+            y = np.zeros(s)
+
+        s = y.shape[:-1] if y_provided else c.shape[:-1]
+        self._c = np.zeros(np.r_[s, self.M])
+        self._y = np.zeros(np.r_[s, self.N])
+        self._cIsOutdated = np.full(s, True, bool)
+        self._yIsOutdated = np.full(s, True, bool)
+
+        if y_provided:
+            self.y = y
+        else:
+            self.c = c
 
         self._initial_func = None
 
@@ -121,7 +132,7 @@ class Basis(Options_Container):
 
         Calling an instance directly (as in the last two lines) is equivalent to calling the interpolation method.
         """
-        if (x is None) and (order is None) and (self._PhiT is not None):
+        if np.all([x is None, order is None, self._PhiT is not None, dropdim == True]):
             return self._Phi
 
         if order is None:
@@ -263,22 +274,30 @@ class Basis(Options_Container):
         return self.nodes
 
     def update_y(self):
+        # todo: try to update only the outdated values. Can't yet figure out how to index them
+        # ii = self._yIsOutdated
         if self.opts.basistype is 'chebyshev':
             self._y = np.dot(self._c, self._PhiT)
         else:
             self._y = self._c * self._PhiT
-        self._yIsOutdated = False
+        self._yIsOutdated = np.full(self._yIsOutdated.shape, False)
 
     def update_c(self):
+        # todo: try to update only the outdated values. Can't yet figure out how to index them
+        ii = self._cIsOutdated
         if self.opts.basistype is 'chebyshev':
             self._c = np.dot(self._y, self._PhiInvT)
         else:
-            self._c = self._y * self._PhiInvT
-        self._cIsOutdated = False
+            try:
+                self._c = self._y * self._PhiInvT
+            except:
+                self._c = np.dot(self._y, self._PhiInvT.toarray())
+
+        self._cIsOutdated = np.full(self._cIsOutdated.shape, False)
 
     @property
     def shape(self):
-        if self._yIsOutdated:
+        if np.any(self._yIsOutdated):
             return self._c.shape[:-1]
         else:
             return self._y.shape[:-1]
@@ -300,17 +319,40 @@ class Basis(Options_Container):
     def copy(self):
         return copy.copy(self)
 
+    def duplicate(self, y=None, c=None, f=None, s=None, l=None):
+        """ Duplicate the basis
+
+        Makes a shallow copy of the basis, allowing the new instance to have its own
+        approximation coefficients while sharing the nodes and interpolation matrices
+
+        New instance values are specified with the same arguments used to create a new Basis,
+        if none is provided, then it copies original coefficients by simply getting all iterms:
+        copy_instance = original_instance[:]
+
+
+
+        """
+        nfunckw = sum([z is not None for z in [y, c, f, s, l]])
+        assert nfunckw < 2, 'To specify the function, only one keyword from [y, c, f, s] should be used.'
+        if nfunckw == 0:
+            return self[:]
+
+        other = self.copy()
+        other._initial_func = {'f':f, 's':s, 'c':c, 'y':y, 'l':l}
+        other._set_function_values()
+        return other
+
     @property
     def y(self):
         """ :return: function values at nodes """
-        if self._yIsOutdated:
+        if np.any(self._yIsOutdated):
             self.update_y()
         return self._y
 
     @property
     def c(self):
         """ :return: interpolation coefficients """
-        if self._cIsOutdated:
+        if np.any(self._cIsOutdated):
             self.update_c()
         return self._c
 
@@ -320,8 +362,8 @@ class Basis(Options_Container):
         if val.shape[-1] != self.N:
             raise ValueError('y must be an array with {} elements in its last dimension.'.format(self.N))
         self._y = val
-        self._yIsOutdated = False
-        self._cIsOutdated = True
+        self._yIsOutdated = np.full(val.shape[:-1], False, bool)
+        self._cIsOutdated = np.full(val.shape[:-1], True, bool)
 
     @c.setter
     def c(self, val):
@@ -329,8 +371,8 @@ class Basis(Options_Container):
         if val.shape[-1] != self.M:
             raise ValueError('c must be an array with {} elements in its last dimension.'.format(self.M))
         self._c = val
-        self._cIsOutdated = False
-        self._yIsOutdated = True
+        self._yIsOutdated = np.full(val.shape[:-1], True, bool)
+        self._cIsOutdated = np.full(val.shape[:-1], False, bool)
 
     """  Interpolation method """
     def __call__(self, x=None, order=None, dropdim=True):
@@ -359,11 +401,14 @@ class Basis(Options_Container):
         if self.opts.basistype is 'chebyshev':
             cPhix = np.array([np.dot(self.c, phix.T) for phix in Phix])
         else:
-            cPhix = np.array([self.c * phix.T for phix in Phix])
+            try:
+                cPhix = np.array([self.c * phix.T for phix in Phix])
+            except:
+                cPhix = np.array([np.dot(self.c, phix.T.toarray()) for phix in Phix])
 
         def clean(A):
             A = np.squeeze(A) if dropdim else A
-            return np.asscalar(A) if A.size == 1 else A
+            return np.asscalar(A) if (A.size == 1 and dropdim) else A
 
 
         if order in ['none', 'provided', 'jac']:
@@ -380,6 +425,44 @@ class Basis(Options_Container):
                 return clean(cPhix[0]), clean(cPhix[1:(1 + d)]), clean(Hess)
         else:
             raise ValueError
+
+    def __getitem__(self, item):
+        litem = list(item) if isinstance(item, tuple) else [item]
+
+        for j, k in enumerate(litem):
+            if isinstance(k, str):
+                try:
+                    litem[j] = self.opts.ylabels[j].index(k)
+                except:
+                    txt = "Dimension {} has no '{}' variable.".format(j, k)
+                    txt += '  Valid options are: ' + str(self.opts.ylabels[j])
+                    raise ValueError(txt)
+        item = tuple([k for k in litem])
+        other = self.copy()
+        other._y = np.atleast_2d(self._y[item])
+        other._c = np.atleast_2d(self._c[item])
+        other._yIsOutdated = other._yIsOutdated[item]
+        other._cIsOutdated = other._cIsOutdated[item]
+        # todo: copy the ylabels too!
+        return other
+
+    def __setitem__(self, key, value):
+        litem = list(key) if isinstance(key, tuple) else [key]
+
+        for j, k in enumerate(litem):
+            if isinstance(k, str):
+                try:
+                    litem[j] = self.opts.ylabels[j].index(k)
+                except:
+                    txt = "Dimension {} has no '{}' variable.".format(j, k)
+                    txt += '  Valid options are: ' + str(self.opts.ylabels[j])
+                    raise ValueError(txt)
+        item = tuple([k for k in litem])
+        self._y[item] = value
+        self._yIsOutdated[item] = False
+        self._cIsOutdated[item] = True
+
+
 
 
 
@@ -427,14 +510,14 @@ class BasisOptions(Options_Container):
     This class stores options for creating a Basis class. It takes care of validating options given by user to Basis constructor.
     """
     valid_basis_types = ['chebyshev', 'spline', 'linear']
-    valid_node_types = {'chebyshev': ['gaussian', 'lobatto', 'endpoint'],
+    valid_node_types = {'chebyshev': ['gaussian', 'lobatto', 'endpoint', 'uniform'],
                         'spline': ['canonical', 'user'],
                         'linear': ['canonical', 'user']}
     valid_methods = {'chebyshev': ['tensor', 'smolyak', 'complete', 'cluster', 'zcluster'],
                      'spline': ['tensor'],
                      'linear': ['tensor']}
 
-    def __init__(self, d, basistype=None, nodetype=None, method=None, qn=None, qp=None, labels=None):
+    def __init__(self, d, basistype=None, nodetype=None, method=None, qn=None, qp=None, labels=None, ylabels=None):
         """
         Make default options dictionary
         :param int d: dimension of the basis
@@ -455,6 +538,7 @@ class BasisOptions(Options_Container):
         self.qn = qn  # node parameter, to guide the selection of node combinations
         self.qp = qp  # polynomial parameter, to guide the selection of polynomial combinations
         self.labels = labels if labels else ["V{}".format(dim) for dim in range(d)]
+        self.ylabels = ylabels
         self._ix = []
         self._ip = []
 
@@ -556,8 +640,8 @@ class BasisOptions(Options_Container):
         :return: None
         """
         if self.d == 1:
-            self.ix = np.arange(n).reshape(1, -1)
-            self.ip = np.arange(n).reshape(1, -1)
+            self.ix = np.arange(n, dtype=int).reshape(1, -1)
+            self.ip = np.arange(n, dtype=int).reshape(1, -1)
             return
 
         ''' Smolyak interpolation: done by SmolyakGrid function'''
