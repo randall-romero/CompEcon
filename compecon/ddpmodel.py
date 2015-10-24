@@ -268,3 +268,8 @@ class DDPmodel(object):
 
         return q  # todo: Mario's code has a second output argument
 
+    def __repr__(self):
+        txt = 'A ' + ('deterministic' if self._is_deterministic else 'stochastic')
+        txt += ' discrete state, discrete action, dynamic model.\n'
+        txt += 'There are {:} possible actions over {:} possible states'.format(self.dims.m, self.dims.n)
+        return txt
