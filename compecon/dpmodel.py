@@ -5,7 +5,7 @@ from .nonlinear import MCP
 import numpy as np
 from numpy.linalg import multi_dot as dot
 from scipy.sparse import block_diag
-from .tools import jacobian, hessian
+from .tools import jacobian, hessian, gridmake, ix
 #from .lcpstep import lcpstep  # todo: is it worth to add lcpstep?
 
 
@@ -349,11 +349,15 @@ class DPmodel(object):
 
         """
 
+        t = slice(None) if np.isinf(self.time.horizon) else -1  # if finite horizon, v is taken as last period
+
         if v is not None:
-            self.Value[:] = v[:]
+            self.Value[t] = v[t]
 
         if x is not None:
-            self.Policy_j[:] = x[:]
+            self.Policy_j[t] = x[t]
+
+
 
         ''' 1: PREPARATIONS*********************** '''
         ni, nj, dx = self.dims['ni', 'nj', 'dx']
@@ -385,7 +389,7 @@ class DPmodel(object):
         else:
             raise ValueError('Unknown solution algorithm')
 
-        # self.update_policy_function()
+        self.update_policy()
 
     def __solve_backwards(self):
         """
@@ -450,6 +454,35 @@ class DPmodel(object):
             if change < self.options.tol:
                 break
         self.options.print_last_iteration(tic, change)
+
+    def residuals(self, nr=10):
+        """
+        Computes residuals over a refined grid
+
+        If nr is scalar, compute a grid. Otherwise compute residuals over provided nr (sr)
+
+        """
+        scalar_input = np.isscalar(nr) and isinstance(nr, int)
+
+        if scalar_input:
+            a = self.Value.a
+            b = self.Value.b
+            n = self.Value.n
+            sr = gridmake([np.linspace(a[i], b[i], nr * n[i]) for i in range(self.Value.d)])
+        else:
+            sr = np.atleast_2d(nr)
+            assert sr.shape[0] == self.dims.ds, 'provided s grid must have {} rows'.format(self.dims.ds)
+
+        xr = self.Policy_j(sr, dropdim=False)
+        vr = self.vmax(sr, xr, self.Value)
+        resid = self.Value(sr, dropdim=False) - np.max(vr, -2)
+
+        # eliminate singleton dimensions and return
+        if scalar_input:
+            return np.squeeze(resid), sr, np.squeeze(vr), np.squeeze(xr)
+        else:
+            return np.squeeze(resid)
+
 
     def getDerivative(self, func, s, x, *args, **kwargs):
         dx, nx = x.shape
@@ -596,7 +629,7 @@ class DPmodel(object):
     # Nested function in vmax: Finds the optimal policy and value function for a given pair of discrete state
     # and discrete action, by solving the linear complementarity problem.
     def vmax_continuous(self, Value, s, xij, i, j):
-        ns = self.dims.ns
+        ns = s.shape[-1]
         dx = self.dims.dx
         xl, xu = self.bounds(s, i, j)
 
@@ -672,7 +705,7 @@ class DPmodel(object):
                 snext = np.real(snext)
                 prob_delta = self.time.discount * w[k] * q[j, i, in_]
 
-                vn, vns, vnss = Value[in_](snext, order='all', dropdim=False)  # evaluates function, jacobian, and hessian if order='all'  #todo: implement this bahavior
+                vn, vns, vnss = Value[in_](snext, order='all', dropdim=False)  # evaluates function, jacobian, and hessian if order='all'
 
 
                 vv += prob_delta * vn
@@ -692,7 +725,7 @@ class DPmodel(object):
         (= jacobian of FOCs). The resulting output is suitable to be solved by the MCP class.
 
         """
-        xij = xvec.reshape((self.dims.dx, self.dims.ns))
+        xij = xvec.reshape((self.dims.dx, s.shape[-1]))
         EV, EVx, EVxx = self.__Bellman_rhs(Value, s, xij, i, j)
 
         EVx = EVx[:, 0]
@@ -706,24 +739,35 @@ class DPmodel(object):
     def make_discrete_choice(self, t=None):
         # notice : Value_j.y  dims are: 0=state, 1=action, 2=node
 
+        if self.dims.nj == 1:
+            if t is None:
+                self.Value[:] = self.Value_j.y[:]
+            else:
+                self.Value[t] = self.Value_j.y[t]
+            return
+
         if t is None:
             self.DiscreteAction = np.argmax(self.Value_j.y, 1)
-            self.Value[:] = np.max(self.Value_j.y, 1)
+            ijs = ix(self.Value_j.y)
+            ijs[-2] = self.DiscreteAction
+            self.Value[:] = self.Value_j.y[ijs]
+            # self.Value[:] = np.max(self.Value_j.y, 1)
         else:
             self.DiscreteAction[t] = np.argmax(self.Value_j.y[t], 1)
-            self.Value[t] = np.max(self.Value_j.y[t], 1)
+            ijs = ix(self.Value_j.y[t])
+            ijs[-2] = self.DiscreteAction[t]
+            self.Value[t] = self.Value_j.y[t][ijs]
+            # self.Value[t] = np.max(self.Value_j.y[t], 1)
 
-        hhh = 1
+    def update_policy(self):
+        if self.dims.nj == 1:
+            self.Policy[:] = self.Policy_j.y[:]
+        else:
+            ijxs = ix(self.Policy_j.y)
+            ijxs[-3] = self.DiscreteAction[:, np.newaxis, :]
+            self.Policy[:] = self.Policy_j.y[ijxs]
 
-        # self.Policy[]
 
-
-        # TODO make this work with finite horizon, fix it, looks ugly
-        # policy = self.Policy_j.y.swapaxes(1, 2)
-        # jmax = self.DiscreteAction
-        # for i in range(self.dims.ni):
-        #     for k in range(self.dims.dx):
-        #         self.Policy[i, k] = policy[i, k][jmax[i], range(self.dims.ns)]
 
     def lqapprox(self, s0, x0):
 

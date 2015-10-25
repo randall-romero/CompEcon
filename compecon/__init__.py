@@ -13,3 +13,4 @@ from .optimize import OP, MLE
 # from .interpolator import Interpolator
 from .dpmodel import DPmodel, DPoptions
 from .tools import tic, toc
+from .ddpmodel import DDPmodel

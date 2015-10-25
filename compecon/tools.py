@@ -321,3 +321,12 @@ def qzswitch(i, S, T, Q, Z):
        Z[:,i:i+2] = Z[:,i:i+2].dot(wz)
        Q[i:i+2] = xy.dot(Q[i:i+2])
 
+def ix(A):
+    """
+    Return the numpy ix_ indices to recreate array A, that is
+
+    A[ix(A)] = A
+
+    Useful to change the indices of a specific dimension
+    """
+    return list(np.ix_(*(np.arange(k) for k in A.shape)))
