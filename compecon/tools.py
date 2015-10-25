@@ -1,6 +1,10 @@
 from functools import reduce
 import numpy as np
+from scipy.linalg import qz
 import time
+
+
+
 
 def gridmake(*arrays):
     """
@@ -101,7 +105,6 @@ def discmoments(w, x):
     xavg = np.dot(x, w)
     xstd = np.sqrt(np.dot(x ** 2, w) - xavg ** 2)
     return xavg, xstd
-
 
 
 def jacobian(func, x, *args, **kwargs):
@@ -268,4 +271,53 @@ def getindex(s, S):
     return np.array([np.abs(S.T - k).sum(1).argmin() for k in s.T])
 
 
+def qzordered(A, B):
+    """
+    QZORDERED QZ decomposition ordered by the absolute value of the generalized eigenvalues
+    See QZ
+
+    Based on code by Pedro Oviedo & Chris Sims
+    """
+    n = A.shape[0]
+    S, T, Q, Z = qz(A, B)
+    Q = Q.T
+
+    i = 0
+    while i < n - 1:
+        if abs(T[i, i] * S[i+1, i+1]) > abs(S[i, i] * T[i+1, i+1]):
+            qzswitch(i,S, T, Q, Z)
+            if i > 0:
+                i -=1
+            else:
+                i += 1
+        else:
+            i += 1
+
+    return S, T, Q, Z
+
+
+def qzswitch(i, S, T, Q, Z):
+    a, b = S[i, i:i+2]
+    d, e = T[i, i:i+2]
+    c = S[i+1, i+1]
+    f = T[i+1, i+1]
+    wz = np.array([c*e - f*b, c*d - f*a])
+    n = np.sqrt(np.inner(wz, wz))
+
+    if n == 0:
+       return
+    else:
+       xy = np.array([b*d - e*a, c*d - f*a])
+       m = np.sqrt(np.inner(xy, xy))
+       wz /= n
+       xy /= m
+       wz = np.r_[np.atleast_2d(wz), np.atleast_2d([-wz[1], wz[0]])]
+       xy = np.r_[np.atleast_2d(xy), np.atleast_2d([-xy[1], xy[0]])]
+
+       S[i:i+2] = xy.dot(S[i:i+2])
+       T[i:i+2] = xy.dot(T[i:i+2])
+       S[:,i:i+2] = S[:,i:i+2].dot(wz)
+       T[:,i:i+2] = T[:,i:i+2].dot(wz)
+       Z[:,i:i+2] = Z[:,i:i+2].dot(wz)
+       Q[i:i+2] = xy.dot(Q[i:i+2])
 

@@ -1,6 +1,8 @@
 import copy
 import numpy as np
 from numpy.linalg import solve
+from scipy.sparse import issparse
+from scipy.sparse.linalg import spsolve
 from .tools import jacobian
 from compecon.tools import Options_Container
 import warnings
@@ -60,13 +62,13 @@ class NLPoptions(Options_Container):
         initi:      if True, use the identity matrix to initialize Jacobian,
                     if [False], a numerical Jacobian will be used
         transform:  either ['ssmooth'] or 'minmax', required for MC problems
-        print_iterations: print to screen if [True], quiet if False
+        print: print to screen if [True], quiet if False
         all_x:      whether to output the full solution sequence too [False]
     """
     description = 'Options for solving a NLP'
 
     def __init__(self, method='newton', maxit=100, maxsteps=10, tol=SQEPS,
-                 print_iterations=False, initb=None, initi=False, transform='ssmooth', all_x=False):
+                 print=False, initb=None, initi=False, transform='ssmooth', all_x=False):
         self.method = method
         self.maxit = maxit
         self.maxsteps = maxsteps
@@ -74,17 +76,17 @@ class NLPoptions(Options_Container):
         self.initb = initb
         self.initi = initi
         self.transform = transform
-        self.print_iterations = print_iterations
+        self.print = print
         self.all_x = all_x
 
     def print_header(self):
-        if self.print_iterations:
+        if self.print:
             print("Solving nonlinear equations by {}'s method".format(self.method.capitalize()))
             print('{:4}  {:4}  {:6}'.format('it', 'bstep', 'change'))
             print('-' * 20)
 
     def print_current_iteration(self, it, backstep, fnormnew):
-        if self.print_iterations:
+        if self.print:
             print('{:4}  {:4}  {:6.2e}'.format(it, backstep, fnormnew))
 
     def print_last_iteration(self, it):
@@ -143,7 +145,7 @@ class NLP(Options_Container):
             raise ValueError('Initial value is required to zero a NLP, none provided!')
 
         if type(self) in (MCP, LCP):
-            if self.opts.print_iterations:
+            if self.opts.print:
                 print('Using the %s transformation' % self.opts.transform.upper())
             self.x0 = self.transform_problem(self.x0)
 
@@ -169,16 +171,23 @@ class NLP(Options_Container):
         self.opts.print_header()
         for it in range(maxit):
             fx, J = self.f(x)
-            J = np.atleast_2d(J)
+            fx = fx.flatten()
+            if not issparse(J):  #with sparse matrices doesn't work nice
+                J = np.atleast_2d(J)
             fnorm = np.max(np.abs(fx))
             if fnorm < tol:
                 self.x, self.it = x, it
                 return x.copy()
-            dx = - np.real(solve(J, fx))
+            if issparse(J):
+                dx = - np.real(spsolve(J, fx))
+            else:
+                dx = - np.real(solve(J, fx))
+
             fnormold = np.inf
 
             for backstep in range(maxsteps):
                 fxnew = self.f(x + dx)[0]  # only function evaluation, not Jacobian
+                fxnew = fxnew.flatten()
                 fnormnew = np.max(np.abs(fxnew))
                 if fnormnew < fnorm:
                     break
@@ -213,7 +222,7 @@ class NLP(Options_Container):
         user_provides_jacobian = self._is_there_jacobian()
 
         fx = self.f(x)[0] if user_provides_jacobian else self.f(x)
-
+        fx = fx.flatten()
 
         Jinv = self.reset_inverse_jacobian(x)
 
@@ -230,6 +239,7 @@ class NLP(Options_Container):
 
             for backstep in range(maxsteps):
                 fxnew = self.f(x + dx)[0] if user_provides_jacobian else self.f(x + dx)
+                fxnew = fxnew.flatten()
                 fnormnew = np.max(np.abs(fxnew))
                 if fnormnew < fnorm:
                     break
@@ -427,16 +437,18 @@ class MCP(NLP):
 
         if self.opts.method is 'newton':  # return the Jacobian
             I = -np.identity(x.size)
-            J = np.atleast_2d(J)
-            if any(L):  # apply the Fischer + transform
+            if not issparse(J):
+                J = np.atleast_2d(J)
+
+            if np.any(L):  # apply the Fischer + transform
                 fx[L], J[:, L] = fischer(fx[L], da[L], J[:, L], I[:, L])
-            if any(U):  # apply the Fischer - transform
+            if np.any(U):  # apply the Fischer - transform
                 fx[U], J[:, U] = fischer(fx[U], db[U], J[:, U], I[:, U], False)
             return fx, J
         else:
-            if any(L):  # apply the Fischer + transform
+            if np.any(L):  # apply the Fischer + transform
                 fx[L] = fischer(fx[L], da[L])
-            if any(U):  # apply the Fischer - transform
+            if np.any(U):  # apply the Fischer - transform
                 fx[U] = fischer(fx[U], db[U], plus=False)
             return fx, None
 
@@ -449,12 +461,14 @@ class MCP(NLP):
         if type(fx) is tuple:
             fx, J = fx
 
-        fhat = np.minimum(np.maximum(fx, da), db)
+        fhat = np.fmin(np.fmax(fx, da), db)
         if self.opts.method is 'newton': # compute the Jacobian
-            J = np.atleast_2d(J)
+            if not issparse(J):
+                J = np.atleast_2d(J)
             Jhat = -np.identity(x.size)
             i = (fx > da) & (fx < db)
-            Jhat[i] = J[i]
+            if np.any(i):
+                Jhat[i] = J[i]
             return fhat, Jhat
         else:
             return fhat, None
