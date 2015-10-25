@@ -1,6 +1,6 @@
 __author__ = 'Randall'
 
-from demos.setup import np, plt, demofigure
+from demos.setup import np, plt, demo
 from compecon import DDPmodel
 from compecon.tools import gridmake
 
@@ -61,7 +61,7 @@ print(*('{:^8d} {:^8s}  {:^8s}  {:^8s}\n'.format(s, *X[x]) for s, x in zip(s1, x
 
 
 # Plot Value Function
-demofigure('Optimal Replacement Value', 'Age', 'Optimal Value (thousands)')
+demo.figure('Optimal Replacement Value', 'Age', 'Optimal Value (thousands)')
 plt.plot(s1, model.value.reshape((n1,n2)) / 1000)
 plt.legend(['Low','Med','Hi'])
 

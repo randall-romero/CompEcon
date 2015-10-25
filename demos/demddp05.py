@@ -1,6 +1,6 @@
 __author__ = 'Randall'
 
-from demos.setup import np, plt, demofigure
+from demos.setup import np, plt, demo
 from compecon import DDPmodel
 from compecon.tools import gridmake, getindex
 
@@ -49,11 +49,11 @@ model.solve()
 ## Analysis
 
 # Plot Optimal Policy
-demofigure('Optimal Irrigation Policy', 'Water Level', 'Irrigation', [-1, 31], [0, 6])
+demo.figure('Optimal Irrigation Policy', 'Water Level', 'Irrigation', [-1, 31], [0, 6])
 plt.plot(S, X[model.policy], '*')
 
 # Plot Value Function
-demofigure('Optimal Value Function', 'Water Level', 'Value')
+demo.figure('Optimal Value Function', 'Water Level', 'Value')
 plt.plot(S, model.value)
 
 # Simulate Model
@@ -63,13 +63,13 @@ t = np.arange(1 + nyrs)
 spath, xpath = model.simulate(sinit, nyrs)
 
 # Plot State Path
-demofigure('Optimal State Path', 'Year', 'Water Level')
+demo.figure('Optimal State Path', 'Year', 'Water Level')
 plt.plot(t, S[spath].mean(1))
 
 
 # Compute Steady-State Distribution of Water Level
 pi = model.markov()
-demofigure('Steady State Distribution', 'Water Level', 'Probability', [-1, 31], [0, 0.16])
+demo.figure('Steady State Distribution', 'Water Level', 'Probability', [-1, 31], [0, 0.16])
 plt.bar(S, pi, 1)
 
 plt.show()

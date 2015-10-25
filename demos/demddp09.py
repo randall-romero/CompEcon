@@ -1,6 +1,6 @@
 __author__ = 'Randall'
 
-from demos.setup import np, plt, demofigure
+from demos.setup import np, plt, demo
 from compecon import DDPmodel
 
 
@@ -38,12 +38,12 @@ model = DDPmodel(f, g, delta)
 model.solve()
 
 # Plot Optimal Policy
-demofigure('Optimal Replacement', 'Age', 'Optimal Decision', [0, n + 1], [-0.5, 1.5])
+demo.figure('Optimal Replacement', 'Age', 'Optimal Decision', [0, n + 1], [-0.5, 1.5])
 plt.plot(S, model.policy, '*', markersize=15)
 plt.yticks((0, 1), X)
 
 # Plot Value Function
-demofigure('Optimal Value in Cow Replacement', 'Age', 'Value (thousands)')
+demo.figure('Optimal Value in Cow Replacement', 'Age', 'Value (thousands)')
 plt.plot(S, model.value / 1000)
 
 plt.show()

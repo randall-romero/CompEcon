@@ -1,7 +1,7 @@
 __author__ = 'Randall'
 
 
-from demos.setup import np, plt, demofigure
+from demos.setup import np, plt, demo.figure
 from compecon import DDPmodel
 from compecon.tools import gridmake, getindex
 
@@ -59,11 +59,11 @@ model.solve()
 lims = [-0.5, emax + 0.5], [0, 1]
 
 # Plot Survial Probabilities, Period 0
-demofigure('Survival Probability (Period 0)', 'Stock of Energy', 'Probability', *lims)
+demo.figure('Survival Probability (Period 0)', 'Stock of Energy', 'Probability', *lims)
 plt.bar(S, model.value[0], 1)
 
 # Plot Survial Probabilities, Period 5
-demofigure('Survival Probability (Period 5)', 'Stock of Energy', 'Probability', *lims)
+demo.figure('Survival Probability (Period 5)', 'Stock of Energy', 'Probability', *lims)
 plt.bar(S, model.value[5], 1)
 
 plt.show()

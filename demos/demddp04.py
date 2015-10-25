@@ -1,6 +1,6 @@
 __author__ = 'Randall'
 
-from demos.setup import np, plt, demofigure
+from demos.setup import np, plt, demo
 from compecon import DDPmodel
 
 # DEMDDP04 Binomial American put option model
@@ -47,11 +47,11 @@ model.solve()
 # Plot Optimal Exercise Boundary
 i, j = np.where(np.diff(model.policy[:-1], 1))
 temp = (i * tau)[::-1]
-demofigure('Put Option Optimal Exercise Boundary', 'Time to Maturity', 'Asset Price')
+demo.figure('Put Option Optimal Exercise Boundary', 'Time to Maturity', 'Asset Price')
 plt.plot(temp, price[j])
 
 # Plot Option Premium vs. Asset Price
-demofigure('Put Option Value', 'Asset Price', 'Premium', [0, 2 * strike])
+demo.figure('Put Option Value', 'Asset Price', 'Premium', [0, 2 * strike])
 plt.plot([0, strike],[strike, 0], 'k--', lw=2)
 plt.plot(price, model.value[0], lw=3)
 

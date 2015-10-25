@@ -1,7 +1,7 @@
 __author__ = 'Randall'
 
 
-from demos.setup import np, plt, demofigure
+from demos.setup import np, plt, demo
 from compecon import DDPmodel
 from compecon.tools import gridmake, getindex
 
@@ -49,12 +49,12 @@ model.solve()
 ## Analysis
 
 # Plot Optimal Policy
-demofigure('Optimal Harvest Policy', 'Stock', 'Harvest')
+demo.figure('Optimal Harvest Policy', 'Stock', 'Harvest')
 plt.plot(S,X[model.policy])
 
 
 # Plot Value Function
-demofigure('Optimal Value Function', 'Stock', 'Value')
+demo.figure('Optimal Value Function', 'Stock', 'Value')
 plt.plot(S,model.value)
 
 
@@ -64,11 +64,11 @@ t = np.arange(nyrs + 1)
 spath, xpath = model.simulate(n - 1, nyrs)
 
 # Plot State Path
-demofigure('Optimal State Path', 'Year', 'Stock')
+demo.figure('Optimal State Path', 'Year', 'Stock')
 plt.plot(t, S[spath])
 
 # Plot Optimal Transition Function
-demofigure('Optimal State Transition Function', 'S(t)', 'S(t+1)')
+demo.figure('Optimal State Transition Function', 'S(t)', 'S(t+1)')
 ii, jj = np.where(model.transition)
 plt.plot(S[ii], S[jj], S, S, '--')
 

@@ -1,7 +1,7 @@
 __author__ = 'Randall'
 
 
-from demos.setup import np, plt, demofigure
+from demos.setup import np, plt, demo
 from compecon import DDPmodel
 
 
@@ -45,11 +45,11 @@ t = np.arange(1 + nyrs)
 spath, xpath = model.simulate(sinit, nyrs)
 
 # Plot Optimal Value
-demofigure('Optimal Value Function', 'Age of Machine', 'Value')
+demo.figure('Optimal Value Function', 'Age of Machine', 'Value')
 plt.plot(S, model.value)
 
 # Plot State Path
-demofigure('Optimal State Path', 'Year', 'Age of Machine', [0, 12])
+demo.figure('Optimal State Path', 'Year', 'Age of Machine', [0, 12])
 plt.plot(t, S[spath])
 
 plt.show()

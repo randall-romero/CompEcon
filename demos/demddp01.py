@@ -1,7 +1,7 @@
 __author__ = 'Randall'
 
 
-from demos.setup import np, plt, demofigure
+from demos.setup import np, plt, demo
 from compecon import DDPmodel
 from compecon.tools import getindex
 
@@ -47,15 +47,15 @@ t = np.arange(nyrs + 1)
 spath, xpath = model.simulate(sinit, nyrs)
 
 # Plot Optimal Policy
-demofigure('Optimal Extraction Policy', 'Stock', 'Extraction')
+demo.figure('Optimal Extraction Policy', 'Stock', 'Extraction')
 plt.plot(S, X[model.policy])
 
 # Plot Value Function
-demofigure('Optimal Value Function', 'Stock', 'Value')
+demo.figure('Optimal Value Function', 'Stock', 'Value')
 plt.plot(S, model.value)
 
 # Plot State Path
-demofigure('Optimal State Path', 'Year', 'Stock')
+demo.figure('Optimal State Path', 'Year', 'Stock')
 plt.plot(t, S[spath])
 
 plt.show()

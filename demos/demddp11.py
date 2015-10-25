@@ -1,6 +1,6 @@
 __author__ = 'Randall'
 
-from demos.setup import np, plt, demofigure
+from demos.setup import np, plt, demo
 from compecon import DDPmodel
 from compecon.tools import getindex
 
@@ -43,15 +43,15 @@ model = DDPmodel(f, g, delta).solve()
 ## Analysis
 
 # Plot Optimal Policy
-demofigure('Optimal Investment', 'Wealth', 'Investment')
+demo.figure('Optimal Investment', 'Wealth', 'Investment')
 plt.plot(S, X[model.policy] * S)
 
 # Plot Optimal Policy
-demofigure('Optimal Consumption', 'Wealth', 'Consumption')
+demo.figure('Optimal Consumption', 'Wealth', 'Consumption')
 plt.plot(S, S - X[model.policy] * S)
 
 # Plot Value Function
-demofigure('Optimal Value Function', 'Wealth', 'Value')
+demo.figure('Optimal Value Function', 'Wealth', 'Value')
 plt.plot(S, model.value)
 
 
@@ -61,7 +61,7 @@ t = np.arange(0, nyrs + 1)
 st, xt = model.simulate(smin, nyrs)
 
 # Plot State Path
-demofigure('Optimal State Path', 'Year', 'Wealth')
+demo.figure('Optimal State Path', 'Year', 'Wealth')
 plt.plot(t, S[st])
 
 # Compute Steady State Distribution and Mean

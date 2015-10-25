@@ -1,6 +1,6 @@
 __author__ = 'Randall'
 
-from demos.setup import np, plt, demofigure
+from demos.setup import np, plt, demo
 from compecon import DDPmodel
 from compecon.tools import gridmake, getindex
 
@@ -52,11 +52,11 @@ t = np.arange(nyrs + 1)
 spath, xpath = model.simulate(sinit, nyrs)
 
 # Plot State Path (Age)
-demofigure('Optimal State Path', 'Year', 'Age of Asset', [0, 12])
+demo.figure('Optimal State Path', 'Year', 'Age of Asset', [0, 12])
 plt.plot(t, S1[spath])
 
 # Plot State Path (Servicings)
-demofigure('Optimal State Path', 'Year', 'Number of Servicings', [0, 12], [0, 2.25])
+demo.figure('Optimal State Path', 'Year', 'Number of Servicings', [0, 12], [0, 2.25])
 plt.plot(t, S2[spath])
 
 plt.show()
