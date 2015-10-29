@@ -3,7 +3,7 @@ import numpy as np
 from scipy.linalg import qz
 import time
 
-
+from scipy.sparse import identity
 
 
 def gridmake(*arrays):
@@ -33,10 +33,17 @@ def gridmake(*arrays):
            [ 4,  4,  5,  5,  4,  4,  5,  5,  4,  4,  5,  5],
            [10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20]])
     """
+    if len(arrays) == 1:
+        return arrays[0][0]
+
     arrays = np.atleast_2d(*arrays)
     n = len(arrays)
     idx = np.indices([a.shape[1] for a in arrays]).reshape([n, -1])
     return np.vstack(arrays[k][:, idx[k]] for k in range(n))
+
+
+def indices(*args):
+    return np.array([a.flatten() for a in np.indices(args)])
 
 
 def ckron(*arrays, invert=False):
@@ -197,7 +204,7 @@ tic = lambda: time.time()
 toc = lambda t: time.time() - t
 
 
-class Options_Container(object):
+class Options_Container(dict):
     """ A container for groups of attributes
 
     Used to overwrite the _getitem_ and the _setitem__ methods to handle several items at once
@@ -330,3 +337,55 @@ def ix(A):
     Useful to change the indices of a specific dimension
     """
     return list(np.ix_(*(np.arange(k) for k in A.shape)))
+
+
+
+def markov(p):
+    # taken from Mario's compecon
+
+    # Error Checking to ensure P is a valid stochastic matrix
+    assert p.ndim == 2, 'Transition matrix does not have two dimensions'
+    n, n2 = p.shape
+    assert n == n2, 'Transition matrix is not square'
+    assert np.all(p >= 0), 'Transition matrix contains negative elements'
+    assert np.all(np.abs(p.sum(1) - 1) < 1e-12), 'Rows of transition matrix do not sum to 1'
+
+    spones = lambda A: (A != 0).astype(int)
+
+    # Determine accessibility from i to j
+    f = np.empty_like(p)
+    for j in range(n):
+        dr = 1
+        r = spones(p[:,j])  # a vector of ones where p(i,j)~=0
+        while np.any(dr):
+            dr = r
+            r = spones(p.dot(r) + r)
+            dr = r - dr
+            f[:, j] = r
+
+    # Determine membership in recurrence classes
+    ind = np.zeros_like(p)
+    numrec = -1  # number of recurrence classes
+    for i in range(n):
+        if np.all(ind[i] == 0):
+            j = f[i]  # states accessible from i
+            if np.all((f[:, i].T * j) == j):  # are all accessible states communicating states?
+                j = np.where(j)[0]           # members in class with state i
+                k = j.size                  # number of members
+                if k:
+                    numrec += 1
+                    ind[j, numrec] = 1
+
+    ind = ind[:, :numrec + 1]        # ind(i,j)=1 if state i is in class j
+
+    # Determine recurrence class invariant probabilities
+    q = np.zeros((n, numrec + 1))
+    for j in range(1 + numrec):
+        k = np.where(ind[:, j])[0]
+        nk = k.size
+        k0, k1 = np.ix_(k, k)
+        A = np.asarray(np.r_[np.ones((1, nk)), identity(nk) - p[k0, k1].T])
+        B = np.asarray(np.r_[np.ones((1, 1)), np.zeros((nk, 1))])
+        q[k, j] = np.linalg.lstsq(A, B)[0].flatten()
+
+    return q  # todo: Mario's code has a second output argument

@@ -1,7 +1,7 @@
 __author__ = 'Randall'
 import numpy as np
 import scipy as sp
-from compecon.tools import tic, toc, Options_Container
+from compecon.tools import tic, toc, Options_Container, markov
 from scipy.sparse import csc_matrix, diags, tril, identity
 import warnings
 import matplotlib.pyplot as plt
@@ -219,54 +219,8 @@ class DDPmodel(object):
         return spath.squeeze(), xpath.squeeze()
 
     def markov(self):
-        p = self.transition
+        return markov(self.transition)
 
-        # Error Checking to ensure P is a valid stochastic matrix
-        assert p.ndim == 2, 'Transition matrix does not have two dimensions'
-        n, n2 = p.shape
-        assert n == n2, 'Transition matrix is not square'
-        assert np.all(p >= 0), 'Transition matrix contains negative elements'
-        assert np.all(np.abs(p.sum(1) - 1) < 1e-12), 'Rows of transition matrix do not sum to 1'
-
-        spones = lambda A: (A != 0).astype(int)
-
-        # Determine accessibility from i to j
-        f = np.empty_like(p)
-        for j in range(n):
-            dr = 1
-            r = spones(p[:,j])  # a vector of ones where p(i,j)~=0
-            while np.any(dr):
-                dr = r
-                r = spones(p.dot(r) + r)
-                dr = r - dr
-                f[:, j] = r
-
-        # Determine membership in recurrence classes
-        ind = np.zeros_like(p)
-        numrec = -1  # number of recurrence classes
-        for i in range(n):
-            if np.all(ind[i] == 0):
-                j = f[i]  # states accessible from i
-                if np.all((f[:, i].T * j) == j):  # are all accessible states communicating states?
-                    j = np.where(j)[0]           # members in class with state i
-                    k = j.size                  # number of members
-                    if k:
-                        numrec += 1
-                        ind[j, numrec] = 1
-
-        ind = ind[:, :numrec + 1]        # ind(i,j)=1 if state i is in class j
-
-        # Determine recurrence class invariant probabilities
-        q = np.zeros((n, numrec + 1))
-        for j in range(1 + numrec):
-            k = np.where(ind[:, j])[0]
-            nk = k.size
-            k0, k1 = np.ix_(k, k)
-            A = np.asarray(np.r_[np.ones((1, nk)), identity(nk) - p[k0, k1].T])
-            B = np.asarray(np.r_[np.ones((1, 1)), np.zeros((nk, 1))])
-            q[k, j] = np.linalg.lstsq(A, B)[0].flatten()
-
-        return q  # todo: Mario's code has a second output argument
 
     def __repr__(self):
         txt = 'A ' + ('deterministic' if self._is_deterministic else 'stochastic')
