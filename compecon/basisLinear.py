@@ -5,7 +5,7 @@ from compecon import Basis
 __author__ = 'Randall'
 # TODO: complete this class
 # todo: compare performance of csr_matrix and csc_matrix to deal with sparse interpolation operators
-
+# fixme: review interpolation matrix
 
 class BasisLinear(Basis):
     def __init__(self, *args, y=None, c=None, f=None, s=None, l=None, **kwargs):
@@ -23,7 +23,7 @@ class BasisLinear(Basis):
                                  "each of them containing the breaks for one dimension.")
         elif nargs == 3:
             n, a, b = np.broadcast_arrays(*np.atleast_1d(*args))
-            breaks = [np.linspace(aa, bb, nn) for aa, bb, nn in zip(a, b, n)]
+            breaks = [aa + (bb - aa) * np.arange(nn) / (nn - 1) for aa, bb, nn in zip(a, b, n)]  # Warning: using linspace introduces rounding error
             kwargs['nodetype'] = 'canonical'
         else:
             txt = 'Either 1 or 3 positional arguments must be provided\n'
@@ -154,7 +154,7 @@ class BasisLinear(Basis):
         # (if x=b, use the index of the next to last breakpoint).
 
         if self.opts.nodetype is 'canonical':
-            ind = np.fix((x - a) * ((n - 1) / (b - a))) + 1
+            ind = np.fix((x - a) * ((n - 1) / (b - a))).astype(int)
             np.maximum(ind, 0, ind)
             np.minimum(ind, n - 2, ind)
         else:
