@@ -96,11 +96,11 @@ plt.legend(['Idle', 'Active'], loc='lower right')
 
 # Simulate Model
 # rand('seed',0.945)
-nper = 51 
+T = 50
 nrep = 50000
 pinit = pbar * np.ones((1, nrep))
 iinit = 1
-data = model.simulate(nper, pinit, iinit, seed=945)
+data = model.simulate(T, pinit, iinit, seed=945)
 
 
 # Print Ergodic Moments
@@ -116,7 +116,7 @@ print(f.format('Activity', (data['i'] == 'active').std()))
 # Plot Simulated and Expected Continuous State Path
 subdata = data[data['_rep'] < 3][['time', 'profit', '_rep']]
 subdata.pivot(index='time', columns='_rep', values='profit').plot(legend=False, lw=1)
-plt.hlines(data['profit'].mean(), 0, nper)
+plt.hlines(data['profit'].mean(), 0, T)
 plt.title('Simulated and Expected Profit Contribution')
 plt.xlabel('Period')
 plt.ylabel('Profit Contribution')

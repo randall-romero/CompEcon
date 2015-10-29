@@ -4,9 +4,7 @@ __author__ = 'Randall Romero'
 from compecon import DPmodel, BasisSpline
 from demos.setup import np, plt, demo
 
-"""
 
-function demdp01
 
 ## DEMDP01 Timber Harvesting Model - Cubic Spline Approximation
 #
@@ -24,7 +22,7 @@ function demdp01
 #     gamma   biomass growth parameter
 #     delta   discount factor
 
-"""
+
 
 ## FORMULATION
 
@@ -87,9 +85,9 @@ plt.plot(sr, 100 * resid.T / vr.max(0).T)
 ## SIMULATION
 
 # Simulate Model
-nper = 50      # Number of periods simulated
+T = 50      # Number of periods simulated
 sinit = 0.0      # Initial value of continuous state
-data = model.simulate(nper, sinit)
+data = model.simulate(T, sinit)
 
 # Compute Optimal Rotation Cycle
 print('Optimal Rotation Cycle = ', np.min(data.time[data.j == 'clear cut']))

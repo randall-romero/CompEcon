@@ -113,11 +113,11 @@ plt.legend(model.labels.i, loc='upper right')
 
 # Simulate Model
 
-nper = 51
+T = 50
 nrep = 10000
 sinit = np.full(nrep, pbar)
 iinit = 0
-data = model.simulate(nper,sinit,iinit, seed=945)
+data = model.simulate(T,sinit,iinit, seed=945)
 
 # Print Ergodic Moments
 frm = '\t{:<10s} = {:5.2f}'
@@ -134,7 +134,7 @@ print(frm.format('Age', data.i.std()))
 
 subdata = data[data['_rep'] < 3][['time', 'unit profit', '_rep']]
 subdata.pivot(index='time', columns='_rep', values='unit profit').plot(legend=False, lw=1)
-plt.hlines(data['unit profit'].mean(), 0, nper, lw=5)
+plt.hlines(data['unit profit'].mean(), 0, T, lw=5)
 plt.title('Simulated and Expected Price')
 plt.ylabel('Net Unit Profit')
 plt.xlabel('Period')
