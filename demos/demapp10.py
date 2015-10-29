@@ -1,4 +1,4 @@
-from demos.setup import np, plt, demofigure
+from demos.setup import np, plt, demo
 from compecon import BasisChebyshev, NLP
 from compecon.tools import nodeunif
 
@@ -29,12 +29,12 @@ pplot = nodeunif(nplot, a, b)
 rplot = resid(Q.c, Q, pplot)
 
 # Plot effective supply
-demofigure("Monopolist's Effective Supply Curve", 'Quantity', 'Price')
+demo.figure("Monopolist's Effective Supply Curve", 'Quantity', 'Price')
 plt.plot(Q(pplot), pplot)
 
 
 # Plot residual
-demofigure('Functional Equation Residual', 'Price', 'Residual')
+demo.figure('Functional Equation Residual', 'Price', 'Residual')
 plt.plot(pplot, np.zeros_like(pplot), 'k--')
 plt.plot(pplot, rplot)
 

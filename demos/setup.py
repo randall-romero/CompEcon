@@ -7,6 +7,11 @@ import seaborn as sns
 sns.set_style('dark')
 np.set_printoptions(4, linewidth=120)
 
+
+from warnings import simplefilter
+simplefilter('ignore')
+
+
 from matplotlib import rcParams
 rcParams['lines.linewidth'] = 2.5
 rcParams['figure.subplot.hspace'] = 0.25

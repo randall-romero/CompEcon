@@ -1,4 +1,4 @@
-from demos.setup import np, plt, demofigure
+from demos.setup import np, plt, demo
 from compecon import BasisChebyshev, BasisSpline
 """
 DEMAPP01 Approximating functions on R
@@ -57,7 +57,7 @@ yapp = F(xgrid)                     # approximant values at grid nodes
 yact = f(xgrid)                     # actual function values at grid points
 
 
-demofigure('Chebychev Approximation Error for exp(-x)', 'x', 'Error')
+demo.figure('Chebychev Approximation Error for exp(-x)', 'x', 'Error')
 plt.plot(xgrid, yapp - yact)
 plt.plot(xgrid, np.zeros(ngrid), 'k--', linewidth=2)
 
@@ -76,7 +76,7 @@ n = 21                         # order of approximation
 S = BasisSpline(n, a, b, f=f)  # define basis
 yapp = S(xgrid)                # approximant values at grid nodes
 
-demofigure('Cubic Spline Approximation Error for exp(-x)','x', 'Error')
+demo.figure('Cubic Spline Approximation Error for exp(-x)','x', 'Error')
 plt.plot(xgrid, yapp - yact)
 plt.plot(xgrid, np.zeros(ngrid), 'k--', linewidth=2)
 
@@ -88,7 +88,7 @@ plt.plot(xgrid, np.zeros(ngrid), 'k--', linewidth=2)
 n = 31                             # order of approximation
 L = BasisSpline(n, a, b, k=1, f=f) # define basis functions
 yapp = L(xgrid)                    # fitted values at grid nodes
-demofigure('Linear Spline Approximation Error for exp(-x)', 'x', 'Error')   # plot approximation error
+demo.figure('Linear Spline Approximation Error for exp(-x)', 'x', 'Error')   # plot approximation error
 plt.plot(xgrid, yapp - yact)
 plt.plot(xgrid, np.zeros(ngrid), 'k--', linewidth=2)
 

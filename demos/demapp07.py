@@ -1,4 +1,4 @@
-from demos.setup import np, plt, demofigure
+from demos.setup import np, plt, demo
 from compecon import BasisChebyshev, NLP
 from compecon.tools import nodeunif
 
@@ -42,7 +42,7 @@ Q.c = cournot.broyden()
 pplot = nodeunif(501, a, b)
 splot = Q(pplot)
 dplot = pplot ** -eta
-demofigure('Cournot Effective Firm Supply Function', 'Quantity', 'Price', [0, 4], [0.5, 2])
+demo.figure('Cournot Effective Firm Supply Function', 'Quantity', 'Price', [0, 4], [0.5, 2])
 plt.legend(('Supply','Demand'))
 plt.plot(5 * splot, pplot, dplot, pplot)
 
@@ -50,14 +50,14 @@ plt.plot(5 * splot, pplot, dplot, pplot)
 
 # Plot residual
 rplot = resid(Q.c, Q, pplot, alpha, eta)
-demofigure('Residual Function for Cournot Problem', 'Quantity', 'Residual')
+demo.figure('Residual Function for Cournot Problem', 'Quantity', 'Residual')
 plt.plot(pplot, np.zeros_like(pplot), 'k--', lw=2)
 plt.plot(pplot, rplot)
 
 
 # Plot demand and effective supply for m=1,3,5,10,15,20 firms
 m = np.array([1, 3, 5, 10, 15, 20])
-demofigure('Industry Supply and Demand Functions', 'Quantity', 'Price', [0, 13])
+demo.figure('Industry Supply and Demand Functions', 'Quantity', 'Price', [0, 13])
 plt.plot(np.outer(splot, m), pplot, dplot, pplot)
 plt.legend(['m=1', 'm=3', 'm=5', 'm=10', 'm=15', 'm=20'])
 
@@ -70,7 +70,7 @@ for i in range(50):
     dp /= 2
     pp = pp - np.sign(Q(pp) * m - pp ** (-eta)) * dp
 
-demofigure('Cournot Equilibrium Price as Function of Industry Size', 'Number of Firms', 'Price')
+demo.figure('Cournot Equilibrium Price as Function of Industry Size', 'Number of Firms', 'Price')
 plt.plot(m, pp)
 
 plt.show()

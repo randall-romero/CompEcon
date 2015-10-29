@@ -1,4 +1,4 @@
-from demos.setup import np, plt, demofigure
+from demos.setup import np, plt, demo
 from compecon import BasisChebyshev, NLP
 from compecon.tools import nodeunif
 
@@ -31,11 +31,11 @@ x = nodeunif(n, a, b)
 r = resid(f.c, f, x)
 
 # Plot function inverse
-demofigure('Implicit Function', 'x', 'f(x)')
+demo.figure('Implicit Function', 'x', 'f(x)')
 plt.plot(x, f(x))
 
 # Plot residual
-demofigure('Functional Equation Residual', 'x', 'Residual')
+demo.figure('Functional Equation Residual', 'x', 'Residual')
 plt.plot(x, np.zeros_like(x), 'k--')
 plt.plot(x, r)
 

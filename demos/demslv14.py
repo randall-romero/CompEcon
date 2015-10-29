@@ -58,7 +58,7 @@ Market = MCP(market,  a, b, x0, *params)
 # In[5]:
 
 
-x = Market.zero(print_iterations=True)
+x = Market.zero(print=True)
 
 print('Function value at solution\n\t', Market.original(x))
 print('Lower bound is binding\n\t', Market.a_is_binding)
@@ -82,7 +82,7 @@ print('Net exports =\n', quantities.sum(0) - quantities.sum(1))
 # A quota is imposed
 Market.b[3] = 2.0
 Market.hasUpperBound[3] = True
-quantities = Market.zero(print_iterations=False).reshape(3, 3)
+quantities = Market.zero(print=False).reshape(3, 3)
 prices = as_ + bs * quantities.sum(0)
 
 print('=' * 40 + '\nEQUILIBRIUM WITH QUOTA\n' + '-'*40 )

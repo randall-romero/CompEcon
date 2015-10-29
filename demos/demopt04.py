@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 ''' Set up the problem '''
 x0 = [1, 0]
 banana = OP(lambda x: -100 * (x[1] - x[0] ** 2)**2 - (1 - x[0]) ** 2,
-            x0, maxit=250, print_iterations=True, all_x=True)
+            x0, maxit=250, print=True, all_x=True)
 
 
 ''' Plots options '''
