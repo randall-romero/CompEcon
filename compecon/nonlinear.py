@@ -98,7 +98,7 @@ class NLP(Options_Container):
     """
             x0:         initial value for x (solution guess)
     """
-    def __init__(self, f, x0=None, *args, **kwargs):
+    def __init__(self, f, x0=None, **kwargs):
         self.x0 = x0
         self.x = None # last solution found
         self._x_list = list() # last sequence of solutions
@@ -106,7 +106,7 @@ class NLP(Options_Container):
         self.it = -1  # iterations needed in last solution (without backsteps)
 
         if callable(f):
-                self.f = lambda x: f(x, *args)
+                self.f = f  #lambda x: f(x, *args)
         else:
             raise ValueError('First argument to NLP must be a function')
 
@@ -399,6 +399,8 @@ class NLP(Options_Container):
         return None
 
     def zero(self, x0=None, **kwargs):
+        if x0 is not None:
+            self.x0 = x0
         self.opts[kwargs.keys()] = kwargs.values()
         if self._is_there_jacobian() and self.opts.method == 'newton':
             return self.newton(x0, **kwargs)
@@ -413,13 +415,13 @@ class NLP(Options_Container):
 
 class MCP(NLP):
 
-    def __init__(self, f, a, b, x0=None, *args, **kwargs):
+    def __init__(self, f, a, b, x0=None, **kwargs):
         a, b = np.atleast_1d(a, b)
         a, b = a.astype(float), b.astype(float)
         if x0 is None:
             x0 = (a + b) / 2
 
-        super().__init__(f, x0, *args, **kwargs)
+        super().__init__(f, x0, **kwargs)
         self.islinear = False
         self.a, self.b = a, b
         self.hasLowerBound = np.isfinite(a)
