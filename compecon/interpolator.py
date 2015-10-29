@@ -100,9 +100,9 @@
 #         return self.B.N
 #
 #     @property
-#     def M(self):
+#     def growth_model(self):
 #         """  :return: number of polynomials """
-#         return self.B.M
+#         return self.B.growth_model
 #
 #     @property
 #     def x(self):
@@ -178,8 +178,8 @@
 #     @c.setter
 #     def c(self, val):
 #         val = np.atleast_2d(np.asarray(val))
-#         if val.shape[-1] != self.M:
-#             raise ValueError('c must be an array with {} elements in its last dimension.'.format(self.M))
+#         if val.shape[-1] != self.growth_model:
+#             raise ValueError('c must be an array with {} elements in its last dimension.'.format(self.growth_model))
 #         self._c = val
 #         self._cIsOutdated = False
 #         self._yIsOutdated = True
