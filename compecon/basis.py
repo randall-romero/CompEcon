@@ -33,7 +33,7 @@ class Basis(object):
         self._PhiT = None
 
         ''' add data '''
-        nfunckw = sum([z is not None for z in [y, c, f, s]])
+        nfunckw = sum([z is not None for z in [y, c, f, s, l]])
 
         assert nfunckw < 2, 'To specify the function, only one keyword from [y, c, f, s] should be used.'
 
@@ -68,6 +68,8 @@ class Basis(object):
         elif y is not None:
             y = np.atleast_2d(y)
         elif l is not None:
+            if isinstance(l[0], str):
+                l = [l]
             s = [len(a) for a in l]  # assumes that l is a list of list or tuples
             s = np.r_[np.atleast_1d(s), self.N]
             y = np.zeros(s)
