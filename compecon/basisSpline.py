@@ -5,10 +5,10 @@ from .basis import Basis
 __author__ = 'Randall'
 # TODO: complete this class
 # todo: compare performance of csr_matrix and csc_matrix to deal with sparse interpolation operators
-
+# fixme: interpolation is 25 slower than in matlab when 2 dimensions!! 2x slower with only one
 
 class BasisSpline(Basis):
-    def __init__(self, *args, k=3, y=None, c=None, f=None, s=None, l=None, **kwargs):
+    def __init__(self, *args, k=3, **kwargs):
 
         nargs = len(args)
         if nargs == 1:

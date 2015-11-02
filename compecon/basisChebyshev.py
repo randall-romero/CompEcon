@@ -10,7 +10,7 @@ __author__ = 'Randall'
 
 
 class BasisChebyshev(Basis):
-    def __init__(self, n, a, b, y=None, c=None, f=None, s=None, l=None, **kwargs):
+    def __init__(self, n, a, b, **kwargs):
         """
         Creates an instance of a BasisChebyshev object
 
@@ -22,7 +22,7 @@ class BasisChebyshev(Basis):
         """
 
         kwargs['basistype'] = 'chebyshev'
-        super().__init__(n, a, b, y, c, f, s, l, **kwargs)
+        super().__init__(n, a, b, **kwargs)
         self._set_nodes()
 
     def _set_nodes(self):

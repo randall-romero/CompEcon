@@ -11,11 +11,58 @@ __author__ = 'Randall'
 
 
 class Basis(object):
-    """
-      A multivariate Phi basis
+    """ A class for function interpolation.
+
+    The CompEcon toolbox includes the classes BasisChebyshev, BasisSpline, and BasisLinear for function interpolation.
+    All of them inherit methods from this class to deal with common functionality.
+
+    Attributes:
+        d (int): Number of dimensions of the basis space.
+        n (numpy array): Number of nodes for each dimension (d-array).
+        a (numpy array): Lower bounds for each dimension (d-array).
+        b (numpy array): Upper bound for each dimension (d-array).
+        N (int): Total number of nodes.
+        M (int): Total number of polynomials.
+        nodes (numpy array): Basis nodes (d.N array).
+        x (numpy array): Same as nodes.
+        y (numpy array):  Value of interpolated function(s) at basis nodes (s0...sk.N array).
+        c (numpy array):  Coefficients of interpolated function(s) at basis nodes (s0...sk.M array).
+        shape (tuple): Dimensions of interpolated function, i.e. (s0, s1, ..., sk).
+        shape_N (tuple): Shape of y. Same as shape, N.
+        size (int): Total number of interpolated functions, i.e. s0 x ... x sk.
+        ndim (int): Number of dimension of interpolated functions, i.e.  k+1.
+        opts (BasisOptions): Options for basis (see BasisOptions class for details).
+        _diff_operators (list): Operators to differentiate/integrate (a list of d dictionaries).
+        _Phi (numpy array): Interpolation array (basis functions evaluated at nodes, N.M array).
+        _PhiT (numpy array): Transpose of _Phi (stored to updated y given c).
+        _PhiInvT (numpy array): Inverse of _PhiT (stored to update c given y).
+        _cIsOutdated (numpy array): Boolean array indicating which coefficients are outdated (following a change in y).
+        _yIsOutdated (numpy array): Boolean array indicating which function values are outdated (following a change in c).
+
+
+    Methods:
+        Phi: Computes interpolation matrix at arbitrary values.
+        plot: Plots interpolation basis functions.
+        copy: Returns a shallow copy of a Basis instance.
+        duplicate: Similar to copy, but allows to specify new functions to be interpolated.
+        update_y: Update function values (called after changing c).
+        update_c: Update interpolation coefficients (called after changing y).
+        _phi1d: Computes interpolation matrix for a given basis dimension.
+        _diff: Returns a specified differentiation operator.
+        _update_diff_operators: Compute differentiation operators, storing them in _diff_operators.
+        _set_function_values: Sets values of y and c attributes.
+        _expand_nodes: Compute the nodes grid (required when d > 1).
+        _lookup: find nearest node to given point (required by spline and linear bases).
+        __init__: Return new instance of Basis. Should be called directly by Basis subclasses only.
+        __repr__: String representation of a Basis contents.
+        __getitem__: Return a copy of Basis for specified item.
+        __setitem__: Modify the y values for a speficied item.
+        __call__: Evaluate the interpolated function at arbitrary values.
+
+
     """
 
-    def __init__(self, n, a, b, y, c, f, s, l, **kwargs):
+    def __init__(self, n, a, b, **kwargs):
         n, a, b = np.broadcast_arrays(*np.atleast_1d(n, a, b))
         assert np.all(n > 2), 'n must be at least 3'
         assert np.all(a < b), 'lower bound must be less than upper bound'
@@ -32,15 +79,6 @@ class Basis(object):
         self._diff_operators = [dict() for h in range(self.d)]
         self._PhiT = None
 
-        ''' add data '''
-        nfunckw = sum([z is not None for z in [y, c, f, s, l]])
-
-        assert nfunckw < 2, 'To specify the function, only one keyword from [y, c, f, s] should be used.'
-
-        if nfunckw == 0:
-            s = 1
-
-        self._initial_func = {'f': f, 's': s, 'c': c, 'y': y, 'l': l}
 
 
     ''' This methods are declared here, but implemented in children classes '''
@@ -56,7 +94,7 @@ class Basis(object):
 
     def _set_function_values(self):
 
-        y, s, f, c, l = [self._initial_func[k] for k in ['y', 's', 'f', 'c', 'l']]
+        y, s, f, c, l = self.opts['y', 's', 'f', 'c', 'l']
 
         y_provided = True
 
@@ -89,7 +127,7 @@ class Basis(object):
         else:
             self.c = c
 
-        self._initial_func = None
+        self.opts.clear_data()
 
     def _expand_nodes(self):
         ix = self.opts.ix
@@ -340,7 +378,7 @@ class Basis(object):
             return self[:]
 
         other = self.copy()
-        other._initial_func = {'f':f, 's':s, 'c':c, 'y':y, 'l':l}
+        other.opts.add_data(y, c, f, s, l)
         other._set_function_values()
         return other
 
@@ -519,7 +557,8 @@ class BasisOptions(Options_Container):
                      'spline': ['tensor'],
                      'linear': ['tensor']}
 
-    def __init__(self, d, basistype=None, nodetype=None, method=None, qn=None, qp=None, labels=None, ylabels=None):
+    def __init__(self, d, basistype=None, nodetype=None, method=None, qn=None, qp=None, labels=None, ylabels=None,
+                 f=None, y=None, c=None, s=None, l=None):
         """
         Make default options dictionary
         :param int d: dimension of the basis
@@ -543,6 +582,27 @@ class BasisOptions(Options_Container):
         self.ylabels = ylabels
         self._ix = []
         self._ip = []
+        self.add_data(y, c, f, s, l)
+
+    def add_data(self, y, c, f, s, l):
+        nfunckw = sum([z is not None for z in [y, c, f, s, l]])
+        assert nfunckw < 2, 'To specify the function, only one keyword from [y, c, f, s] should be used.'
+        if nfunckw == 0:
+            s = 1
+
+        self.y = y
+        self.c = c
+        self.f = f
+        self.s = s
+        self.l = l
+
+
+    def clear_data(self):
+        self.y = None
+        self.c = None
+        self.f = None
+        self.s = None
+        self.l = None
 
     ''' Properties'''
     @property
