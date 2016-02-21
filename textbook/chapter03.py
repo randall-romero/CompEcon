@@ -44,7 +44,7 @@ print('q1 = ', x[0], '\nq2 = ', x[1])
 ''' Example page 43 '''
 # numbers don't match those of Table 3.1, but CompEcon2014' broyden gives same answer as this code
 example(43)
-opts = {'maxit': 30, 'all_x': True, 'print_iterations': True}
+opts = {'maxit': 30, 'all_x': True, 'print': True}
 
 g = NLP(lambda x: sqrt(x), 0.5)
 f = NLP(lambda x: (x - sqrt(x), 1 - 0.5/sqrt(x)), 0.5)
@@ -212,7 +212,7 @@ guess[6] = 0.5
 guess[7:] = 0.0
 
 market = NLP(equilibrium, guess)
-z = market.broyden(print_iterations=True)
+z = market.broyden(print=True)
 x, p, la = unpack_market(z)
 print('Consumption = \n', x)
 print('Prices =\n', p)
@@ -247,7 +247,7 @@ exercise('3.10')
 
 # SOMETHING IS WRONG WITH THIS ONE!
 
-# M = np.zeros((12, 12))
+# growth_model = np.zeros((12, 12))
 # q = np.zeros(12)
 #
 # ad = np.array([42, 54, 51])
@@ -256,7 +256,7 @@ exercise('3.10')
 # bs = np.array([1, 2, 1])
 #
 #
-# M = [
+# growth_model = [
 #     [-2,  0,  0, -2,  0,  0, -2,  0,  0, -1,  0,  0],
 #     [ 0,  0,  0,  0,  0,  0,  0,  0,  0, -1,  1,  0],
 #     [ 0,  0,  0,  0,  0,  0,  0,  0,  0, -1,  0,  1],
@@ -277,7 +277,7 @@ exercise('3.10')
 # b = a + np.inf
 # x0 = np.random.rand(12)
 #
-# trade = LCP(M, q, a, b, x0)
+# trade = LCP(growth_model, q, a, b, x0)
 # z = trade.zero()
 # x, p = np.split(z, [9])
 # x.shape = 3, 3

@@ -85,8 +85,8 @@ def dlogL(theta):
 
 
 a0 = 1.1 # initial guess
-estimator = NLP(dlogL, a0, print_iterations=True, all_x=True)
-# estimator = MCP(dlogL, 0, np.inf, a0, print_iterations=True, all_x=True)
+estimator = NLP(dlogL, a0, print=True, all_x=True)
+# estimator = MCP(dlogL, 0, np.inf, a0, print=True, all_x=True)
 a_hat = estimator.zero()
 print(estimator.x_sequence)
 print(b_hat(estimator.x_sequence))
@@ -158,11 +158,11 @@ def ss2(x, r, tau):
 x0 = np.array([0.51, 0.05, 0.12])
 
 hola = MCP(ss2, np.zeros(3), np.ones(3), x0, treasury_r[0], treasury_tau)
-x = hola.zero(print_iterations=True)
+x = hola.zero(print=True)
 print(x)
 
 objective = OP(ss, x0, treasury_r[0], treasury_tau)
-objective.qnewton(print_iterations=True, all_x=True)
+objective.qnewton(print=True, all_x=True)
 print(objective.x)
 print(objective.fnorm)
 
