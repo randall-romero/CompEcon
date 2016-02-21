@@ -7,14 +7,10 @@ __author__ = 'Randall'
 
 # DEMAPP07 Solve Cournot oligopoly model via collocation
 
+# Model parameters
+alpha = 1.0
+eta = 3.5
 
-# Residual function
-
-
-def resid(c, Q, p, alpha, eta):
-    Q.c = c
-    q = Q(p)
-    return p + q * ((-1 / eta) * p ** (eta+1)) - alpha * np.sqrt(q) - q ** 2
 
 
 # Approximation structure
@@ -25,18 +21,22 @@ c0 = np.zeros(n)
 c0[0] = 1
 
 Q = BasisChebyshev(n, a, b, c=c0)
+p = Q.nodes
 
 
+# Residual function
 
-# Model parameters
-alpha = 1.0
-eta = 3.5
+def resid(c):
+    Q.c = c
+    q = Q(p)
+    return p + q * ((-1 / eta) * p ** (eta+1)) - alpha * np.sqrt(q) - q ** 2
+
 
 
 # Solve for effective supply function
-p = Q.nodes
-cournot = NLP(resid, c0, Q, p, alpha, eta, tol=1e-12)
-Q.c = cournot.broyden()
+
+cournot = NLP(resid)
+Q.c = cournot.broyden(c0, tol=1e-12)
 
 # Plot demand and effective supply for m=5 firms
 pplot = nodeunif(501, a, b)
@@ -49,7 +49,8 @@ plt.plot(5 * splot, pplot, dplot, pplot)
 
 
 # Plot residual
-rplot = resid(Q.c, Q, pplot, alpha, eta)
+p = pplot
+rplot = resid(Q.c)
 demo.figure('Residual Function for Cournot Problem', 'Quantity', 'Residual')
 plt.plot(pplot, np.zeros_like(pplot), 'k--', lw=2)
 plt.plot(pplot, rplot)

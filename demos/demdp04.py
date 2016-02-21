@@ -47,8 +47,6 @@ q[1, 0, 1] = p0
 q[1, 1, 1] = p1
 q[:, :, 0] = 1 - q[:, :, 1]
 
-print(q)
-
 # Model Structure
 
 # Approximation Structure
@@ -78,8 +76,12 @@ model = DPmodel(basis, reward, transition,
 
 # Solve Bellman Equation
 
-model.solve(print=True)
-resid, sr, vr = model.residuals(10)
+S = model.solve(print=True)
+ni, nj = model.dims['ni', 'nj']
+vr = S['value_j'].reshape(ni, nj, -1)
+sr = S['wage'].reshape(ni, nj, -1)[0, 0]
+
+#resid, sr, vr = model.residuals(10)
 
 # Compute and Print Critical Action Wages
 
@@ -110,9 +112,18 @@ plt.legend(['Quit', 'Work'], loc='upper left')
 # Plot Residual
 
 demo.figure('Bellman Equation Residual', 'Wage', 'Percent Residual')
-plt.plot(sr, 100 * (resid / model.Value(sr)).T)
-plt.hlines(0, wmin, wmax,'k', '--')
-plt.legend(model.labels.j, loc='upper left')
+S['resid2'] = 100 * (S.resid / S.value)
+fig= demo.qplot('wage', 'resid2', 'i',
+           data=S,
+           geom='line',
+           main='Bellman Equation Residual',
+           xlab='Wage',
+           ylab='Percent Residual')
+fig.draw()
+
+resid = S['resid2'].reshape(ni, nj, -1)[0].T
+demo.figure('Bellman Equation Residual', 'Wage', 'Percent Residual')
+plt.plot(sr,resid)
 
 
 # SIMULATION

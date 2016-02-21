@@ -6,7 +6,7 @@ __author__ = 'Randall'
 
 # DEMAPP06 Chebychev and cubic spline derivative approximation errors
 
-# Function to be approximated
+# Function to be  approximated
 
 
 def f(x):

@@ -44,11 +44,12 @@ x3 = problem_as_fixpoint.fixpoint()
 t3 = 100 * toc(t0)
 n3 = np.linalg.norm(problem_as_fixpoint.fx - x3)
 
-''' Print table header '''
+
 print('Hundredths of seconds required to compute fixed-point of g(x)=sqrt(x)')
 print('using Newton, Broyden, and function iteration methods, starting at')
-print('x = {:4.2f}\n\n'.format(*xinit))
+print('x = %4.2f\n' % xinit)
 print('Method       Time   Norm of f         x\n', '-' * 40)
-print('Newton   {:8.2f}    {:8.0e}     {:5.2f}'.format(t1, n1, *x1))
-print('Broyden  {:8.2f}    {:8.0e}     {:5.2f}'.format(t2, n2, *x2))
-print('Function {:8.2f}    {:8.0e}     {:5.2f}'.format(t3, n3, *x3))
+ff = '%9s %8.2f    %8.0e     %5.2f'
+print(ff % ('Newton', t1, n1, x1))
+print(ff % ('Broyden', t2, n2, x2))
+print(ff % ('Function', t3, n3, x3))

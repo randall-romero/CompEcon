@@ -11,22 +11,22 @@
      k       capital investment
  Parameters
      beta    capital production elasticity
-     delta   discount facto
+     delta   discount factor
 """
 
 
 from demos.setup import demo, np, plt
-from compecon import BasisChebyshev, DPmodel, DPoptions
+from compecon import BasisChebyshev, DPmodel, DPoptions, qnwnorm
 
 
 # =========== Approximation Structure
-n, smin, smax = 25, 0.2, 1.0
+n, smin, smax = 15, 0.2, 1.0
 basis = BasisChebyshev(n, smin, smax, labels=['Wealth'])
 snodes = basis.nodes
 
 # =========== Model specification
 
-beta, delta = 0.7, 0.9
+beta, delta = 0.5, 0.9
 
 
 def bounds(s, i, j):
@@ -48,6 +48,12 @@ def transition(s, k, i, j, in_, e):
     return g, gx, gxx
 
 
+sigma = 0.1
+m=5
+e,w = qnwnorm(m, -sigma**2 / 2, sigma**2)
+
+
+
 growth_model = DPmodel(basis, reward, transition, bounds,
                        x=['Investment'],
                        discount=delta)
@@ -67,7 +73,7 @@ ktrue = delta * beta * snodes
 
 
 # Set a refined grid to evaluate the functions
-s = np.linspace(smin, smax, n * 10)
+#Wealth = np.linspace(smin, smax, n * 10)
 order = np.atleast_2d([0, 1])
 
 # ===========  Solve Bellman Equation
@@ -75,10 +81,10 @@ options = dict(print=True,
                algorithm='newton',
                maxit=253)
 
-growth_model.solve(vtrue, ktrue, print=True, algorithm='newton', maxit=120)
-v, pr = growth_model.Value(s, order)
-k = growth_model.Policy(s)
-resid = growth_model.residuals(s)
+S = growth_model.solve(vtrue, ktrue, print=True, algorithm='newton', maxit=120)
+v, pr = growth_model.Value(S.Wealth, order)
+k = growth_model.Policy(S.Wealth)
+# resid = growth_model.residuals(s)
 
 # ============  Simulate Model
 T = 20
@@ -87,27 +93,27 @@ data = growth_model.simulate(T, np.atleast_2d(smin))
 
 # ============  Compute Linear-Quadratic Approximation
 growth_model.lqapprox(sstar, kstar)
-vlq, plq = growth_model.Value(s, order)
-klq = growth_model.Policy(s)
+vlq, plq = growth_model.Value(S.Wealth, order)
+klq = growth_model.Policy(S.Wealth)
 
 # ============   Compute Analytic Solution
-vtrue = vstar + b * (np.log(s) - np.log(sstar))
+vtrue = vstar + b * (np.log(S.Wealth) - np.log(sstar))
 
 
 # ==============   Make plots:
-s = s.T
+Wealth = S.Wealth.T
 
 
 # Plot Optimal Policy
 demo.figure('Optimal Investment Policy', 'Wealth', 'Investment')
-plt.plot(s,np.c_[k, klq])
+plt.plot(Wealth, np.c_[k, klq])
 demo.annotate(sstar, kstar,'$s^*$ = %.2f\n$k^*$ = %.2f' % (sstar, kstar), 'bo', (10, -7))
 plt.legend(['Chebychev Collocation','L-Q Approximation'], loc = 'upper left')
 
 
 # Plot Value Function
 demo.figure('Value Function', 'Wealth', 'Value')
-plt.plot(s,np.c_[v, vlq])
+plt.plot(Wealth, np.c_[v, vlq])
 demo.annotate(sstar, vstar,'$s^*$ = %.2f\n$V^*$ = %.2f' % (sstar, vstar),'bo', (10, -7))
 plt.legend(['Chebychev Collocation','L-Q Approximation'], loc= 'upper left')
 
@@ -115,20 +121,20 @@ plt.legend(['Chebychev Collocation','L-Q Approximation'], loc= 'upper left')
 
 # Plot Shadow Price Function
 demo.figure('Shadow Price Function', 'Wealth', 'Shadow Price')
-plt.plot(s,np.c_[pr, plq])
-demo.annotate(sstar, pstar,'$s^*$ = %.2f\n$\lambda^*$ = %.2f}' % (sstar, pstar), 'bo', (10, 7))
+plt.plot(Wealth, np.c_[pr, plq])
+demo.annotate(sstar, pstar,'$s^*$ = %.2f\n$\lambda^*$ = %.2f' % (sstar, pstar), 'bo', (10, 7))
 plt.legend(['Chebychev Collocation','L-Q Approximation'])
 
 
 # Plot Chebychev Collocation Residual and Approximation Error
 plt.figure(figsize=[12, 6])
 demo.subplot(1, 2, 1, 'Chebychev Collocation Residual\nand Approximation Error', 'Wealth', 'Residual/Error')
-plt.plot(s,np.c_[resid, v-vtrue], s, np.zeros_like(s), 'k--')
+plt.plot(Wealth, np.c_[S.resid, v - vtrue], Wealth, np.zeros_like(Wealth), 'k--')
 plt.legend(['Residual','Error'], loc='lower right')
 
 # Plot Linear-Quadratic Approximation Error
 demo.subplot(1, 2, 2, 'Linear-Quadratic Approximation Error', 'Wealth', 'Error')
-plt.plot(s, vlq - vtrue)
+plt.plot(Wealth, vlq - vtrue)
 
 
 # Plot State and Policy Paths
@@ -136,7 +142,7 @@ opts = dict(spec='r*', offset=(-5, -5), fs=11, ha='right')
 
 data[['Wealth', 'Investment']].plot()
 plt.title('State and Policy Paths')
-demo.annotate(T, sstar, 'steady-state wealth\n = %.2f' % sstar , **opts)
+demo.annotate(T, sstar, 'steady-state wealth\n = %.2f' % sstar, **opts)
 demo.annotate(T, kstar, 'steady-state investment\n = %.2f' % kstar, **opts)
 plt.xlabel('Period')
 plt.ylabel('Wealth/Investment')

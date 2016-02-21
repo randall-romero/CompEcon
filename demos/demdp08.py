@@ -18,7 +18,6 @@ __author__ = 'Randall'
 
 # Preliminary tasks
 from compecon import BasisChebyshev, DPmodel
-from compecon.quad import qnwlogn
 from demos.setup import np, plt, demo
 
 ## FORMULATION

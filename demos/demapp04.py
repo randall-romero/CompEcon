@@ -9,7 +9,6 @@ warnings.simplefilter('ignore')
 """ Uniform-node and Chebyshev-node polynomial approximation of Runge's function
 and compute condition numbers of associated interpolation matrices
 """
-#TODO  fix this demo: figures are not the same as in matlab
 
 
 # Runge function

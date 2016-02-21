@@ -21,9 +21,10 @@ __author__ = 'Randall'
 from compecon import BasisSpline, DPmodel
 from compecon.quad import qnwnorm
 from demos.setup import np, plt, demo
+import pandas as pd
 from warnings import simplefilter
 simplefilter('ignore')
-
+from ggplot import ggplot, aes, geom_line, geom_point
 
 ## FORMULATION
   
@@ -63,14 +64,21 @@ model = DPmodel(BasisSpline(n, pmin, pmax, labels=['profit']),
 ## SOLUTION
 
 # Solve Bellman Equation
-model.solve(print=True)
-resid, sr, vr = model.residuals(10)
+S = model.solve(print=True)
 
 # Plot Action-Contingent Value Functions
+
+S['ij'] = pd.Categorical(S.i.astype(np.ndarray) + '--' + S.j.astype(np.ndarray))
+S.ij.cat.categories = ['Keep active firm open', 'Shut down', 'Reopen Firm', 'Remain idle']
+print(demo.qplot('profit', 'value_j', 'ij',
+                 data=S[S.ij != 'Remain idle'],
+                 geom='line')
+     )
+
+
+
+'''
 demo.figure('Action-Contingent Value Functions', 'Potential Profit', 'Value of Firm')
-plt.plot(sr,vr[0, 1].T)
-plt.plot(sr,vr[1].T)
-plt.legend(['Reopen Idle Firm', 'Shut Down', 'Keep Active Firm Open'], loc='upper left')
 
 #  Compute and Plot Critical Profit
 offs = [(4, -6), (-8, 5)]
@@ -84,12 +92,16 @@ for i in range(2):
     else:
         print('Profit Entry = {:5.2f}'.format(pcrit))
 
+'''
 
 # Plot Residual
-demo.figure('Bellman Equation Residual', 'Potential Profit', 'Percent Residual')
-plt.plot(sr, 100 * (resid / vr.max(1)).T)
-plt.hlines(0, pmin, pmax, 'k')
-plt.legend(['Idle', 'Active'], loc='lower right')
+S['resid2'] = 100 * (S.resid / S.value)
+print(demo.qplot('profit','resid2','i',
+                 data=S,
+                 geom='line',
+                 main='Bellman Equation Residual',
+                 xlab='Potential Profit',
+                 ylab='Percent Residual'))
 
 
 # SIMULATION
@@ -97,7 +109,7 @@ plt.legend(['Idle', 'Active'], loc='lower right')
 # Simulate Model
 # rand('seed',0.945)
 T = 50
-nrep = 50000
+nrep = 500#00
 pinit = pbar * np.ones((1, nrep))
 iinit = 1
 data = model.simulate(T, pinit, iinit, seed=945)
@@ -114,6 +126,32 @@ print(f.format('Activity', (data['i'] == 'active').std()))
 
 
 # Plot Simulated and Expected Continuous State Path
+data2 = data[['time', 'profit']].groupby('time').mean()
+data2['time'] = data2.index
+
+print(data2)
+print(data2.columns)
+
+ppp = ggplot(aes('time','profit'),
+             data=data2) + \
+      geom_line()
+
+print(ppp)
+
+ppp = ggplot(aes('time','profit','_rep'),
+             data=data[data._rep <3]) + \
+      geom_point() + \
+      geom_line(aes('time','profit'), data=data2)
+
+print(ppp)
+
+print(demo.qplot('time','profit','_rep',
+                 data=data[data._rep <3],
+                 geom='line') +
+      geom_line(aes('time','profit'),data=data2
+                 ))
+
+'''
 subdata = data[data['_rep'] < 3][['time', 'profit', '_rep']]
 subdata.pivot(index='time', columns='_rep', values='profit').plot(legend=False, lw=1)
 plt.hlines(data['profit'].mean(), 0, T)
@@ -132,3 +170,4 @@ plt.xlabel('Period')
 plt.ylabel('Probability')
 
 plt.show()
+'''

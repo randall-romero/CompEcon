@@ -117,7 +117,7 @@ data = growth.simulate(T, sinit)
 
 subdata = data[data['_rep'] < 3][['time', 'wealth', '_rep']]
 subdata.pivot(index='time', columns='_rep', values='wealth').plot(legend=False, lw=1)
-plt.plot(data.groupby('time')['wealth'].mean(), 'k-')
+data.groupby('time')['wealth'].mean().plot(color='k', linestyle='--')
 plt.title('Simulated and Expected Wealth')
 plt.xlabel('Period')
 plt.ylabel('Wealth')

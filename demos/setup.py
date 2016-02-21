@@ -3,21 +3,28 @@ __author__ = 'Randall'
 import warnings
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import seaborn as sns
+import ggplot as gg
 sns.set_style('dark')
 np.set_printoptions(4, linewidth=120)
-
 
 from warnings import simplefilter
 simplefilter('ignore')
 
 
-from matplotlib import rcParams
-rcParams['lines.linewidth'] = 2.5
-rcParams['figure.subplot.hspace'] = 0.25
-rcParams['legend.frameon'] = False
-rcParams['savefig.directory'] = '/figures/'
-rcParams['savefig.format'] = 'pdf'
+# from matplotlib import rcParams
+# rcParams['lines.linewidth'] = 2.5
+# rcParams['figure.subplot.hspace'] = 0.25
+# rcParams['legend.frameon'] = False
+# rcParams['savefig.directory'] = './figures/'
+# rcParams['savefig.format'] = 'pdf'
+# rcParams['font.size'] = 24
+
+mpl.rc('lines', linewidth=2.5)
+mpl.rc('font', size=18)
+mpl.rc('savefig', directory='./figures', format='pdf')
+plt.rcParams['figure.figsize'] = 12, 6
 
 from compecon import tic, toc
 
@@ -61,6 +68,7 @@ class demo(object):
             plt.xlim(xlim)
         if ylim is not None:
             plt.ylim(ylim)
+        return plt.gca()
 
 
     @staticmethod
@@ -79,3 +87,8 @@ class demo(object):
         v0 = offset[1] * (yl[1] - yl[0]) / 100
         demo.bullet(x, y, spec, ms)
         demo.text(x + h0, y + v0, txt, fs=fs, **kwargs)
+
+    @staticmethod
+    def qplot(*args, **kwargs):
+        g = gg.qplot(*args, **kwargs) + gg.theme_matplotlib()
+        return g

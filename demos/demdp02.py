@@ -67,17 +67,31 @@ def transition(p, x, i, j, in_, e):
 
 model = DPmodel(basis, profit, transition,
                 # i=['a={}'.format(a+1) for a in range(A)],
-                i=[a+1 for a in range(A)],
+                i=[a + 1 for a in range(A)],
                 j=['keep', 'replace'],
                 discount=delta, e=e, w=w, h=h)
 
 # SOLUTION
 
-model.solve()
+S = model.solve()
 
 pr = np.linspace(pmin, pmax, 10 * n)
 
 # Plot Action-Contingent Value Functions
+
+pp = demo.qplot('unit profit', 'value_j', 'i',
+      data=S,
+      main='Action-Contingent Value Functions',
+      xlab='Net Unit Profit',
+      ylab='Value')
+
+
+print(pp)
+
+
+
+'''
+
 # color_list = plt.cm.Set3(np.linspace(0, 1, 8))
 
 demo.figure('Action-Contingent Value Functions', 'Net Unit Profit', 'Value')
@@ -99,15 +113,25 @@ for a in range(A-1):
                   (0, 0), fs=11, ms=18)
     print('   Age {:2d}  Profit {:5.2f}'.format(a, pcrit))
 
-
+'''
 # Plot Residual
-resid = model.residuals(pr)
+S['resid2'] = 100*S.resid / S.value
+print(demo.qplot('unit profit', 'resid2','i',
+            data=S,
+            geom='line',
+            main='Bellman Equation Residual',
+            xlab='Net Unit Profit',
+            ylab='Percent Residual'))
 
+
+
+
+'''
 demo.figure('Bellman Equation Residual', 'Net Unit Profit', 'Percent Residual')
 plt.plot(pr, 100 * (resid / model.Value(pr)).T)
 # plot(pr,0*pr,'k--')
 plt.legend(model.labels.i, loc='upper right')
-
+'''
 
 ## SIMULATION
 
@@ -131,19 +155,16 @@ print(frm.format('Age', data.i.std()))
 
 
 # Plot Simulated and Expected Continuous State Path
+print(demo.qplot('time', 'unit profit', '_rep',
+      data=data[data['_rep'] < 3],
+            geom='line',
+      main='Simulated and Expected Price',
+      ylab='Net Unit Profit',
+      xlab='Period'))
 
-subdata = data[data['_rep'] < 3][['time', 'unit profit', '_rep']]
-subdata.pivot(index='time', columns='_rep', values='unit profit').plot(legend=False, lw=1)
-plt.hlines(data['unit profit'].mean(), 0, T, lw=5)
-plt.title('Simulated and Expected Price')
-plt.ylabel('Net Unit Profit')
-plt.xlabel('Period')
-#
-# # Plot Expected Discrete State Path
+# Plot Expected Discrete State Path
 data[['time', 'i']].groupby('time').mean().plot(legend=False)
 plt.title('Expected Machine Age')
 plt.xlabel('Period')
 plt.ylabel('Age')
-
-
 plt.show()

@@ -1,4 +1,4 @@
-from demos.setup import np, plt
+from demos.setup import np, plt, demo
 from compecon import NLP
 from compecon.tools import gridmake
 
@@ -71,15 +71,13 @@ qmin, qmax = 0.1, 1.3
 plt.figure()
 for it in range(2):
     x = cournot_problem.zero(method=methods[it])
-    plt.subplot(1, 2, it + 1)
+    demo.subplot(1, 2, it + 1, methods[it].capitalize() + "'s method",
+                 '$q_1$', '$q_2$', [qmin, qmax], [qmin, qmax])
     plt.contour(Q1, Q2, Z0, **contour_options)
     plt.contour(Q1, Q2, Z1, **contour_options)
     plt.plot(*cournot_problem.x_sequence, **steps_options)
-    plt.title(methods[it].capitalize() + "'s method")
-    plt.xlabel('q_1', verticalalignment='top')
-    plt.ylabel('q_2', verticalalignment= 'bottom')
-    plt.axis((qmin, qmax, qmin, qmax))
-    plt.text(0.85, qmax,r'\pi_1 = 0', ha='left',va='top')
-    plt.text(qmax, 0.55, r'\pi_2 = 0', ha='right', va='center')
+
+    demo.text(0.85, qmax, '$\pi_1 = 0$', 'left', 'top')
+    demo.text(qmax, 0.55, '$\pi_2 = 0$', 'right', 'center')
 plt.show()
 
