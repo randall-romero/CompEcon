@@ -2,10 +2,10 @@ import time
 
 from compecon.tools import Options_Container, qzordered
 from compecon.nonlinear import MCP
+from compecon.lcpstep import lcpstep
 import numpy as np
 import scipy as sp
 import pandas as pd
-from numpy.linalg import multi_dot as dot
 from scipy.sparse import block_diag, kron, issparse, identity
 from scipy.sparse.linalg import spsolve
 from compecon.tools import jacobian, hessian, gridmake
@@ -137,7 +137,7 @@ class DPoptions(Options_Container):
 
     def __init__(self, algorithm='newton', tol=np.sqrt(np.spacing(1)), ncpmethod='minmax',
                  maxit=80, maxitncp=50, discretized=False, X=None,
-                 D_reward_provided=True, D_transition_provided=True, knownFunctions=None, print=True):
+                 knownFunctions=None, print=True):
         self.algorithm = algorithm
         self.tol = tol
         self.ncpmethod = ncpmethod
@@ -146,8 +146,6 @@ class DPoptions(Options_Container):
         self.print = print
         self.discretized = discretized
         self.X = X
-        self.D_reward_provided = D_reward_provided
-        self.D_transition_provided = D_transition_provided
         self.knownFunctions = knownFunctions
 
     def print_header(self, method, horizon):
@@ -326,27 +324,6 @@ class DPmodel(object):
 
         return txt
 
-    def __set_params(self):
-        """
-        makes a dictionary with parameters needed for bounds, reward, transition
-        """
-        pass
-        ''' This will be useful if wanting to pass parameters explicitly. Seems unnecessary for Python '''
-        # if self.params:
-        #     par = dict
-        #     par['bounds'] = (self.params[k] for k in getargspec(self.bounds)[3:])
-        #     par['reward'] = (self.params[k] for k in getargspec(self.reward)[4:])
-        #     par['transition'] = (self.params[k] for k in getargspec(self.transition)[6:])
-        #     self.__par = par
-
-
-
-
-
-
-    ''' Dummy auxilliary functions
-                To be overwritten by actual model '''
-
     def bounds(self, s, i, j):  # --> (lowerBound, UpperBound)
         """ Returns upper-  and lower-bounds for the continuous action variable.
 
@@ -359,26 +336,37 @@ class DPmodel(object):
         ub.shape = dx, ns
         return lb, ub
 
-    def reward(self, s, x, i, j):  # --> (f, fx, fxx)
+    def reward(self, s, x, i, j, derivative=False):  # --> (f, fx, fxx)
         """ Returns the reward function (e.g. utility, profits) and its first- and second-derivatives.
 
         Depends only on current variables
+
         """
         ns = s.shape[-1]
         dx = self.dims.dx
 
-        if self.options.D_reward_provided:
-            f, fx, fxx = self.__f(s, x, i, j)
-            if self.options.discretized:
-                return f.reshape(1, ns)
-            else:
-                return f.reshape(1, ns), fx.reshape(dx, ns), fxx.reshape(dx, dx, ns)
-        elif self.options.discretized:
-            return self.__f(s, x, i, j).reshape(1, ns)
+        ff = self.__f(s, x, i, j)
+        if isinstance(ff, tuple):
+            # assert len(ff) == 3, 'reward must return 1 or 3 arrays'  # commented-out for speed
+            f, fx, fxx = ff[0].reshape(1, ns), ff[1].reshape(dx, ns), ff[2].reshape(dx, dx, ns)
         else:
-            return self.getDerivative('reward', s, x, i, j)
+            f, fx, fxx = ff.reshape(1, ns), None, None
 
-    def transition(self, s, x, i, j, in_, e, derivative=True):  # --> (g, gx, gxx)
+        return (f, fx, fxx) if derivative else f
+
+        #  ======OLD VERSION BELOW THIS LINE=======
+        # if self.options.D_reward_provided:
+        #     f, fx, fxx = self.__f(s, x, i, j)
+        #     if self.options.discretized:
+        #         return f.reshape(1, ns)
+        #     else:
+        #         return f.reshape(1, ns), fx.reshape(dx, ns), fxx.reshape(dx, dx, ns)
+        # elif self.options.discretized:
+        #     return self.__f(s, x, i, j).reshape(1, ns)
+        # else:
+        #     return self.getDerivative('reward', s, x, i, j)
+
+    def transition(self, s, x, i, j, in_, e, derivative=False):  # --> (g, gx, gxx)
         """ Returns the next-period continuous state and its first- and second-derivatives.
 
          Depends on current (s,x,i,j) and future (in,e) variables
@@ -386,17 +374,26 @@ class DPmodel(object):
         ns = s.shape[-1]
         dx, ds = self.dims['dx', 'ds']
 
-        if dx > 0 and self.options.D_transition_provided:
-            g, gx, gxx = self.__g(s, x, i, j, in_, e)
-            if self.options.discretized or not derivative:
-                return g.reshape(ds, ns)
-            else:
-                return g.reshape(ds, ns), gx.reshape(dx, ds, ns), gxx.reshape(dx, dx, ds, ns)
-        elif self.options.discretized:
-            return self.__g(s, x, i, j, in_, e).reshape(ds, ns)
+        gg = self.__g(s, x, i, j, in_, e)
+        if isinstance(gg, tuple):
+            # assert len(ff) == 3, 'reward must return 1 or 3 arrays'  # commented-out for speed
+            g, gx, gxx = gg[0].reshape(ds, ns), gg[1].reshape(dx, ds, ns), gg[2].reshape(dx, dx, ds, ns)
         else:
-            return self.getDerivative('transition', s, x, i, j, in_, e)
+            g, gx, gxx = gg.reshape(ds, ns), None, None
 
+        return (g, gx, gxx) if derivative else g
+
+        #  ======OLD VERSION BELOW THIS LINE=======
+        # if dx > 0 and self.options.D_transition_provided:
+        #     g, gx, gxx = self.__g(s, x, i, j, in_, e)
+        #     if self.options.discretized or not derivative:
+        #         return g.reshape(ds, ns)
+        #     else:
+        #         return g.reshape(ds, ns), gx.reshape(dx, ds, ns), gxx.reshape(dx, dx, ds, ns)
+        # elif self.options.discretized:
+        #     return self.__g(s, x, i, j, in_, e).reshape(ds, ns)
+        # else:
+        #     return self.getDerivative('transition', s, x, i, j, in_, e)
 
     def solve(self, v=None, x=None, nr=10, **kwargs):
         """ Solves the model
@@ -419,7 +416,6 @@ class DPmodel(object):
         if x is not None:
             self.Policy_j[t] = x[t]
 
-        self.__set_params()
 
         ''' 1: PREPARATIONS*********************** '''
         ni, nj, dx = self.dims['ni', 'nj', 'dx']
@@ -437,10 +433,10 @@ class DPmodel(object):
             if self.options.X.shape[0] != dx:
                 raise ValueError('If model is discretized, field "X" must have {} rows'.format(dx))
 
-        s0 = self.Value.nodes
-        x0 = self.Policy.y[..., 0, :, :]
-        self.options.D_reward_provided = isinstance(self.__f(s0, x0, 0, 0), tuple)
-        self.options.D_transition_provided = isinstance(self.__g(s0, x0, 0, 0, 0, 0), tuple)
+        # s0 = self.Value.nodes
+        # x0 = self.Policy.y[..., 0, :, :]
+        # self.options.D_reward_provided = isinstance(self.__f(s0, x0, 0, 0), tuple)
+        # self.options.D_transition_provided = isinstance(self.__g(s0, x0, 0, 0, 0, 0), tuple)
 
 
         ''' 2: SOLVE THE MODEL******************** '''
@@ -455,77 +451,8 @@ class DPmodel(object):
 
         self.update_policy()
 
-    def __solve_backwards(self):
-        """
-        Solve collocation equations for finite horizon model by backward recursion
-        """
-        T = self.time.horizon
-        s = self.Value.nodes
-
-        tic = time.time()
-        self.options.print_header('backward recursion', T)
-        for t in reversed(range(T)):
-            self.options.print_current_iteration(t, 0, tic)
-            self.Value_j[t] = self.vmax(s,
-                                        self.Policy_j.y[t],
-                                        self.Value[t + 1])
-            self.make_discrete_choice(t)
-
-        self.options.print_last_iteration(tic, 0)
-        return None
-
-    def __solve_by_function_iteration(self):
-        """
-            Solves infinite-horizon model collocation equation by function iteration. Solution is found when the
-            collocation coefficients of the value function converge to a fixed point (within |self.tol| tolerance).
-         """
-        tic = time.time()
-        s = self.Value.nodes
-        self.options.print_header('function iteration', self.time.horizon)
-        for it in range(self.options.maxit):
-            cold = self.Value.c.copy()
-            self.Value_j[:] = self.vmax(s, self.Policy_j.y, self.Value)
-            self.make_discrete_choice()
-            change = np.linalg.norm((self.Value.c - cold).flatten(), np.Inf)
-            self.options.print_current_iteration(it, change, tic)
-            if change < self.options.tol:
-                break
-            if np.isnan(change):
-                raise ValueError('nan found on function iteration')
-        self.options.print_last_iteration(tic, change)
-
-    def __solve_by_Newton_method(self):
-        tic = time.time()
-        s = self.Value_j.nodes
-        x = self.Policy_j.y
-        ni = self.dims.ni
-
-        if issparse(self.Value_j._Phi):
-            Phik = kron(identity(ni), self.Value_j._Phi)
-            Solve = spsolve
-        else:
-            Phik = np.kron(np.eye(self.dims.ni), self.Value._Phi)
-            Solve = np.linalg.solve
-
-        # todo: fix the dimensions and check that Phik is transposed?
-
-
-        self.options.print_header("Newton's", self.time.horizon)
-        for it in range(self.options.maxit):
-            cold = self.Value.c.copy().flatten()
-            # print('\ncold', cold)
-            self.Value_j[:], vc = self.vmax(s, x, self.Value, True)
-            self.make_discrete_choice()
-            step = - Solve(Phik - vc, Phik.dot(cold) - self.Value.y.flatten())
-            c = cold + step
-            change = np.linalg.norm(step, np.Inf)
-            self.Value.c = c.reshape(self.Value.c.shape)
-            self.options.print_current_iteration(it, change, tic)
-            if np.isnan(change):
-                raise ValueError('nan found on Newton iteration')
-            if change < self.options.tol:
-                break
-        self.options.print_last_iteration(tic, change)
+        if nr:
+            return self.residuals(nr)
 
     def residuals(self, nr=10):
         """
@@ -534,21 +461,72 @@ class DPmodel(object):
         If nr is scalar, compute a grid. Otherwise compute residuals over provided nr (sr)
 
         """
+        # TODO:  Make finite horizon case
+
+
         scalar_input = np.isscalar(nr) and isinstance(nr, int)
 
         if scalar_input:
             a = self.Value.a
             b = self.Value.b
             n = self.Value.n
-            sr = gridmake([np.linspace(a[i], b[i], nr * n[i]) for i in range(self.Value.d)])
+            sr = np.atleast_2d(gridmake(*[np.linspace(a[i], b[i], nr * n[i]) for i in range(self.Value.d)]))
         else:
             sr = np.atleast_2d(nr)
             assert sr.shape[0] == self.dims.ds, 'provided s grid must have {} rows'.format(self.dims.ds)
 
-        xr = self.Policy_j(sr, dropdim=False)
+        xr = self.Policy_j(sr, dropdim=False)  # [0] because there is only 1 order
         vr = self.vmax(sr, xr, self.Value)
-        resid = self.Value(sr, dropdim=False) - np.max(vr, -2)
+        vopt = np.max(vr, -2)
+        resid = self.Value(sr, dropdim=False) - vopt
 
+        ni, nj, dx = self.dims['ni', 'nj', 'dx']
+
+        discrete_indices = np.indices(vr.shape)[:2].reshape(2, -1)
+        data = np.vstack((
+            discrete_indices,
+            np.tile(sr, ni * nj),
+            vr.flatten()
+        ))
+
+        columns = ["i", "j"] + self.labels.s + ['value_j' if nj > 1 else 'value']
+
+        # Add continuous action
+        if dx:
+            xr = np.rollaxis(xr, -2)
+            xr.shape = (dx, -1)
+            data = np.vstack((data, xr))
+            columns = columns + list(self.labels.x)
+
+        data = pd.DataFrame(data.T, columns=columns)
+
+        # Add residuals
+        data['resid'] = np.nan
+        data.resid[data.j == 0] = resid.flatten()
+
+        # Add value
+        if nj > 1:
+            data['value'] = np.nan
+            data.value[data.j == 0] = vopt.flatten()
+
+
+
+
+
+        # eliminate singleton dimensions, label non-singleton dimensions
+        if ni > 1:
+            data['i'] = self.__as_categorical(data.i, True)
+        else:
+            del data['i']
+
+        if nj > 1:
+            data['j'] = self.__as_categorical(data.j, False)
+        else:
+            del data['j']
+
+        return data
+
+        '''
         # eliminate singleton dimensions and return
         if scalar_input:
             if self.dims.dx:
@@ -558,416 +536,22 @@ class DPmodel(object):
         else:
             return np.squeeze(resid)
 
+        '''
 
-    def getDerivative(self, func, s, x, *args, **kwargs):
-        dx, nx = x.shape
+    def __as_categorical(self, vals, ii=True):
+        """
+        Converts vector of integers (representing states or actions) to a pandas categorical variable.
+        Args:
+            vals: vector of integers, representing discrete states or actions
+            ii: Use discrete states if True, else use discrete actions
 
-        if func == 'reward':
-            def F(X):
-                return self.__f(s, X, *args, **kwargs)
-            df = 1
-            f = F(x)
-            # assert(f.ndim == 1, 'reward must return a numpy vector')
-        elif func == 'transition':
-            def F(X):
-                return self.__g(s, X, *args, **kwargs)
-            df = self.dims.ds
-            f = F(x)
-            # assert(f.shape[0] == df, 'transition must have {}rows'.format(df))
-        else:
-            raise ValueError('unknown function')
+        Returns:
+            A pandas categorical series.
 
-        ''' Compute Jacobian'''
-        tol = np.spacing(1) ** (1 / 3)
+        """
+        labels = np.array(self.labels.i if ii else self.labels.j)
+        return pd.Categorical(labels[vals], labels)
 
-        h = tol * np.maximum(abs(x), 1)
-        x_minus_h = x - h
-        x_plus_h = x + h
-        deltaX = x_plus_h - x_minus_h
-        fx = np.zeros([dx, df, nx])
-
-        for k in range(dx):
-            xx = x.copy()
-            xx[k] = x_plus_h[k]
-            fplus = F(xx)
-
-            xx[k] = x_minus_h[k]
-            fminus = F(xx)
-
-            # fx[k] = (fplus - fminus) / np.tile(deltaX[k],(df, 1))
-            fx[k] = (fplus - fminus) / deltaX[k]
-
-        ''' Compute Hessian'''
-        tol = np.spacing(1) ** (1 / 4)
-
-        h = tol * np.maximum(abs(x), 1)
-        x_minus_h = x - h
-        x_plus_h = x + h
-        deltaX = h  # repmat(h, 1, 1, dx)
-
-        # deltaXX = deltaX .* permute(deltaX,[1,3,2])
-
-        fxx = np.zeros([dx, dx, df, nx])
-        for k in range(dx):
-            for h in range(dx):
-                xx = x.copy()
-                if h == k:
-                    xx[k] = x_plus_h[k]
-                    fplus = F(xx)
-
-                    xx[k] = x_minus_h[k]
-                    fminus = F(xx)
-                    fxx[k, k] = (fplus - 2 * f + fminus) / (deltaX[k] ** 2)
-                else:
-                    xx[k] = x_plus_h[k]
-                    xx[h] = x_plus_h[h]
-                    fpp = F(xx)
-
-                    xx[h] = x_minus_h[h]
-                    fpm = F(xx)
-
-                    xx[k] = x_minus_h[k]
-                    fmm = F(xx)
-
-                    xx[h] = x_plus_h[h]
-                    fmp = F(xx)
-
-                    fxx[k, h] = (fpp + fmm - fpm - fmp) / (4 * deltaX[k] * deltaX[h])
-
-        fxx = (fxx + fxx.swapaxes(0, 1)) / 2
-
-        if func == 'reward':  # reduce the second dimension
-            fx = fx[:, 0]
-            fxx = fxx[:, :, 0]
-
-        return f, fx, fxx
-
-
-
-    def vmax(self, s, x, Value, dVc=False):  # [v,x,vc]
-        # Unpack model structure
-        ni, nj = self.dims['ni', 'nj']
-        ns = s.shape[-1]
-        v = np.empty([ni, nj, ns])
-
-        if self.dims.dx == 0:  # Discrete model
-            # hh = slice(None)
-            for i in range(ni):
-                for j in range(nj):
-                    v[i, j] = self.__Bellman_rhs_discrete(Value, None, s, i, j)
-        elif self.options.discretized:
-            # hh = slice(None)
-            for i in range(ni):
-                for j in range(nj):
-                    v[i, j] = self.vmax_discretized(Value, s, x[i, j], i, j)
-        else:
-            # hh = 0
-            for i in range(ni):
-                for j in range(nj):
-                    v[i, j] = self.vmax_continuous(Value, s, x[i, j], i, j)
-
-        if not dVc:
-            return v
-
-        # Computes derivative with respect to Value function interpolation coefficients
-        e, w, q = self.random['e', 'w', 'q']
-
-
-        if ni * nj > 1:
-            vc = np.zeros((ns, ni, ns, ni))
-            jmax = np.argmax(v, 1)
-
-            for i in range(ni):
-                for j in range(nj):
-                    is_ = jmax[i] == j
-                    if not np.any(is_):
-                        continue
-
-                    for k in range(w.size):
-                        ee = np.tile(e[:, [k]], ns)  # indexing with [k] instead of k retains shape of vector!
-                        for in_ in range(ni):
-                            if q[j, i, in_] > 0:
-                                snext = self.transition(s[:, is_], x[i, j, :, is_], i , j, in_, ee[:, is_], False)  #fixme need to know number of output arguments!!!
-                                prob = w[k] * q[j, i, in_,]
-                                vc[is_, i, :, in_] += prob * Value.Phi(snext).toarray().reshape((is_.sum(), ns), order='F')   #fixme I can't find the proper way to index this
-
-            vc = vc.reshape((ns*ni,ns*ni),order='F')
-        else:
-            vc = np.zeros((ns, ns))
-            for k in range(w.size):
-                ee = np.tile(e[:, [k]], ns)
-                snext = self.transition(s, x[0, 0], 0, 0, 0, ee, False) #fixme need to know number of output arguments!!!
-                vc += w[k] * Value.Phi(snext)
-
-        vc *= self.time.discount
-        return v, vc
-
-
-
-
-
-
-
-    # vmax_discretized
-    # Nested function in vmax: Finds the optimal policy and value function for a given pair of discrete state
-    # and discrete action, when the continuous policy has been discretized.
-
-    def vmax_discretized(self, Value, s, xij, i, j):
-
-        nx = self.dims.nx
-        ns = s.shape[-1]
-        dx = self.dims.dx
-        X = self.options.X
-
-        vv = np.full((nx, ns), -np.inf)
-
-        xl, xu = self.bounds(s, i, j)
-        xl = xl.T
-        xu = xu.T
-
-        for h, x0 in enumerate(X.T):
-            is_= np.all((xl <= x0) & (x0 <= xu), 1)
-            if np.any(is_):
-                xx = np.repeat(x0, ns, 0)
-                vv[h, is_] = self.__Bellman_rhs_discrete(Value, xx, s, i, j)
-
-        xmax = np.argmax(vv, 0)
-
-        vxs = [a[0] for a in np.indices(vv.shape)]  # the [0] reduces one dimension
-        vxs[0] = xmax
-        vij = vv[vxs]
-
-        xxs = [a[0] for a in np.indices(X.T.shape)]
-        xxs[0] = xmax
-        xij[:] = X.T[xxs]
-
-        return vij
-
-
-
-
-    # vmax_continuous
-    # Nested function in vmax: Finds the optimal policy and value function for a given pair of discrete state
-    # and discrete action, by solving the linear complementarity problem.
-    def vmax_continuous(self, Value, s, xij, i, j):
-
-        ns = s.shape[-1]
-        dx = self.dims.dx
-
-        def kkt(xvec):
-            """ Karush-Kuhn Tucker conditions
-
-            The first-order conditions are given by the derivative of Bellman equation. The problem needs to be
-            solved ns times (number of nodes), each time with dx unknowns (policy variables). This routine
-            expresses all this FOCs as a single vector, making a block-diagonal matrix with the respective Hessian matrices
-            (= jacobian of FOCs). The resulting output is suitable to be solved by the MCP class.
-
-            """
-            xij = xvec.reshape((dx, ns))
-            EV, EVx, EVxx = self.__Bellman_rhs(Value, s, xij, i, j)
-
-            EVx = EVx[:, 0]
-            EVxx = EVxx[:, :, 0]
-
-            # and let the first index indicate node
-            Vx = np.swapaxes(EVx, 0, -1)
-            Vxx = np.swapaxes(EVxx, 0, -1)
-            return Vx.flatten(), block_diag(Vxx, 'csc').toarray()  #todo not so sure I want a full array, but a lot of trouble with sparse
-
-        xl, xu = self.bounds(s, i, j)
-
-        xlv, xuv, xijv = map(lambda z: z.flatten('F'), (xl, xu, xij))  # vectorize
-
-        FOCs = MCP(kkt, xlv, xuv, xijv)
-        xij[:] = FOCs.zero(print=False, transform=self.options.ncpmethod).reshape((ns, dx)).T
-
-        return self.__Bellman_rhs(Value, s, xij, i, j)[0][0]
-
-
-
-    def __Bellman_rhs_discrete(self, Value, xij, s, i, j):
-        ni, nj = self.dims['ni', 'nj']
-        ns = s.shape[-1]
-        e, w, q = self.random['e', 'w', 'q']
-        vv = self.reward(s, xij, i, j)
-
-        for k in range(w.size):
-            # Compute states next period
-            ee = np.tile(e[:, k: k + 1], ns)
-            for in_ in range(ni):
-                if q[j, i, in_] == 0:
-                    continue
-                snext = np.real(self.transition(s, xij, i, j, in_, ee))
-                prob_delta = self.time.discount * w[k] * q[j, i, in_]
-                vv += prob_delta * Value[in_](snext)
-        return vv
-
-
-
-    def __Bellman_rhs(self, Value, s, xij, i, j):
-        ni, nj = self.dims['ni', 'nj']  # dimensions
-        ns = s.shape[-1]
-        e, w, q = self.random['e', 'w', 'q']                # randomness
-
-        vv, vx, vxx = self.reward(s, xij, i, j)
-        vx = vx[:, np.newaxis]
-        vxx = vxx[:, :, np.newaxis]
-
-        for k in range(w.size):
-            # Compute states next period and derivatives
-            ee = np.tile(e[:, k: k + 1], ns)
-            for in_ in range(ni):
-                if q[j, i, in_] == 0:
-                    continue
-
-                snext, snx, snxx = self.transition(s, xij, i, j, in_, ee)
-                snext = np.real(snext)
-                prob_delta = self.time.discount * w[k] * q[j, i, in_]
-
-                vn, vns, vnss = Value[in_](snext, order='all', dropdim=False)  # evaluates function, jacobian, and hessian if order='all'
-
-                vv += prob_delta * vn
-                vx += prob_delta * np.einsum('k...,jk...->j...', vns, snx)
-                vxx += prob_delta * np.einsum('hi...,ij...,kj...->hk...', snx, vnss, snx) +  \
-                      np.einsum('k...,ijk...->ij...', vns, snxx)
-
-        return vv, vx, vxx
-
-    # def kkt(self, xvec, Value, s, i, j):
-    #     """ Karush-Kuhn Tucker conditions
-    #
-    #     The first-order conditions are given by the derivative of Bellman equation. The problem needs to be
-    #     solved ns times (number of nodes), each time with dx unknowns (policy variables). This routine
-    #     expresses all this FOCs as a single vector, making a block-diagonal matrix with the respective Hessian matrices
-    #     (= jacobian of FOCs). The resulting output is suitable to be solved by the MCP class.
-    #
-    #     """
-    #     xij = xvec.reshape((self.dims.dx, s.shape[-1]))
-    #     EV, EVx, EVxx = self.__Bellman_rhs(Value, s, xij, i, j)
-    #
-    #     EVx = EVx[:, 0]
-    #     EVxx = EVxx[:, :, 0]
-    #
-    #     # and let the first index indicate node
-    #     Vx = np.swapaxes(EVx, 0, -1)
-    #     Vxx = np.swapaxes(EVxx, 0, -1)
-    #     return Vx.flatten(), block_diag(Vxx, 'csc').toarray()  #todo not so sure I want a full array, but a lot of trouble with sparse
-
-    def make_discrete_choice(self, t=None):
-        # notice : Value_j.y  dims are: 0=state, 1=action, 2=node
-
-        if self.dims.nj == 1:
-            if t is None:
-                self.Value[:] = self.Value_j.y[:]
-            else:
-                self.Value[t] = self.Value_j.y[t]
-            return
-
-        if t is None:
-            self.DiscreteAction = np.argmax(self.Value_j.y, 1)
-            ijs = [a[:, 0] for a in np.indices(self.Value_j.y.shape)]
-            ijs[1] = self.DiscreteAction
-            self.Value[:] = self.Value_j.y[ijs]
-
-
-        else:
-            self.DiscreteAction[t] = np.argmax(self.Value_j.y[t], 1)
-            ijs = [a[:, 0] for a in np.indices(self.Value_j.y[t].shape)]
-            ijs[1] = self.DiscreteAction[t]
-            self.Value[t] = self.Value_j.y[t][ijs]
-
-    def update_policy(self):
-        if self.dims.nj == 1:
-            self.Policy[:] = self.Policy_j.y[:]
-        else:
-            ijxs = [a[:, 0] for a in np.indices(self.Policy_j.y.shape)]
-            ijxs[-3] = self.DiscreteAction[:, np.newaxis, :]
-            self.Policy[:] = self.Policy_j.y[ijxs]
-
-
-
-    def lqapprox(self, s0, x0):
-
-        assert (self.dims.ni * self.dims.nj < 2), 'Linear-Quadratic not implemented for models with discrete state or choice'
-        s0, x0 = np.atleast_1d(s0, x0)
-        delta = self.time.discount
-
-        # Fix shock at mean
-        estar = np.inner(self.random.w, self.random.e)
-
-        # Get derivatives
-        f0, fx, fxx = self.reward(s0, x0, None, None)
-        g0, gx, gxx = self.transition(s0, x0, None, None, None, estar)
-
-        fs = jacobian(lambda s: self.reward(s, x0, None, None)[0], s0)
-        fxs = jacobian(lambda s: self.reward(s, x0, None, None)[1], s0)
-        fss = hessian(lambda s: self.reward(s, x0, None, None)[0], s0)
-        gs = jacobian(lambda s: self.transition(s, x0, None, None, None, estar, False), s0)
-
-        # Reshape to ensure conformability
-        ds, dx = self.dims['ds', 'dx']
-
-        f0.shape = 1, 1
-        s0.shape = ds, 1
-        x0.shape = dx, 1
-        fs.shape = 1, ds
-        fx.shape = 1, dx
-        fss.shape = ds, ds
-        fxs.shape = dx, ds
-        fxx.shape = dx, dx
-        g0.shape = ds, 1
-        gx.shape = ds, dx
-        gs.shape = ds, ds
-        fsx = fxs.T
-
-        f0 += - fs.dot(s0) - fx.dot(x0) + 0.5 * dot((s0.T, fss, s0)) + dot((s0.T, fsx, x0)) + 0.5 * dot((x0.T, fxx, x0))
-        fs += - s0.T.dot(fss) - x0.T.dot(fxs)
-        fx += - s0.T.dot(fsx) - x0.T.dot(fxx)
-        g0 += - gs.dot(s0) - gx.dot(x0)
-
-        # Solve Riccati equation using QZ decomposition
-        dx2ds = dx + 2 * ds
-        A = np.zeros((dx2ds, dx2ds))
-        A[:ds, :ds] = np.identity(ds)
-        A[ds:-ds, -ds:] = -delta * gx.T
-        A[-ds:, -ds:] = delta * gs.T
-
-        B = np.zeros_like(A)
-        B[:ds, :-ds] = np.c_[gs, gx]
-        B[ds: -ds, :-ds] = np.c_[fsx.T, fxx]
-        B[-ds:] = np.c_[-fss, -fsx, np.identity(ds)]
-
-        S, T, Q, Z = qzordered(A, B)
-        C = np.real(Z[ds:, :ds] / Z[:ds, :ds])
-        X = C[:dx]
-        P = C[dx:, :]
-
-        # Compute steady-state state, action, and shadow price
-        t0 = np.r_[np.c_[fsx.T, fxx, delta * gx.T],
-                  np.c_[fss, fsx, delta*gs.T - np.eye(ds)],
-                  np.c_[gs - np.eye(ds), gx, np.zeros((ds, ds))]]
-        t1 = np.r_[-fx.T, -fs.T, -g0]
-        t = np.linalg.solve(t0, t1)
-        sstar, xstar, pstar = np.split(t, [ds, ds + dx])
-        vstar = (f0 + fs.dot(sstar) + fx.dot(xstar) + 0.5 * dot((sstar.T, fss, sstar)) +
-                 dot((sstar.T, fsx, xstar)) + 0.5 * dot((xstar.T, fxx, xstar))) / (1 - delta)
-
-        # Compute lq-approximation optimal policy and shadow price functions at state nodes
-        s = self.Value.nodes.T
-        sstar = sstar.T
-        xstar = xstar.T
-        pstar = pstar.T
-        s -= sstar   # hopefully broadcasting works here  (np.ones(ns,1),:)  #todo make sure!!
-        xlq = xstar + s.dot(X.T)  #(np.ones(1,ns),:)
-        plq = pstar + s.dot(P.T)   #(np.ones(1,ns),:)
-        vlq = vstar + s.dot(pstar.T) + 0.5 * np.sum(s * s.dot(P.T), axis=1,keepdims=True)
-
-        self.Value[:] = vlq.T[:]
-        self.Value_j[:]= vlq.T[:]
-        self.Policy[:] = xlq.T[:]
-        self.Policy_j[:] = xlq.T[:]
-
-        return sstar, xstar, pstar
 
 
 
@@ -1079,7 +663,7 @@ class DPmodel(object):
                     if ni > 1:
                         ii[ir] =  np.random.choice(ni, ir.sum(), p=self.random.q[j, i, :])
                         # ii[ir] =  discrand(ir.sum(), self.random.q[j, i, :])
-                    ss[:, ir] = self.transition(ss[:, ir], xx[:, ir], i, j, ii[ir], ee[:, ir], False)
+                    ss[:, ir] = self.transition(ss[:, ir], xx[:, ir], i, j, ii[ir], ee[:, ir])
 
             ### Save the current-period simulation
             ssim[ip + 1] = ss
@@ -1129,6 +713,428 @@ class DPmodel(object):
             data.append(pd.Series(rsim, name='_rep'))
 
         return pd.concat(data, axis=1,copy=False)
+
+    def lqapprox(self, s0, x0):
+
+        assert (self.dims.ni * self.dims.nj < 2), 'Linear-Quadratic not implemented for models with discrete state or choice'
+        s0, x0 = np.atleast_1d(s0, x0)
+
+        assert s0.size == self.dims.ds, 's0 must have %d values' % self.dims.ds
+        assert x0.size == self.dims.dx, 'x0 must have %d values' % self.dims.dx
+
+        s0, x0 = s0.astype(float), x0.astype(float)
+        s0.shape = -1, 1
+        x0.shape = -1, 1
+
+        delta = self.time.discount
+
+        # Fix shock at mean
+        estar = self.random.w @ self.random.e.T
+        estar.shape = -1, 1
+
+        # Get derivatives
+        f0, fx, fxx = self.reward(s0, x0, None, None, True)
+        g0, gx, gxx = self.transition(s0, x0, None, None, None, estar, derivative=True)
+
+        fs = jacobian(lambda y: self.reward(y.reshape((-1, 1)), x0, None, None), s0)
+        fxs = jacobian(lambda y: self.reward(y.reshape((-1, 1)), x0, None, None, True)[1], s0)
+        fss = hessian(lambda y: self.reward(y.reshape((-1, 1)), x0, None, None), s0)
+        gs = jacobian(lambda y: self.transition(y.reshape((-1, 1)), x0, None, None, None, estar), s0)
+
+        # Reshape to ensure conformability
+        ds, dx = self.dims['ds', 'dx']
+
+        f0.shape = 1, 1
+        s0.shape = ds, 1
+        x0.shape = dx, 1
+        fs.shape = 1, ds
+        fx.shape = 1, dx
+        fss.shape = ds, ds
+        fxs.shape = dx, ds
+        fxx.shape = dx, dx
+        g0.shape = ds, 1
+        gx.shape = ds, dx
+        gs.shape = ds, ds
+        fsx = fxs.T
+
+        f0 += - fs @ s0 - fx @ x0 + 0.5 * s0.T @ fss @ s0 + s0.T @ fsx @ x0 + 0.5 * x0.T @ fxx @ x0
+        fs += - s0.T @ fss - x0.T @ fxs
+        fx += - s0.T @ fsx - x0.T @ fxx
+        g0 += - gs @ s0 - gx @ x0
+
+        # Solve Riccati equation using QZ decomposition
+        dx2ds = dx + 2 * ds
+        A = np.zeros((dx2ds, dx2ds))
+        A[:ds, :ds] = np.identity(ds)
+        A[ds:-ds, -ds:] = -delta * gx.T
+        A[-ds:, -ds:] = delta * gs.T
+
+        B = np.zeros_like(A)
+        B[:ds, :-ds] = np.c_[gs, gx]
+        B[ds: -ds, :-ds] = np.c_[fsx.T, fxx]
+        B[-ds:] = np.c_[-fss, -fsx, np.identity(ds)]
+
+        S, T, Q, Z = qzordered(A, B)
+        C = np.real(np.linalg.solve(Z[:ds, :ds].T, Z[ds:, :ds].T)).T
+        X = C[:dx]
+        P = C[dx:, :]
+
+        # Compute steady-state state, action, and shadow price
+        t0 = np.r_[np.c_[fsx.T, fxx, delta * gx.T],
+                  np.c_[fss, fsx, delta*gs.T - np.eye(ds)],
+                  np.c_[gs - np.eye(ds), gx, np.zeros((ds, ds))]]
+        t1 = np.r_[-fx.T, -fs.T, -g0]
+        t = np.linalg.solve(t0, t1)
+        sstar, xstar, pstar = np.split(t, [ds, ds + dx])
+        vstar = (f0 + fs @ sstar + fx @ xstar + 0.5 * sstar.T @ fss @ sstar +
+                 sstar.T @ fsx @ xstar + 0.5 * xstar.T @ fxx @ xstar) / (1 - delta)
+
+        # Compute lq-approximation optimal policy and shadow price functions at state nodes
+        s = self.Value.nodes.T.copy()
+        sstar = sstar.T
+        xstar = xstar.T
+        pstar = pstar.T
+        s -= sstar   # hopefully broadcasting works here  (np.ones(ns,1),:)  #todo make sure!!
+        xlq = xstar + s @ X.T  #(np.ones(1,ns),:)
+        plq = pstar + s @ P.T   #(np.ones(1,ns),:)
+        vlq = vstar + s @ pstar.T + 0.5 * np.sum(s * (s @ P.T), axis=1,keepdims=True)
+
+        self.Value[:] = vlq.T[:]
+        self.Value_j[:]= vlq.T[:]
+        self.Policy[:] = xlq.T[:]
+        self.Policy_j[:] = xlq.T[:]
+
+        return sstar, xstar, pstar
+
+
+
+
+    def __solve_backwards(self):
+        """
+        Solve collocation equations for finite horizon model by backward recursion
+        """
+        T = self.time.horizon
+        s = self.Value.nodes
+
+        tic = time.time()
+        self.options.print_header('backward recursion', T)
+        for t in reversed(range(T)):
+            self.options.print_current_iteration(t, 0, tic)
+            self.Value_j[t] = self.vmax(s,
+                                        self.Policy_j.y[t],
+                                        self.Value[t + 1])
+            self.make_discrete_choice(t)
+
+        self.options.print_last_iteration(tic, 0)
+        return None
+
+    def __solve_by_function_iteration(self):
+        """
+            Solves infinite-horizon model collocation equation by function iteration. Solution is found when the
+            collocation coefficients of the value function converge to a fixed point (within |self.tol| tolerance).
+         """
+        tic = time.time()
+        s = self.Value.nodes
+        self.options.print_header('function iteration', self.time.horizon)
+        for it in range(self.options.maxit):
+            cold = self.Value.c.copy()
+            self.Value_j[:] = self.vmax(s, self.Policy_j.y, self.Value)
+            self.make_discrete_choice()
+            change = np.linalg.norm((self.Value.c - cold).flatten(), np.Inf)
+            self.options.print_current_iteration(it, change, tic)
+            if change < self.options.tol:
+                break
+            if np.isnan(change):
+                raise ValueError('nan found on function iteration')
+        self.options.print_last_iteration(tic, change)
+
+    def __solve_by_Newton_method(self):
+        tic = time.time()
+        s = self.Value_j.nodes
+        x = self.Policy_j.y
+        ni = self.dims.ni
+
+        if issparse(self.Value_j._Phi):
+            Phik = kron(identity(ni), self.Value_j._Phi, format='csr').toarray()
+            # Solve = spsolve
+        else:
+            Phik = np.kron(np.eye(self.dims.ni), self.Value._Phi)
+            # Solve = np.linalg.solve
+
+        # todo: fix the dimensions and check that Phik is transposed?
+
+        def SOLVE(A,b):
+            return np.linalg.solve(A, b) if (self.dims.ns == self.dims.nc) else np.linalg.lstsq(A, b)[0]
+
+
+        self.options.print_header("Newton's", self.time.horizon)
+        for it in range(self.options.maxit):
+            cold = self.Value.c.copy().flatten()
+            # print('\ncold', cold)
+            self.Value_j[:], vc = self.vmax(s, x, self.Value, True)
+            self.make_discrete_choice()
+            step = - SOLVE(Phik - vc, Phik @ cold - self.Value.y.flatten())
+            c = cold + step
+            change = np.linalg.norm(step, np.Inf)
+            self.Value.c = c.reshape(self.Value.c.shape)
+            self.options.print_current_iteration(it, change, tic)
+            if np.isnan(change):
+                raise ValueError('nan found on Newton iteration')
+            if change < self.options.tol:
+                break
+        self.options.print_last_iteration(tic, change)
+
+
+
+
+    def vmax(self, s, x, Value, dVc=False):  # [v,x,vc]
+        # Unpack model structure
+        ni, nj = self.dims['ni', 'nj']
+        ns = s.shape[-1]
+        ms = Value.M  # number of polynomials
+        v = np.empty([ni, nj, ns])
+
+        if self.dims.dx == 0:  # Discrete model
+            # hh = slice(None)
+            for i in range(ni):
+                for j in range(nj):
+                    v[i, j] = self.__Bellman_rhs_discrete(Value, None, s, i, j)
+        elif self.options.discretized:
+            # hh = slice(None)
+            for i in range(ni):
+                for j in range(nj):
+                    v[i, j] = self.vmax_discretized(Value, s, x[i, j], i, j)
+        else:
+            # hh = 0
+            for i in range(ni):
+                for j in range(nj):
+                    v[i, j] = self.vmax_continuous(Value, s, x[i, j], i, j)
+
+        if not dVc:
+            return v
+
+        # Computes derivative with respect to Value function interpolation coefficients
+        e, w, q = self.random['e', 'w', 'q']
+
+
+        if ni * nj > 1:
+            vc = np.zeros((ns, ni, ms, ni))
+            jmax = np.argmax(v, 1)
+
+            for i in range(ni):
+                for j in range(nj):
+                    is_ = jmax[i] == j
+                    if not np.any(is_):
+                        continue
+
+                    for k in range(w.size):
+                        ee = np.tile(e[:, [k]], ns)  # indexing with [k] instead of k retains shape of vector!
+                        for in_ in range(ni):
+                            if q[j, i, in_] > 0:
+                                snext = self.transition(s[:, is_], x[i, j, :, is_], i , j, in_, ee[:, is_])  #fixme need to know number of output arguments!!!
+                                prob = w[k] * q[j, i, in_,]
+                                vc[is_, i, :, in_] += prob * Value.Phi(snext).toarray().reshape((is_.sum(), ms), order='F')   #fixme I can't find the proper way to index this
+
+            vc = vc.reshape((ns*ni,ms*ni),order='F')
+        else:
+            vc = np.zeros((ns, ms))
+            for k in range(w.size):
+                ee = np.tile(e[:, [k]], ns)
+                snext = self.transition(s, x[0, 0], 0, 0, 0, ee) #fixme need to know number of output arguments!!!
+                vc += w[k] * Value.Phi(snext)
+
+        vc *= self.time.discount
+        return v, vc
+
+
+
+
+
+
+
+    # vmax_discretized
+    # Nested function in vmax: Finds the optimal policy and value function for a given pair of discrete state
+    # and discrete action, when the continuous policy has been discretized.
+
+    def vmax_discretized(self, Value, s, xij, i, j):
+
+        nx = self.dims.nx
+        ns = s.shape[-1]
+        dx = self.dims.dx
+        X = self.options.X
+
+        vv = np.full((nx, ns), -np.inf)
+
+        xl, xu = self.bounds(s, i, j)
+        xl = xl.T
+        xu = xu.T
+
+        for h, x0 in enumerate(X.T):
+            is_= np.all((xl <= x0) & (x0 <= xu), 1)
+            if np.any(is_):
+                xx = np.repeat(x0, ns, 0)
+                vv[h, is_] = self.__Bellman_rhs_discrete(Value, xx, s, i, j)
+
+        xmax = np.argmax(vv, 0)
+
+        vxs = [a[0] for a in np.indices(vv.shape)]  # the [0] reduces one dimension
+        vxs[0] = xmax
+        vij = vv[vxs]
+
+        xxs = [a[0] for a in np.indices(X.T.shape)]
+        xxs[0] = xmax
+        xij[:] = X.T[xxs]
+
+        return vij
+
+
+
+
+    # vmax_continuous
+    # Nested function in vmax: Finds the optimal policy and value function for a given pair of discrete state
+    # and discrete action, by solving the linear complementarity problem.
+    def vmax_continuous_MCP(self, Value, s, xij, i, j):
+
+        ns = s.shape[-1]
+        dx = self.dims.dx
+
+        def kkt(xvec):
+            """ Karush-Kuhn Tucker conditions
+
+            The first-order conditions are given by the derivative of Bellman equation. The problem needs to be
+            solved ns times (number of nodes), each time with dx unknowns (policy variables). This routine
+            expresses all this FOCs as a single vector, making a block-diagonal matrix with the respective Hessian matrices
+            (= jacobian of FOCs). The resulting output is suitable to be solved by the MCP class.
+
+            """
+            xij = xvec.reshape((dx, ns))
+            EV, EVx, EVxx = self.__Bellman_rhs(Value, s, xij, i, j)
+
+            # and let the first index indicate node
+            Vx = np.swapaxes(EVx, 0, -1)
+            Vxx = np.swapaxes(EVxx, 0, -1)
+            return Vx.flatten(), block_diag(Vxx, 'csc')#.toarray()  #todo not so sure I want a full array, but a lot of trouble with sparse
+
+        xl, xu = self.bounds(s, i, j)
+
+        xlv, xuv, xijv = map(lambda z: z.flatten('F'), (xl, xu, xij))  # vectorize
+
+        FOCs = MCP(kkt, xlv, xuv, xijv)
+        xij[:] = FOCs.zero(print=False, transform=self.options.ncpmethod).reshape((ns, dx)).T
+
+        return self.__Bellman_rhs(Value, s, xij, i, j)[0][0]
+
+    # Nested function in vmax: Finds the optimal policy and value function for a given pair of discrete state
+    # and discrete action, by solving the linear complementarity problem.
+    def vmax_continuous(self, Value, s, xij, i, j):
+
+        ns = s.shape[-1]
+        dx = self.dims.dx
+        xl, xu = self.bounds(s, i, j)
+
+        for it in range(self.options.maxitncp):
+            vv, vx, vxx = self.__Bellman_rhs(Value, s, xij, i, j)
+
+            # Compute Newton step, update continuous action, check convergence
+            vx, delx = lcpstep(self.options.ncpmethod, xij, xl, xu, vx, vxx)
+            xij[:] += delx
+            if np.linalg.norm(vx.flatten(), np.Inf) < self.options.tol:
+                break
+
+        return self.__Bellman_rhs(Value, s, xij, i, j)[0][0]
+
+
+
+
+
+
+
+    def __Bellman_rhs_discrete(self, Value, xij, s, i, j):
+        ni, nj = self.dims['ni', 'nj']
+        ns = s.shape[-1]
+        e, w, q = self.random['e', 'w', 'q']
+        vv = self.reward(s, xij, i, j)
+
+        for k in range(w.size):
+            # Compute states next period
+            ee = np.tile(e[:, k: k + 1], ns)
+            for in_ in range(ni):
+                if q[j, i, in_] == 0:
+                    continue
+                snext = np.real(self.transition(s, xij, i, j, in_, ee))
+                prob_delta = self.time.discount * w[k] * q[j, i, in_]
+                vv += prob_delta * Value[in_](snext)
+        return vv
+
+
+
+    def __Bellman_rhs(self, Value, s, xij, i, j):
+        ni, nj = self.dims['ni', 'nj']  # dimensions
+        ns = s.shape[-1]
+        e, w, q = self.random['e', 'w', 'q']                # randomness
+
+        vv, vx, vxx = self.reward(s, xij, i, j, True)
+
+        for k in range(w.size):
+            # Compute states next period and derivatives
+            ee = np.tile(e[:, [k]], ns)
+            for in_ in range(ni):
+                if q[j, i, in_] == 0:
+                    continue
+
+                snext, snx, snxx = self.transition(s, xij, i, j, in_, ee, derivative=True)
+                snext = np.real(snext)
+                prob_delta = self.time.discount * w[k] * q[j, i, in_]
+
+                vn, vns, vnss = Value[in_](snext, order='all', dropdim=False)  # evaluates function, jacobian, and hessian if order='all'
+
+                # Drop the unnecessary dimension
+                vns = vns[:, 0]
+                vnss = vnss[:, :, 0]
+
+
+                vv += prob_delta * vn
+                vx += prob_delta * np.einsum('k...,jk...->j...', vns, snx)
+                vxx += prob_delta * np.einsum('hi...,ij...,kj...->hk...', snx, vnss, snx) +  \
+                      np.einsum('k...,ijk...->ij...', vns, snxx)
+
+        return vv, vx, vxx
+
+
+    def make_discrete_choice(self, t=None):
+        # notice : Value_j.y  dims are: 0=state, 1=action, 2=node
+
+        if self.dims.nj == 1:
+            if t is None:
+                self.Value[:] = self.Value_j.y[:, 0]
+            else:
+                self.Value[t] = self.Value_j.y[t]
+            return
+
+        if t is None:
+            self.DiscreteAction = np.argmax(self.Value_j.y, 1)
+            ijs = [a[:, 0] for a in np.indices(self.Value_j.y.shape)]
+            ijs[1] = self.DiscreteAction
+            self.Value[:] = self.Value_j.y[ijs]
+
+
+        else:
+            self.DiscreteAction[t] = np.argmax(self.Value_j.y[t], 1)
+            ijs = [a[:, 0] for a in np.indices(self.Value_j.y[t].shape)]
+            ijs[1] = self.DiscreteAction[t]
+            self.Value[t] = self.Value_j.y[t][ijs]
+
+    def update_policy(self):
+        if self.dims.nj == 1:
+            self.Policy[:] = self.Policy_j.y[:, 0]
+        else:
+            ijxs = [a[:, 0] for a in np.indices(self.Policy_j.y.shape)]
+            ijxs[-3] = self.DiscreteAction[:, np.newaxis, :]
+            self.Policy[:] = self.Policy_j.y[ijxs]
+
+
+
+
 
 
 
