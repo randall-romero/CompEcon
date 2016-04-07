@@ -16,4 +16,5 @@ config = {
     'name': 'compecon'
     }
     
-setup(requires=['nose', 'numpy', 'scipy', 'matplotlib', 'matplotlib', 'seaborn', 'numba'], **config)
+# setup(requires=['nose', 'numpy', 'scipy', 'matplotlib', 'matplotlib', 'seaborn', 'numba'], **config)  # fixme Uncomment when numba is available for python 3.5
+setup(requires=['nose', 'numpy', 'scipy', 'pandas', 'matplotlib', 'matplotlib', 'seaborn','ggplot'], **config)

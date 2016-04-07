@@ -117,7 +117,7 @@ class DDPmodel(object):
         if self._is_deterministic:
             Pv = v[self.P]
         else:
-            Pv = np.dot(self.P, v).squeeze()
+            Pv = (self.P @ v).squeeze()
 
         v = self.reward + self.discount * Pv
         x = np.argmax(v, 0)

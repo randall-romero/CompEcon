@@ -8,7 +8,7 @@ import scipy as sp
 import pandas as pd
 from scipy.sparse import block_diag, kron, issparse, identity
 from scipy.sparse.linalg import spsolve
-from compecon.tools import jacobian, hessian, gridmake
+from compecon.tools import jacobian, hessian, gridmake, indices
 from inspect import getargspec
 #from .lcpstep import lcpstep  # todo: is it worth to add lcpstep?
 
@@ -82,6 +82,7 @@ class DPdims(Options_Container):
         ns  number of continuous state nodes output
         nx  number of discretized continuous actions, if applicable
         nc  number of collocation polynomials = of coefficients to be determined
+        dr  number of restrictions on x (other than bounds on individual x variables)
     """
     description = "Dimensions of a DPmodel object"
 
@@ -97,6 +98,7 @@ class DPdims(Options_Container):
         self.nj = nj
         self.ne = ne
         self.nc = nc
+        self.dr = 0
 
 
 class DPlabels(Options_Container):
@@ -235,7 +237,7 @@ class DPmodel(object):
      """
     # todo: Review the dimensions of attributes in above docstring
 
-    def __init__(self, basis, reward, transition, bounds=None,
+    def __init__(self, basis, reward, transition, bounds=None, restrictions=None,
                  i=('State 0',), j=('Choice 0', ), x=(),
                  discount=0.0, horizon=np.inf,
                  e=None, w=None, q=None, h=None, params=None):
@@ -250,6 +252,7 @@ class DPmodel(object):
         self.__b = bounds
         self.__f = reward
         self.__g = transition
+        self.__h = restrictions
 
         assert isinstance(i, (list, tuple)), 'i must be a tuple of strings (names of discrete states)'
         assert isinstance(j, (list, tuple)), 'j must be a tuple of strings (names of discrete choices)'
@@ -335,6 +338,27 @@ class DPmodel(object):
         lb.shape = dx, ns
         ub.shape = dx, ns
         return lb, ub
+
+    def restrictions(self, s, x, i, j, derivative=False):  # --> (h, hx, hxx)
+        """ Returns the restriction functions and their first- and second-derivatives.
+
+        Depends only on current variables
+
+        """
+        ns = s.shape[-1]
+        dx = self.dims.dx
+
+        hh = self.__h(s, x, i, j)
+
+
+        if isinstance(hh, tuple):
+            # assert len(ff) == 3, 'reward must return 1 or 3 arrays'  # commented-out for speed
+            h, hx, hxx = hh[0].reshape(-1, ns), hh[1].reshape(-1, dx, ns), hh[2].reshape(-1, dx, dx, ns)
+        else:
+            h, hx, hxx = hh.reshape(-1, ns), None, None
+
+        return (h, hx, hxx) if derivative else h
+
 
     def reward(self, s, x, i, j, derivative=False):  # --> (f, fx, fxx)
         """ Returns the reward function (e.g. utility, profits) and its first- and second-derivatives.
@@ -904,11 +928,16 @@ class DPmodel(object):
             for i in range(ni):
                 for j in range(nj):
                     v[i, j] = self.vmax_discretized(Value, s, x[i, j], i, j)
-        else:
+        elif self.__h is None:
             # hh = 0
             for i in range(ni):
                 for j in range(nj):
                     v[i, j] = self.vmax_continuous(Value, s, x[i, j], i, j)
+        else:
+            for i in range(ni):
+                for j in range(nj):
+                    v[i, j] = self.vmax_continuous_restricted(Value, s, x[i, j], i, j)
+
 
         if not dVc:
             return v
@@ -1027,9 +1056,6 @@ class DPmodel(object):
     # Nested function in vmax: Finds the optimal policy and value function for a given pair of discrete state
     # and discrete action, by solving the linear complementarity problem.
     def vmax_continuous(self, Value, s, xij, i, j):
-
-        ns = s.shape[-1]
-        dx = self.dims.dx
         xl, xu = self.bounds(s, i, j)
 
         for it in range(self.options.maxitncp):
@@ -1044,6 +1070,49 @@ class DPmodel(object):
         return self.__Bellman_rhs(Value, s, xij, i, j)[0][0]
 
 
+    def vmax_continuous_restricted(self, Value, s, xij, i, j):
+
+        ns = s.shape[-1]
+        dx = self.dims.dx
+        xl, xu = self.bounds(s, i, j)
+
+        dr = self.restrictions(s, xij, i, j).shape[0]
+        lij = np.ones((dr, ns))
+        xl = np.vstack((xl, np.zeros((dr, ns))))
+        xu = np.vstack((xu, np.tile(np.inf, (dr, ns))))
+        ZEROS = np.zeros((dr, dr, ns))
+
+
+        for it in range(self.options.maxitncp):
+            vv, vx, vxx = self.__Bellman_rhs(Value, s, xij, i, j)
+
+            # Adjust derivative to add the Lagrange multiplier term
+            h, hx, hxx = self.restrictions(s, xij, i, j, True)
+
+            for ir in range(dr):
+                vx += lij[ir] * hx[ir]
+                vxx += lij[ir] * hxx[ir]
+
+            vx = np.vstack((vx, -h))
+
+            vxx = np.vstack((np.hstack((vxx, np.swapaxes(hx, 0,1))),
+                             np.hstack((-hx, ZEROS))))
+
+
+            #  Compute Newton step, update continuous action, check convergence
+            vx, delxl = lcpstep(self.options.ncpmethod,
+                               np.vstack((xij, lij)),
+                               xl, xu, vx, vxx)
+            delx, dell = np.split(delxl, [dx])
+            xij[:] += delx
+            lij[:] += dell
+
+            print('it = ', it, '\tchange = ', np.linalg.norm(vx.flatten(), np.Inf))
+            if np.linalg.norm(vx.flatten(), np.Inf) < self.options.tol:
+                break
+
+
+        return self.__Bellman_rhs(Value, s, xij, i, j)[0][0]
 
 
 
@@ -1132,16 +1201,42 @@ class DPmodel(object):
             ijxs[-3] = self.DiscreteAction[:, np.newaxis, :]
             self.Policy[:] = self.Policy_j.y[ijxs]
 
+    def check_derivatives(self):
+        ni, nj, ds, ns = self.dims['ni', 'nj', 'ds', 'ns']
+        nij = ni * nj
+        idx = pd.MultiIndex.from_product([np.arange(ni), np.arange(nj)], names=['i', 'j'])
+        F = pd.DataFrame({
+            'fx': np.zeros(nij) + np.nan,
+            'fxx': np.zeros(nij) + np.nan},
+            index=idx)
+
+        idy = pd.MultiIndex.from_product([['gx', 'gxx'], np.arange(ds)], names=['func', 's'])
+        G = pd.DataFrame(np.zeros((nij,2 * ds)), index=idx, columns=idy)
+
+        s = self.Value.nodes
+        e = np.tile(self.random.e[:, 1], ns)
+
+        for k, (i, j) in enumerate(indices(ni,nj).T):
+            xl, xu = self.bounds(s, i , j)
+            xlinf = np.isinf(xl)
+            xuinf = np.isinf(xu)
+            xm = (xl + xu) / 2
+            xm[xlinf] = xu[xlinf]
+            xm[xuinf] = xl[xuinf]
+            xm[xuinf & xlinf] = 0.0
+
+            f, fx, fxx = self.reward(s,xm,i,j, derivative=True)
+            fxa = jacobian(lambda z: self.reward(s, z, i, j), xm)
+            fxxa = hessian(lambda z: self.reward(s, z, i, j), xm)
+
+            F.values[k, 0] = np.linalg.norm(fx - fxa, np.inf)
+            F.values[k, 1] = np.linalg.norm(fxx - fxxa, np.inf)
 
 
 
 
-
-
-
-
-
-
+    def __get_derivatives(self):
+        pass
 
 # TODO: design this class:
 """

@@ -34,7 +34,7 @@ def gridmake(*arrays):
            [10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20]])
     """
     if len(arrays) == 1:
-        return arrays[0][0]
+        return arrays[0]
 
     arrays = np.atleast_2d(*arrays)
     n = len(arrays)
@@ -116,10 +116,11 @@ def discmoments(w, x):
 
 def jacobian(func, x, *args, **kwargs):
 
-    if type(func(x, *args, **kwargs)) is tuple:
-        F = lambda x: func(x, *args, **kwargs)[0]
-    else:
-        F = lambda x: func(x, *args, **kwargs)
+    # if type(func(x, *args, **kwargs)) is tuple:
+    #     F = lambda x: func(x, *args, **kwargs)[0]
+    # else:
+    #     F = lambda x: func(x, *args, **kwargs)
+    F = lambda z: func(z, *args, **kwargs)
 
     x = x.flatten()
     dx = x.size
@@ -144,14 +145,14 @@ def jacobian(func, x, *args, **kwargs):
         xx[k] = x_minus_h[k]
         fminus = F(xx)
 
-        fx[k] = (fplus - fminus) / deltaX[k]
+        fx[k] = np.squeeze((fplus - fminus) / deltaX[k])  # fixme doing this to deal with broadcasting
 
     return fx.T
 
 
 def hessian(func, x, *args, **kwargs):
 
-    F = lambda x: func(x, *args, **kwargs)
+    F = lambda z: func(z, *args, **kwargs)
     if x.ndim < 2:
         x = np.atleast_2d(x).T
 

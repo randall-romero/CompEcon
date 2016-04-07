@@ -38,7 +38,7 @@ class BasisSpline(Basis):
 
         ''' Make instance '''
         kwargs['basistype'] = 'spline'
-        super().__init__(n, a, b, y, c, f, s, l, **kwargs)
+        super().__init__(n, a, b, **kwargs)
         self.k = k
         self.breaks = breaks
         self._set_nodes()

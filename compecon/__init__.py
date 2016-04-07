@@ -10,7 +10,7 @@ from .basisSpline import BasisSpline
 from .basisLinear import BasisLinear
 from .nonlinear import MCP, NLP, LCP
 from .optimize import OP, MLE
-# from .interpolator import Interpolator
 from .dpmodel import DPmodel, DPoptions
-from .tools import tic, toc
+from .tools import *
+from .quad import *
 from .ddpmodel import DDPmodel

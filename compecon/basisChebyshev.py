@@ -11,14 +11,48 @@ __author__ = 'Randall'
 
 class BasisChebyshev(Basis):
     def __init__(self, n, a, b, **kwargs):
-        """
-        Creates an instance of a BasisChebyshev object
+        """ Create an instance of BasisChebyshev.
 
-        :param int n: number of nodes
-        :param float a: lower bound
-        :param float b: upper bound
-        :param str nodetype: type of collocation nodes, ('gaussian','lobatto', or 'endpoint')
-        :param str varName: a string to name the variable
+        Args:
+            n: number of nodes per dimension
+            a: lower bounds
+            b: upper bounds
+            **kwargs: options passed to BasisOptions (see Keyword Args below)
+
+            The dimension of the basis is inferred from the number of elements in n, a, b. If all of them are scalars,
+            then d = 1. Otherwise, they are broadcast to a common size array.
+
+        Keyword Args:
+            nodetype (str): type of nodes to use, either 'gaussian', 'lobatto', 'endpoint', or 'uniform'.
+            method (str): method to combine basis dimensions (relevant only if d > 1). Valid options are 'tensor',
+                'smolyak', 'complete', 'cluster', and 'zcluster'.
+            qn (int or array of ints): if method is 'smolyak', qn controls depth of node selection. Isotropic grid if qn
+                is scalar, anisotropic grid if qn is an array on ints.
+            qp (int or array of ints): if method is 'smolyak', qp controls depth of polynomial selection. Isotropic grid
+                if qp is scalar, anisotropic grid if qp is an array on ints. If method is 'complete', then qp controls
+                maximum degree of interpolation polynomials.
+            labels (list of strings): Labels to identify basis dimensions.
+            f (callable): a function to compute value of interpolated function at nodes.
+            y (numpy array): value of interpolated function at nodes.
+            c (numpy array): interpolation coefficients.
+            s (list of scalars): number of function for each dimension.
+            l (list of strings): labels for each of the function dimensions.
+
+            Notice that only one of the keyword arguments f, y, c, s, l can be specified. If none is, then s=1.
+
+        Notes:
+            Methods 'cluster' and 'zcluster' have not been implemented yet.
+
+        Examples:
+            BasisChebyshev(15, -2, 3, labels=['wealth']) # a basis to interpolate a function of wealth.
+            income = BasisChebyshev(15, -2, 3, labels=['wealth'], l=['employed', 'unemployed') # a basis to interpolate
+                income as a function of wealth, for employed and unemployed workers.
+            BasisChebyshev(9, [0, 0], [2, 3])  # it uses 9 nodes in each dimension, uses tensor product (81 nodes total)
+            BasisChebyshev(9, [0, 0], [2, 3], method='smolyak', qn=3, qp=3)  # Smolyak grid, 29 nodes (as opposed to 81)
+
+        Returns:
+            A BasisChebyshev instance.
+
         """
 
         kwargs['basistype'] = 'chebyshev'
@@ -26,11 +60,6 @@ class BasisChebyshev(Basis):
         self._set_nodes()
 
     def _set_nodes(self):
-        """
-        Sets the basis nodes
-
-        :return: None
-        """
         nodetype = self.opts.nodetype
 
         for i in range(self.d):
@@ -62,7 +91,6 @@ class BasisChebyshev(Basis):
         :param x: nodes in [a, b] domain (array)
         :return: nodes in [-1, 1] domain
         """
-        n = self.n[i]
         a = self.a[i]
         b = self.b[i]
 
@@ -71,12 +99,7 @@ class BasisChebyshev(Basis):
         return (2 / (b - a)) * (x - (a + b) / 2)
 
     def _update_diff_operators(self, i, order):
-        """
-        Updates the list _D of differentiation operators
 
-        :param order: order of required derivative
-        :return: None
-        """
         keys = set(self._diff_operators[i].keys())
 
         if (order in keys) or (order == 0):
@@ -139,23 +162,7 @@ class BasisChebyshev(Basis):
         Interpolation methods
     """
     def _phi1d(self, i, x=None, order=0):
-        """
-        Computes interpolation matrices for given data x and order of differentiation 'order' (integration if negative)
 
-        :param x:  evaluation points (defaults to nodes)
-        :param order: a list of orders for differentiation (+) / integration (-)
-        :return a: dictionary with interpolation matrices, keys given by unique elements of order.
-
-        Example: Create a basis with 5 nodes, get the interpolation matrix evaluated at 20 points::
-
-                n, a, b = 5, 0, 4
-                x = numpy.linspace(a,b, 20)
-                Phi = BasisChebyshev(n, a, b)
-                Phi.Phi(x)
-                Phi(x)
-
-        Calling an instance directly (as in the last line) is equivalent to calling the interpolation method.
-        """
         if order is None:
             order = 0
 

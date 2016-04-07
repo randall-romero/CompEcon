@@ -84,7 +84,8 @@ class BasisLinear(Basis):
                 d = 1 / np.diff(newbreaks)
                 dd = csc_matrix((data(d), (r_id, c_id)), shape=(n - 1, n))
                 if j > 1:
-                    self._diff_operators[i][j] = np.dot(dd, self._diff_operators[i][j - 1])
+                    # self._diff_operators[i][j] = np.dot(dd, self._diff_operators[i][j - 1])  #make sure * is matrix mult
+                    self._diff_operators[i][j] = dd * self._diff_operators[i][j - 1]
                 else:
                     self._diff_operators[i][1] = dd
 

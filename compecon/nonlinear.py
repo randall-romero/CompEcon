@@ -1,7 +1,7 @@
 import copy
 import numpy as np
 from numpy.linalg import solve
-from scipy.sparse import issparse
+from scipy.sparse import issparse, identity
 from scipy.sparse.linalg import spsolve
 from .tools import jacobian
 from compecon.tools import Options_Container
@@ -51,7 +51,7 @@ def fischer(u, v, du=None, dv=None, plus=True):
 
 
 class NLPoptions(Options_Container):
-    """ A container for options to zero a NLP or MCP
+    """ A container for options to find a zero for a NLP or MCP
 
     Attributes: default in brackets
         method:     either ['newton'] or 'broyden'
@@ -145,9 +145,11 @@ class NLP(Options_Container):
             raise ValueError('Initial value is required to zero a NLP, none provided!')
 
         if type(self) in (MCP, LCP):
+            # This step is important, as it sets the proper transformation (minmax, ssmooth) in case the original
+            # problem has complementarity conditions
             if self.opts.print:
                 print('Using the %s transformation' % self.opts.transform.upper())
-            self.x0 = self.transform_problem(self.x0)
+                self.transform_problem()
 
         self._x_list = [self.x0]
         return self.x0
@@ -270,6 +272,14 @@ class NLP(Options_Container):
         self.x, self.it = x, it
         return x.copy()
 
+    def funcit(self, x0=None, **kwargs):
+        f_original = self.f
+        user_provided_jacobian = self._is_there_jacobian()
+        self.f = lambda z: z - f_original(z)[0] if user_provided_jacobian else z - f_original(z)
+        x = self.fixpoint(x0, **kwargs)
+        self.f = f_original
+        return x
+
     def fixpoint(self, x0=None, **kwargs):
         # Update solution options using kwargs
         self.opts[kwargs.keys()] = kwargs.values()
@@ -336,11 +346,13 @@ class NLP(Options_Container):
             if self.opts.initi:
                 fjacinv = - np.identity(x.size)
             else:
-                fjacinv = np.linalg.pinv(jacobian(self.f, x))
+                fjac = self.f(x)[1] if self._is_there_jacobian() else jacobian(self.f, x)
+                # fjacinv = np.linalg.pinv(jacobian(self.f[0], x))
+                fjacinv = np.linalg.pinv(np.atleast_2d(fjac))
         else:
             fjacinv = self.opts.initb
 
-        return np.atleast_2d(fjacinv)
+        return fjacinv
 
     def update_inverse_jacobian(self, df, dx, fjacinv):
         """ Rule to update the inverse of Broyden's approximation of the Jacobian
@@ -367,8 +379,10 @@ class NLP(Options_Container):
             print('Jacobian was not provided by user!')
             return None
 
+        func = lambda z: self.f(z)[0]
+
         f, provided_jacobian = self.f(x)
-        numerical_jacobian = jacobian(self.f, x)
+        numerical_jacobian = jacobian(func, x)
         gap = np.abs(provided_jacobian - numerical_jacobian)
         idx = np.unravel_index(gap.argmax(), gap.shape)
 
@@ -378,8 +392,8 @@ class NLP(Options_Container):
         n_funcs, n_vars = gap.shape
 
         if np.any(trouble):
-            print("In '#' entries, the numerical derivative differs from")
-            print('the user-provided by more than {:d} decimal digits.\n'.format(signif))
+            print("In entries marked by '#' not all of the first {:d} decimal digits are the same in the numerical ")
+            print('and the user-provided derivatives.\n'.format(signif))
             tmp = lambda a: '#' if a else '.'
             header_frmt = '\t      ' + '{:5s}' * n_vars
             headers = ['x' + str(k) for k in range(n_vars)]
@@ -462,12 +476,17 @@ class MCP(NLP):
         fx = self._original(x)
         if type(fx) is tuple:
             fx, J = fx
+        else:
+            J = jacobian(self._original, x)
 
         fhat = np.fmin(np.fmax(fx, da), db)
-        if self.opts.method is 'newton': # compute the Jacobian
-            if not issparse(J):
+        if True:  #self.opts.method is 'newton': # compute the Jacobian  #fixme not sure this is ok
+            if issparse(J):
+                Jhat = -identity(x.size, format='csc')
+            else:
+                Jhat = -np.identity(x.size)
                 J = np.atleast_2d(J)
-            Jhat = -np.identity(x.size)
+
             i = (fx > da) & (fx < db)
             if np.any(i):
                 Jhat[i] = J[i]
@@ -492,14 +511,12 @@ class MCP(NLP):
         else:
             return self._original(x)
 
-    def transform_problem(self, x0):
+    def transform_problem(self):
         # Choose proper transformation
         if self.opts.transform is 'ssmooth':
             self.f = self._ssmooth
         else:
             self.f = self._minmax
-
-        return self.x0
 
     @property
     def a_is_binding(self):

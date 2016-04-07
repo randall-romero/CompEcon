@@ -83,8 +83,11 @@ bank = DPmodel(basis, reward, transition, bounds,
 
 # Solve Bellman Equation
 
-bank.solve()
+#sol = bank.solve()
 # resid, s, v, x = bank.residuals(nr=5)  # fixme takes huge amount of memory to deal with vmax over the refined grid!
+
+bank.check_derivatives()
+
 
 """
 ''' this is a temp fix '''
