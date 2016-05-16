@@ -521,7 +521,6 @@ class DPmodel(object):
             xr.shape = (dx, -1)
             data = np.vstack((data, xr))
             columns = columns + list(self.labels.x)
-
         data = pd.DataFrame(data.T, columns=columns)
 
         # Add residuals
@@ -532,10 +531,6 @@ class DPmodel(object):
         if nj > 1:
             data['value'] = np.nan
             data.value[data.j == 0] = vopt.flatten()
-
-
-
-
 
         # eliminate singleton dimensions, label non-singleton dimensions
         if ni > 1:
@@ -738,7 +733,7 @@ class DPmodel(object):
 
         return pd.concat(data, axis=1,copy=False)
 
-    def lqapprox(self, s0, x0):
+    def lqapprox(self, s0, x0, steady=False):
 
         assert (self.dims.ni * self.dims.nj < 2), 'Linear-Quadratic not implemented for models with discrete state or choice'
         s0, x0 = np.atleast_1d(s0, x0)
@@ -828,7 +823,52 @@ class DPmodel(object):
         self.Policy[:] = xlq.T[:]
         self.Policy_j[:] = xlq.T[:]
 
-        return sstar, xstar, pstar
+
+        #MAKE PANDAS DATAFRAME
+        ni, nj, dx = self.dims['ni', 'nj', 'dx']
+
+        sr = self.Value.nodes.copy()
+        discrete_indices = np.indices(vlq.shape)[:2].reshape(2, -1)
+        data = np.vstack((
+            discrete_indices,
+            np.tile(sr, ni * nj),
+            vlq.T.flatten()
+        ))
+
+        columns = ["i", "j"] + self.labels.s + ['value_j' if nj > 1 else 'value']
+
+        # Add continuous action
+        if dx:
+            xlq = np.rollaxis(xlq, -2)
+            xlq.shape = (dx, -1)
+            data = np.vstack((data, xlq))
+            columns = columns + list(self.labels.x)
+
+        data = pd.DataFrame(data.T, columns=columns)
+
+        # Add value
+        if nj > 1:
+            data['value'] = np.nan
+            data.value[data.j == 0] = vlq.flatten()
+
+        # eliminate singleton dimensions, label non-singleton dimensions
+        if ni > 1:
+            data['i'] = self.__as_categorical(data.i, True)
+        else:
+            del data['i']
+
+        if nj > 1:
+            data['j'] = self.__as_categorical(data.j, False)
+        else:
+            del data['j']
+
+        if steady:
+            ss0 = {a: b for a, b in zip(self.labels.s, sstar)}
+            ss0.update({a: b for a, b in zip(self.labels.x, xstar)})
+            ss0['value'] = vstar
+            ss0['shadow'] = pstar
+
+        return (data, ss0) if steady else data
 
 
 
@@ -1214,7 +1254,7 @@ class DPmodel(object):
         G = pd.DataFrame(np.zeros((nij,2 * ds)), index=idx, columns=idy)
 
         s = self.Value.nodes
-        e = np.tile(self.random.e[:, 1], ns)
+        e = np.tile(self.random.e[:, 0], ns)
 
         for k, (i, j) in enumerate(indices(ni,nj).T):
             xl, xu = self.bounds(s, i , j)
@@ -1228,6 +1268,8 @@ class DPmodel(object):
             f, fx, fxx = self.reward(s,xm,i,j, derivative=True)
             fxa = jacobian(lambda z: self.reward(s, z, i, j), xm)
             fxxa = hessian(lambda z: self.reward(s, z, i, j), xm)
+
+            #FIXME: HESSIAN SEEMS TO BE THROWING WRONG DIMENSIONS!!
 
             F.values[k, 0] = np.linalg.norm(fx - fxa, np.inf)
             F.values[k, 1] = np.linalg.norm(fxx - fxxa, np.inf)
