@@ -149,7 +149,7 @@ class NLP(Options_Container):
             # problem has complementarity conditions
             if self.opts.print:
                 print('Using the %s transformation' % self.opts.transform.upper())
-                self.transform_problem()
+            self.transform_problem()
 
         self._x_list = [self.x0]
         return self.x0

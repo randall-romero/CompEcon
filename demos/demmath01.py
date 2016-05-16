@@ -44,6 +44,6 @@ def newPlot(title, Y, k):
 
 fig = plt.figure(figsize=[15, 6])
 newPlot('Original function', y, 1)
-newPlot('First-order approximation', y1, 2)
-newPlot('Second-order approximation', y2, 3)
+newPlot('First-order approximation error', y1-y, 2)
+newPlot('Second-order approximation error', y2-y, 3)
 plt.show()
