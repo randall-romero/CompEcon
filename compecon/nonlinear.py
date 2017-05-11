@@ -154,6 +154,9 @@ class NLP(Options_Container):
         self._x_list = [self.x0]
         return self.x0
 
+    def _keep_within_limits(self, x):
+        return x
+
     def newton(self, x0=None, **kwargs):
         # Update solution options using kwargs
         self.opts[kwargs.keys()] = kwargs.values()
@@ -180,15 +183,22 @@ class NLP(Options_Container):
             if fnorm < tol:
                 self.x, self.it = x, it
                 return x.copy()
-            if issparse(J):
-                dx = - np.real(spsolve(J, fx))
-            else:
-                dx = - np.real(solve(J, fx))
+
+            solve_func = spsolve if issparse(J) else solve
+
+            dx = -np.real(solve_func(J, fx))
+
+
+            # this part comes from my ncpsolve4 matlab file
+            if np.any(np.isnan(dx)):
+                notYet = np.array([np.linalg.norm(J[k]) > SQEPS for k in range(dx.size)])
+                dx = -np.real(np.linalg.lstsq(J[notYet], fx[notYet])[0])
+
 
             fnormold = np.inf
 
             for backstep in range(maxsteps):
-                fxnew = self.f(x + dx)[0]  # only function evaluation, not Jacobian
+                fxnew = self.f(self._keep_within_limits(x + dx))[0]  # only function evaluation, not Jacobian
                 fxnew = fxnew.flatten()
                 fnormnew = np.max(np.abs(fxnew))
                 if fnormnew < fnorm:
@@ -199,7 +209,7 @@ class NLP(Options_Container):
                 fnormold = fnormnew
                 dx /= 2
                 # ---> end of back-step
-            x += dx
+            x = self._keep_within_limits(x + dx)
             if all_x:
                 self._x_list.append(x.copy())
 
@@ -498,6 +508,10 @@ class MCP(NLP):
         dx = self.hasLowerBound.size
         x = np.atleast_2d(x) if dx > 1 else np.atleast_1d(x)
         return np.array([self._ssmooth(xi)[0] for xi in np.atleast_1d(x)])
+
+    def _keep_within_limits(self, x):
+        return np.minimum(self.b, np.maximum(self.a, x))
+
 
     def minmax(self, x):
         dx = self.hasLowerBound.size
