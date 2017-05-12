@@ -14,3 +14,6 @@ from .dpmodel import DPmodel, DPoptions
 from .tools import *
 from .quad import *
 from .ddpmodel import DDPmodel
+
+import pkgutil
+pkgutil.extend_path(__path__, __name__)
