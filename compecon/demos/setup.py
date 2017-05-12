@@ -8,6 +8,9 @@ import seaborn as sns
 import ggplot as gg
 sns.set_style('dark')
 np.set_printoptions(4, linewidth=120)
+import os
+import inspect
+import ggplot as gg
 
 from warnings import simplefilter
 simplefilter('ignore')
@@ -92,3 +95,11 @@ class demo(object):
     def qplot(*args, **kwargs):
         g = gg.qplot(*args, **kwargs) + gg.theme_matplotlib()
         return g
+
+    def savefig(*args, name=None):
+        name = name if name else 'figures/' + os.path.basename(inspect.stack()[1].filename)[:-3]
+        for n, fig in enumerate(*args):
+            fname = name + f'--{n+1:02d}.pdf'
+            fig.savefig(fname, bbox_inches='tight')
+
+
