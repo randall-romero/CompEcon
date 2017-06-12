@@ -1,4 +1,4 @@
-from demos.setup import np, plt
+from compecon.demos import demo, np, plt
 
 from compecon.quad import qnwlogn
 from compecon.tools import discmoments
@@ -34,7 +34,7 @@ varnames = ['Market Price', 'Farm Price', 'Farm Revenue', 'Government Expenditur
 # Print results
 print('\n{:24s} {:8s} {:8s}'.format('Variable', 'Expect', 'Std Dev'))
 for varname, av, sd in zip(varnames, xavg, xstd):
-    print('{:24s} {:8.4f} {:8.4f}'.format(varname, av, sd))
+    print(f'{varname:24s} {av:8.4f} {sd:8.4f}')
 
 # Generate fixed-point mapping
 aeq = a
@@ -127,3 +127,4 @@ ax3.plot(ptarg, Eg, linewidth=4)
 plt.show()
 
 
+demo.savefig([fig1, fig2, fig3])

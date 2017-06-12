@@ -1,10 +1,12 @@
-from demos.setup import np, plt
+from compecon.demos import np, plt, demo
 from numpy.linalg import norm, cond, solve
 
 """ Ill-conditioning of Vandermonde matrix"""
 #todo: Review this demo, result not the same as in Miranda's
+#fixme: There seems to be a problem with the computation of eigenvalues by numpy.linalg
+
 # Compute approximation error and matrix condition number
-n = np.arange(6, 51)
+n = np.arange(6, 12)
 nn = n.size
 
 errv = np.zeros(nn)
@@ -26,18 +28,19 @@ print('b = ', b)
 conv = np.dot(X, b)
 
 # Plot matrix condition numbers
-plt.figure(figsize=[12, 5])
+fig = plt.figure(figsize=[12, 5])
 plt.subplot(1, 2, 1)
 plt.plot(n, conv)
 plt.xlabel('n')
-plt.ylabel('Log_{10} Condition Number')
+plt.ylabel('$\log_{10}$ Condition Number')
 plt.title('Vandermonde Matrix Condition Numbers')
 
 # Plot approximation errors
 plt.subplot(1, 2, 2)
 plt.plot(n,errv)
 plt.xlabel('n')
-plt.ylabel('Log_{10} Error')
-plt.title(r'Approximation Error for I - V\V')
+plt.ylabel('$\log_{10}$ Error')
+plt.title(r'Approximation Error for $I - V^{-1}V$')
 
 plt.show()
+demo.savefig([fig])
