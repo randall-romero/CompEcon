@@ -5,12 +5,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import seaborn as sns
-import ggplot as gg
 sns.set_style('dark')
 np.set_printoptions(4, linewidth=120)
 import os
 import inspect
-import ggplot as gg
+
+try:
+    import ggplot as gg
+except:
+    pass
 
 from warnings import simplefilter
 simplefilter('ignore')
@@ -63,6 +66,7 @@ class demo(object):
             plt.xlim(xlim)
         if ylim is not None:
             plt.ylim(ylim)
+        return plt.gcf()
 
     @staticmethod
     def subplot(nr, nc, i, title, xlab, ylab, xlim=None, ylim=None):
