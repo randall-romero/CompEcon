@@ -89,9 +89,11 @@ class NLPoptions(Options_Container):
         if self.print:
             print('{:4}  {:4}  {:6.2e}'.format(it, backstep, fnormnew))
 
-    def print_last_iteration(self, it):
+    def print_last_iteration(self, it, x):
         if (it + 1) == self.maxit:
             warnings.warn('Failure to converge after {} iteration in {} method.'.format(self.maxit, self.method.capitalize()))
+        else:
+            print('Solution is = ', x)
 
 
 class NLP(Options_Container):
@@ -218,7 +220,7 @@ class NLP(Options_Container):
             else:
                 self.opts.print_current_iteration(it, 0, fnorm)
 
-        self.opts.print_last_iteration(it)
+        self.opts.print_last_iteration(it, x)
         self.x, self.it = x, it
         return x.copy()
 
@@ -278,7 +280,7 @@ class NLP(Options_Container):
             fnorm = fnormnew
             self.opts.print_current_iteration(it, backstep, fnormnew)
 
-        self.opts.print_last_iteration(it)
+        self.opts.print_last_iteration(it, x)
         self.x, self.it = x, it
         return x.copy()
 
@@ -312,7 +314,7 @@ class NLP(Options_Container):
                 self.x, self.it = x, it
                 return x.copy()
 
-        self.opts.print_last_iteration(it)
+        self.opts.print_last_iteration(it, x)
         warnings.warn('Failure to converge in fixpoint')
 
     def bisect(self, a, b, **kwargs):
