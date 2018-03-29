@@ -1019,10 +1019,10 @@ def hess_order(n):
         Array with orders of derivatives.
         Array with location of hessian entries.
     """
-    A = np.array([a.flatten() for a in np.indices(3*np.ones(n))])
+    A = np.array([a.flatten() for a in np.indices(3*np.ones(n, int))])
     A = A[:,A.sum(0)==2]
 
-    C = np.zeros([n,n])
+    C = np.zeros([n,n], int)
     for i in range(n):
         for j in range(n):
             v = np.zeros(n)
