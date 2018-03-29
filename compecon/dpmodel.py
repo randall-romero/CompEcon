@@ -487,6 +487,76 @@ class DPmodel(object):
         """
         # TODO:  Make finite horizon case
 
+        ni, nj, dx = self.dims['ni', 'nj', 'dx']
+
+
+        scalar_input = np.isscalar(nr) and isinstance(nr, int)
+
+        if scalar_input:
+            a = self.Value.a
+            b = self.Value.b
+            n = self.Value.n
+            sr = np.atleast_2d(gridmake(*[np.linspace(a[i], b[i], nr * n[i]) for i in range(self.Value.d)]))
+        else:
+            sr = np.atleast_2d(nr)
+            assert sr.shape[0] == self.dims.ds, 'provided s grid must have {} rows'.format(self.dims.ds)
+
+
+
+        DATA = pd.DataFrame(np.tile(sr, ni).T, columns=self.labels.s)
+
+        if ni > 1:
+            temp= np.repeat(np.arange(ni), sr.shape[1])
+            DATA['i'] = self.__as_categorical(temp, self.labels.i)
+
+        xr = self.Policy_j(sr, dropdim=False)  # [0] because there is only 1 order
+        vr = self.vmax(sr, xr, self.Value)
+        v_LHS = np.max(vr, -2)  # LHS of Bellman equation
+        v_RHS = self.Value(sr, dropdim=False) # RHS of Bellman equation
+
+        DATA['resid'] = (v_RHS - v_LHS).flatten()
+        DATA['value'] = v_RHS.flatten()
+
+        if nj > 1:
+            DATA['j*'] = np.argmax(vr, -2).flatten()  # optimal discrete choice
+
+            for j, jlabel in enumerate(self.labels.j):
+                DATA['value[' + jlabel + ']'] = vr[:, j].flatten()
+
+        ''' Add continuous action'''
+        if dx:
+            for ix, xlabel in enumerate(self.labels.x):
+                DATA[xlabel] = self.Policy(sr, dropdim=False)[:,ix].flatten()
+
+                if nj > 1:
+                    for j, jlabel in enumerate(self.labels.j):
+                        DATA[xlabel + '[' + jlabel + ']'] = xr[:, j, ix].flatten()
+
+
+
+        # Add continuous action
+        #if dx:
+        #    xr = self.Policy_j(sr, dropdim=False)  # [0] because there is only 1 order
+        #    xr = np.rollaxis(xr, -2)
+        #    xr.shape = (dx, -1)
+        #    data = np.vstack((data, xr))
+        #    columns = columns + list(self.labels.x)
+        #data = pd.DataFrame(data.T, columns=columns)
+
+
+
+        return DATA
+
+    '''  OLD VERSION>>>>
+    def residuals(self, nr=10):
+        """
+        Computes residuals over a refined grid
+
+        If nr is scalar, compute a grid. Otherwise compute residuals over provided nr (sr)
+
+        """
+        # TODO:  Make finite horizon case
+
 
         scalar_input = np.isscalar(nr) and isinstance(nr, int)
 
@@ -534,18 +604,19 @@ class DPmodel(object):
 
         # eliminate singleton dimensions, label non-singleton dimensions
         if ni > 1:
-            data['i'] = self.__as_categorical(data.i, True)
+            data['i'] = self.__as_categorical(data.i, self.labels.i)
         else:
             del data['i']
 
         if nj > 1:
-            data['j'] = self.__as_categorical(data.j, False)
+            data['j'] = self.__as_categorical(data.j, self.labels.j)
         else:
             del data['j']
 
         return data
+    
 
-        '''
+
         # eliminate singleton dimensions and return
         if scalar_input:
             if self.dims.dx:
@@ -555,21 +626,22 @@ class DPmodel(object):
         else:
             return np.squeeze(resid)
 
-        '''
+    '''
 
-    def __as_categorical(self, vals, ii=True):
+    def __as_categorical(self, vals, labels):
         """
         Converts vector of integers (representing states or actions) to a pandas categorical variable.
         Args:
             vals: vector of integers, representing discrete states or actions
-            ii: Use discrete states if True, else use discrete actions
+            labels: labels to apply to the categories
 
         Returns:
             A pandas categorical series.
 
         """
-        labels = np.array(self.labels.i if ii else self.labels.j)
-        return pd.Categorical(labels[vals], labels)
+        temp = pd.Categorical(vals.astype(int))
+        temp.categories = labels
+        return temp
 
 
 
@@ -853,12 +925,12 @@ class DPmodel(object):
 
         # eliminate singleton dimensions, label non-singleton dimensions
         if ni > 1:
-            data['i'] = self.__as_categorical(data.i, True)
+            data['i'] = self.__as_categorical(data.i, self.labels.i)
         else:
             del data['i']
 
         if nj > 1:
-            data['j'] = self.__as_categorical(data.j, False)
+            data['j'] = self.__as_categorical(data.j, self.labels.j)
         else:
             del data['j']
 
