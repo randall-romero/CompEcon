@@ -14,7 +14,7 @@ Miranda, Mario J, and Paul L Fackler. Applied Computational Economics
 and Finance, MIT Press, 2002.
 
 """
-from __future__ import division
+#from __future__ import division
 
 import math
 import numpy as np
@@ -163,7 +163,7 @@ def qnwequi(n, a, b, kind="N", equidist_pp=None):
     nodes = a + nodes * r
     weights = (np.prod(r) / n) * np.ones(n)
 
-    return nodes, weights
+    return nodes.T, weights
 
 
 def qnwlege(n, a, b):
@@ -905,7 +905,7 @@ def _qnwsimp1(n, a, b):
 
     nodes = np.linspace(a, b, n)
     dx = nodes[1] - nodes[0]
-    weights = np.tile([2.0, 4.0], (n + 1.0) / 2.0)
+    weights = np.tile([2.0, 4.0], int((n + 1) / 2))
     weights = weights[:n]
     weights[0] = weights[-1] = 1
     weights = (dx / 3.0) * weights
