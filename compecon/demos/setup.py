@@ -9,11 +9,7 @@ sns.set_style('dark')
 np.set_printoptions(4, linewidth=120)
 import os
 import inspect
-
-try:
-    import ggplot as gg
-except:
-    pass
+#import plotnine as gg
 
 from warnings import simplefilter
 simplefilter('ignore')
@@ -96,14 +92,19 @@ class demo(object):
         demo.text(x + h0, y + v0, txt, fs=fs, **kwargs)
 
     @staticmethod
-    def qplot(*args, **kwargs):
-        g = gg.qplot(*args, **kwargs) + gg.theme_matplotlib()
-        return g
+    def qplot(x, y, color, data):
+        '''Makes plot from pandas
+        x: numeric variable
+        y: numeric variable
+        color: categoric variable
+        '''
+        return plt.plot(data.pivot(index=x,columns=color, values=y))
+
 
     def savefig(*args, name=None):
         name = name if name else 'figures/' + os.path.basename(inspect.stack()[1].filename)[:-3]
         for n, fig in enumerate(*args):
-            fname = name + f'--{n+1:02d}.pdf'
+            fname = name + '--%02d.pdf' % (n+1)
             fig.savefig(fname, bbox_inches='tight')
 
 
