@@ -476,18 +476,21 @@ class DPmodel(object):
         self.update_policy()
 
         if nr:
-            return self.residuals(nr)
+            return self.solution(nr)
 
-    def residuals(self, nr=10):
+    def solution(self, nr=10, resid=True):
         """
-        Computes residuals over a refined grid
+        Computes solution over a refined grid
 
-        If nr is scalar, compute a grid. Otherwise compute residuals over provided nr (sr)
+        nr:  scalar or np.array
+            -- scalar >> compute a grid from basis
+            -- array  >> compute solution over provided values
+        resid: compute residuals if True
 
         """
         # TODO:  Make finite horizon case
 
-        ni, nj, dx = self.dims['ni', 'nj', 'dx']
+        ni, nj, ds, dx = self.dims['ni', 'nj','ds', 'dx']
 
 
         scalar_input = np.isscalar(nr) and isinstance(nr, int)
@@ -501,133 +504,63 @@ class DPmodel(object):
             sr = np.atleast_2d(nr)
             assert sr.shape[0] == self.dims.ds, 'provided s grid must have {} rows'.format(self.dims.ds)
 
-
-
+        ''' MAKE DATABASE'''
+        # ADD CONTINUOUS STATE VARIABLE
         DATA = pd.DataFrame(np.tile(sr, ni).T, columns=self.labels.s)
 
+        # ADD DISCRETE STATE VARIABLE
         if ni > 1:
-            temp= np.repeat(np.arange(ni), sr.shape[1])
-            DATA['i'] = self.__as_categorical(temp, self.labels.i)
+            ivals= np.repeat(np.arange(ni), sr.shape[1])
+            icat = pd.Categorical.from_codes(ivals, self.labels.i)
+            DATA['i'] = ivals
 
+        # SET INDEX FOR DATA
+        if ds == 1:
+            slab = DATA[self.labels.s[0]]
+            if ni > 1:
+                DATA.index = pd.MultiIndex.from_arrays([icat, slab])
+            else:
+                DATA.index = slab
+        elif ni > 1:
+            DATA.index = icat
+
+        # COMPUTE OPTIMAL POLICY AND VALUE
         xr = self.Policy_j(sr, dropdim=False)  # [0] because there is only 1 order
         vr = self.vmax(sr, xr, self.Value)
-        v_LHS = np.max(vr, -2)  # LHS of Bellman equation
-        v_RHS = self.Value(sr, dropdim=False) # RHS of Bellman equation
+        v_LHS = self.Value(sr, dropdim=False) # LHS of Bellman equation: V(s)
 
-        DATA['resid'] = (v_RHS - v_LHS).flatten()
-        DATA['value'] = v_RHS.flatten()
+        # ADD VALUE FUNCTION
+        DATA['value'] = v_LHS.flatten()
 
+        # ADD RESIDUAL IF REQUESTED
+        if resid:
+            v_RHS = np.max(vr, -2)  # RHS of Bellman equation: max[f(s,x) + dV(s')]
+            DATA['resid'] = (v_LHS - v_RHS).flatten()
+
+        # ADD VALUE FUNCTION PER DISCRETE ACTION
         if nj > 1:
-            DATA['j*'] = np.argmax(vr, -2).flatten()  # optimal discrete choice
+            tempj = np.argmax(vr,-2).flatten()
+            DATA['j*'] = pd.Categorical.from_codes(tempj,self.labels.j)  # optimal discrete choice
 
             for j, jlabel in enumerate(self.labels.j):
                 DATA['value[' + jlabel + ']'] = vr[:, j].flatten()
 
-        ''' Add continuous action'''
+        # ADD CONTINUOUS ACTION
         if dx:
             for ix, xlabel in enumerate(self.labels.x):
                 DATA[xlabel] = self.Policy(sr, dropdim=False)[:,ix].flatten()
 
+                # ADD CONTINUOUS ACTION PER DISCRETE ACTION
                 if nj > 1:
                     for j, jlabel in enumerate(self.labels.j):
                         DATA[xlabel + '[' + jlabel + ']'] = xr[:, j, ix].flatten()
 
 
-
-        # Add continuous action
-        #if dx:
-        #    xr = self.Policy_j(sr, dropdim=False)  # [0] because there is only 1 order
-        #    xr = np.rollaxis(xr, -2)
-        #    xr.shape = (dx, -1)
-        #    data = np.vstack((data, xr))
-        #    columns = columns + list(self.labels.x)
-        #data = pd.DataFrame(data.T, columns=columns)
-
-
-
         return DATA
 
-    '''  OLD VERSION>>>>
-    def residuals(self, nr=10):
-        """
-        Computes residuals over a refined grid
-
-        If nr is scalar, compute a grid. Otherwise compute residuals over provided nr (sr)
-
-        """
-        # TODO:  Make finite horizon case
 
 
-        scalar_input = np.isscalar(nr) and isinstance(nr, int)
-
-        if scalar_input:
-            a = self.Value.a
-            b = self.Value.b
-            n = self.Value.n
-            sr = np.atleast_2d(gridmake(*[np.linspace(a[i], b[i], nr * n[i]) for i in range(self.Value.d)]))
-        else:
-            sr = np.atleast_2d(nr)
-            assert sr.shape[0] == self.dims.ds, 'provided s grid must have {} rows'.format(self.dims.ds)
-
-        xr = self.Policy_j(sr, dropdim=False)  # [0] because there is only 1 order
-        vr = self.vmax(sr, xr, self.Value)
-        vopt = np.max(vr, -2)
-        resid = self.Value(sr, dropdim=False) - vopt
-
-        ni, nj, dx = self.dims['ni', 'nj', 'dx']
-
-        discrete_indices = np.indices(vr.shape)[:2].reshape(2, -1)
-        data = np.vstack((
-            discrete_indices,
-            np.tile(sr, ni * nj),
-            vr.flatten()
-        ))
-
-        columns = ["i", "j"] + self.labels.s + ['value_j' if nj > 1 else 'value']
-
-        # Add continuous action
-        if dx:
-            xr = np.rollaxis(xr, -2)
-            xr.shape = (dx, -1)
-            data = np.vstack((data, xr))
-            columns = columns + list(self.labels.x)
-        data = pd.DataFrame(data.T, columns=columns)
-
-        # Add residuals
-        data['resid'] = np.nan
-        data.resid[data.j == 0] = resid.flatten()
-
-        # Add value
-        if nj > 1:
-            data['value'] = np.nan
-            data.value[data.j == 0] = vopt.flatten()
-
-        # eliminate singleton dimensions, label non-singleton dimensions
-        if ni > 1:
-            data['i'] = self.__as_categorical(data.i, self.labels.i)
-        else:
-            del data['i']
-
-        if nj > 1:
-            data['j'] = self.__as_categorical(data.j, self.labels.j)
-        else:
-            del data['j']
-
-        return data
-    
-
-
-        # eliminate singleton dimensions and return
-        if scalar_input:
-            if self.dims.dx:
-                return np.squeeze(resid), sr, np.squeeze(vr), np.squeeze(xr)
-            else:
-                return np.squeeze(resid), sr, np.squeeze(vr)
-        else:
-            return np.squeeze(resid)
-
-    '''
-
+    ''' NO LONGER NEEDED
     def __as_categorical(self, vals, labels):
         """
         Converts vector of integers (representing states or actions) to a pandas categorical variable.
@@ -642,7 +575,7 @@ class DPmodel(object):
         temp = pd.Categorical(vals.astype(int))
         temp.categories = labels
         return temp
-
+    '''
 
 
 
@@ -781,7 +714,29 @@ class DPmodel(object):
         tsim, rsim = gridmake(np.arange(nper), np.arange(nrep))
 
         ### Make the table.
+        DATA = pd.DataFrame()
+        DATA['time'] = tsim
+        if nrep > 1:
+            DATA['_rep'] = rsim
 
+        if ni > 1:
+            DATA['i'] = pd.Categorical.from_codes(isim.flatten(),self.labels.i)
+
+        sdata = ssim.swapaxes(0, 1).reshape((ds, -1))
+        for k, slab in enumerate(self.labels.s):
+            DATA[slab] = sdata[k]
+
+        if nj > 1:
+            DATA['j*'] = pd.Categorical.from_codes(jsim.flatten(), self.labels.j)
+
+        if dx > 0:
+            xdata = xsim.swapaxes(0, 1).reshape((dx, -1))
+            for k, xlab in enumerate(self.labels.x):
+                DATA[xlab] = xdata[k]
+
+        return DATA
+
+        ''' OLD IMPLEMENTATION OF DATABASE
         data = list()
         data.append(pd.Series(tsim, name='time'))
         if ni > 1:
@@ -804,6 +759,7 @@ class DPmodel(object):
             data.append(pd.Series(rsim, name='_rep'))
 
         return pd.concat(data, axis=1,copy=False)
+        '''
 
     def lqapprox(self, s0, x0, steady=False):
 
@@ -895,7 +851,19 @@ class DPmodel(object):
         self.Policy[:] = xlq.T[:]
         self.Policy_j[:] = xlq.T[:]
 
+        data = self.solution(self.Value.nodes, resid=False)
 
+        if steady:
+            ss0 = {a: b for a, b in zip(self.labels.s, sstar)}
+            ss0.update({a: b for a, b in zip(self.labels.x, xstar)})
+            ss0['value'] = vstar
+            ss0['shadow'] = pstar
+            return data, ss0
+        else:
+            return data
+
+
+        ''' OLD IMPLEMENTATION
         #MAKE PANDAS DATAFRAME
         ni, nj, dx = self.dims['ni', 'nj', 'dx']
 
@@ -941,7 +909,7 @@ class DPmodel(object):
             ss0['shadow'] = pstar
 
         return (data, ss0) if steady else data
-
+        '''
 
 
 
