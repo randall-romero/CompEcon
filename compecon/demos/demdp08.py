@@ -79,7 +79,7 @@ print('\tHarvest = %5.2f' % qstar)
 
 # Solve Bellman Equation
 model.solve()
-resid, s, v, q = model.residuals()
+resid, s, v, q = model.solution()
 
 # Plot Optimal Policy
 demo.figure('Optimal Harvest Policy', 'Stock', 'Harvest')

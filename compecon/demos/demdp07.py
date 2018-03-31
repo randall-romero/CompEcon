@@ -79,7 +79,7 @@ sstar = gamma * kstar + kstar ** beta       	# deterministic steady-state wealth
 
 # Solve Bellman Equation
 growth.solve()
-resid, s, v, k = growth.residuals()
+resid, s, v, k = growth.solution()
 
 # Plot Optimal Policy
 demo.figure('Optimal Investment Policy',  'Wealth', 'Investment')

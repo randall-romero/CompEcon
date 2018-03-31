@@ -1,43 +1,86 @@
-from demos.setup import np, plt, demo
-from compecon import BasisChebyshev, NLP
-from compecon.tools import nodeunif
 
-__author__ = 'Randall'
+# coding: utf-8
 
-# DEMAPP08 Compute function inverse via collocation
+# ### DEMAPP08 
+# 
+# # Compute function inverse via collocation
+# 
+# The function is defined implicitly by
+# \begin{equation*}
+# f(x)^{-2} + f(x)^{-5} - 2x = 0
+# \end{equation*}
 
-# Residual function
+# In[1]:
 
 
-def resid(c, F, x):
-    F.c = c
-    f = F(x)
+import numpy as np
+import matplotlib.pyplot as plt
+from compecon import BasisChebyshev, NLP, demo
+
+
+# ### Approximation structure
+
+# In[2]:
+
+
+n, a, b = 31, 1, 5
+F = BasisChebyshev(n, a, b)  # define basis functions
+x = F.nodes                  # compute standard nodes
+
+
+# ### Residual function
+
+# In[3]:
+
+
+def resid(c):
+    F.c = c  # update basis coefficients
+    f = F(x) # interpolate at basis nodes x
     return f ** -2 + f ** -5 - 2 * x
 
-# Approximation structure
-n, a, b = 31, 1, 5
-f = BasisChebyshev(n, a, b)  # define basis functions
-xnode = f.nodes              # compute standard nodes
 
-# Compute function inverse
-c0 = np.zeros(n)
+# ### Compute function inverse
+
+# In[4]:
+
+
+c0 = np.zeros(n)  # set initial guess for coeffs
 c0[0] = 0.2
-problem = NLP(resid, c0, f, xnode)
-f.c = problem.broyden()   # call rootfinding routine to compute coefficients
+problem = NLP(resid)
+F.c = problem.broyden(c0)  # compute coeff by Broyden's method
 
-# Plot setup
+
+# ### Plot setup
+
+# In[5]:
+
+
 n = 1000
-x = nodeunif(n, a, b)
-r = resid(f.c, f, x)
+x = np.linspace(a, b, n)
+r = resid(F.c)
 
-# Plot function inverse
-demo.figure('Implicit Function', 'x', 'f(x)')
-plt.plot(x, f(x))
 
-# Plot residual
-demo.figure('Functional Equation Residual', 'x', 'Residual')
-plt.plot(x, np.zeros_like(x), 'k--')
+# ### Plot function inverse
+
+# In[6]:
+
+
+fig1 = demo.figure('Implicit Function', 'x', 'f(x)')
+plt.plot(x, F(x))
+
+
+# ### Plot residual
+
+# In[7]:
+
+
+fig2 = demo.figure('Functional Equation Residual', 'x', 'Residual')
+plt.hlines(0, a, b, 'k', '--')
 plt.plot(x, r)
 
-plt.show()
+
+# In[8]:
+
+
+demo.savefig([fig1, fig2])
 

@@ -63,7 +63,7 @@ model = DPmodel(basis, reward, transition, bounds,
 
 # Solve Bellman Equation
 model.solve()
-resid, s, v, q = model.residuals()
+resid, s, v, q = model.solution()
 
 # Compute and print abandonment point
 sstar = (b[0] - a[0]) / b[1]

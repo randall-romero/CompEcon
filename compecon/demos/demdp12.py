@@ -83,7 +83,7 @@ model = DPmodel(basis, reward, transition, bounds,
 
 # Solve Bellman Equation
 model.solve()
-resid, s, v, x = model.residuals()
+resid, s, v, x = model.solution()
 
 """
 

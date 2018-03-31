@@ -79,7 +79,7 @@ model.lqapprox(sstar, xstar)
 
 # Solve Bellman Equation
 model.solve() # no need to pass LQ to model, it's already there
-resid, s, v, x = model.residuals()
+resid, s, v, x = model.solution()
 
 # Plot Optimal Policy
 demo.figure('Optimal Irrigation Policy', 'Reservoir Level', 'Irrigation')

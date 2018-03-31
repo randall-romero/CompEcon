@@ -1,4 +1,4 @@
-from demos.setup import np, plt
+from compecon.demos.setup import np, plt
 
 from compecon.quad import qnwlogn
 from compecon.tools import nodeunif
