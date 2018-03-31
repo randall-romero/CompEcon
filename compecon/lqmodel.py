@@ -1,22 +1,34 @@
-import time
-
 from compecon.tools import Options_Container, qzordered
-from compecon.nonlinear import MCP
-from compecon.lcpstep import lcpstep
 import numpy as np
-import scipy as sp
 import pandas as pd
-from scipy.sparse import block_diag, kron, issparse, identity
-from scipy.sparse.linalg import spsolve
 from compecon.tools import jacobian, hessian, gridmake, indices
-from inspect import getargspec
-#from .lcpstep import lcpstep  # todo: is it worth to add lcpstep?
 
-
-
-#fixme In docstrings, indicate that discrete model should not include x in definitions
 
 __author__ = 'Randall'
+
+
+class LQlabels(Options_Container):
+    """ Container for labels of the LQmodel variables
+
+    Attributes:
+        s  labels for continuous state variables
+        x  labels for continuous action variables
+    """
+    description = "Labels for LQmodel variables"
+
+    def __init__(self, s, x):
+        self.s = list(s)
+        self.x = list(x)
+
+    @property
+    def snext(self):
+        return [k + '_next' for k in self.s]
+
+    @property
+    def p(self):
+        return ['value_' + k for k in self.s]
+
+
 
 
 class LQmodel(object):
@@ -47,7 +59,7 @@ class LQmodel(object):
      """
     # TODO: write the docstring
 
-    def __init__(self, f0,fs,fx,fss,fsx,fxx,g0,gs,gx,delta):
+    def __init__(self, f0,fs,fx,fss,fsx,fxx,g0,gs,gx,delta, slabels=None, xlabels=None):
         """
         Args:
             f0: 1.1   objective function parameter
@@ -94,6 +106,16 @@ class LQmodel(object):
         self.P = np.nan
         self.G = np.nan
 
+        '''MAKE THE LABELS'''
+        if slabels is None:
+            slabels = ['s'] if ds == 1 else [f's{i}' for i in range(ds)]
+
+        if xlabels is None:
+            xlabels = ['x'] if dx == 1 else [f'x{i}' for i in range(dx)]
+
+        self.labels = LQlabels(slabels, xlabels)
+
+        '''SOLVE THE MODEL'''
         self.solve()
         ''' <<<<<<<<<<<<<<<<<<<             END OF CONSTRUCTOR        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'''
 
@@ -208,8 +230,6 @@ class LQmodel(object):
 
         ds, dx = self.dims['ds'], self.dims['dx']
 
-
-
         '''GET THE DATA'''
         ss = np.atleast_2d(ss)
         assert ss.shape[0] == ds, 'provided s grid must have {} rows'.format(ds)
@@ -218,23 +238,13 @@ class LQmodel(object):
         pr = self.Shadow(ss)
         snext = self.Next(ss)
 
-        '''MAKE THE LABELS'''
-        if ds == 1:
-            sla = ['s']
-            snextla = ['snext']
-            shala = ['p']
-        else:
-            sla = [f's{i}' for i in range(ds)]
-            snextla = [f's{i}next' for i in range(ds)]
-            shala = [f'p{i}' for i in range(ds)]
-        if dx == 1:
-            xla = ['x']
-        else:
-            xla = [f'x{i}' for i in range(dx)]
-
         ''' MAKE DATABASE'''
         DATA = pd.DataFrame(np.r_[ss, xr, vr, pr, snext].T,
-                            columns=sla + xla + ['v'] + shala + snextla)
+                            columns=self.labels.s + self.labels.x + ['value'] + self.labels.p + self.labels.snext)
+
+        '''SET INDEX FOR DATA'''
+        if ds == 1:
+            DATA.index = DATA[self.labels.s[0]]
 
         return DATA
 
@@ -315,7 +325,7 @@ class LQmodel(object):
         return DATA
 
 
-    def solve(self, steady=True):
+    def solve(self):
         # Unpak data
         ds = self.dims['ds']
         dx = self.dims['dx']
@@ -359,5 +369,3 @@ class LQmodel(object):
                  sstar.T @ fsx @ xstar + 0.5 * xstar.T @ fxx @ xstar) / (1 - delta)
 
         self.steady = {'s':sstar, 'x': xstar, 'p': pstar, 'v':vstar}
-
-        #data = self.solution(self.Value.nodes, resid=False)

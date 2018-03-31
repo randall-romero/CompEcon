@@ -3,6 +3,7 @@ import time
 from compecon.tools import Options_Container, qzordered
 from compecon.nonlinear import MCP
 from compecon.lcpstep import lcpstep
+from compecon.lqmodel import LQmodel
 import numpy as np
 import scipy as sp
 import pandas as pd
@@ -453,7 +454,7 @@ class DPmodel(object):
 
         self.update_policy()
 
-        if nr:
+        if nr is not None:
             return self.solution(nr)
 
     def solution(self, nr=10, resid=True):
@@ -630,7 +631,7 @@ class DPmodel(object):
                 ee = np.tile(self.random.e, nrep)     #self.random.e[ones(nrep,1),:]  #fixme make sure dimensions are ok
             else:
                 ee = self.random.e[:, np.random.choice(ne, nrep, p=self.random.w)] #fixme make sure dimensions are ok
-                # ee = self.random.e[:, discrand(nrep,self.random.w)] #fixme make sure dimensions are ok
+
 
 
             ### Compute the new state: use the Markov transition matrix self.random.q to update
@@ -695,7 +696,17 @@ class DPmodel(object):
         return DATA
 
 
-    def lqapprox(self, s0, x0, steady=False):
+    def lqapprox(self, s0, x0):
+        """
+        Solves discrete time continuous state/action dynamic programming model using a linear quadratic approximation
+        Args:
+            s0: steady-state state
+            x0:  steady-state action
+
+        Returns:
+            A LQmodel object
+        """
+
 
         assert (self.dims.ni * self.dims.nj < 2), 'Linear-Quadratic not implemented for models with discrete state or choice'
         s0, x0 = np.atleast_1d(s0, x0)
@@ -743,58 +754,7 @@ class DPmodel(object):
         fx += - s0.T @ fsx - x0.T @ fxx
         g0 += - gs @ s0 - gx @ x0
 
-        # Solve Riccati equation using QZ decomposition
-        dx2ds = dx + 2 * ds
-        A = np.zeros((dx2ds, dx2ds))
-        A[:ds, :ds] = np.identity(ds)
-        A[ds:-ds, -ds:] = -delta * gx.T
-        A[-ds:, -ds:] = delta * gs.T
-
-        B = np.zeros_like(A)
-        B[:ds, :-ds] = np.c_[gs, gx]
-        B[ds: -ds, :-ds] = np.c_[fsx.T, fxx]
-        B[-ds:] = np.c_[-fss, -fsx, np.identity(ds)]
-
-        S, T, Q, Z = qzordered(A, B)
-        C = np.real(np.linalg.solve(Z[:ds, :ds].T, Z[ds:, :ds].T)).T
-        X = C[:dx]
-        P = C[dx:, :]
-
-        # Compute steady-state state, action, and shadow price
-        t0 = np.r_[np.c_[fsx.T, fxx, delta * gx.T],
-                  np.c_[fss, fsx, delta*gs.T - np.eye(ds)],
-                  np.c_[gs - np.eye(ds), gx, np.zeros((ds, ds))]]
-        t1 = np.r_[-fx.T, -fs.T, -g0]
-        t = np.linalg.solve(t0, t1)
-        sstar, xstar, pstar = np.split(t, [ds, ds + dx])
-        vstar = (f0 + fs @ sstar + fx @ xstar + 0.5 * sstar.T @ fss @ sstar +
-                 sstar.T @ fsx @ xstar + 0.5 * xstar.T @ fxx @ xstar) / (1 - delta)
-
-        # Compute lq-approximation optimal policy and shadow price functions at state nodes
-        s = self.Value.nodes.T.copy()
-        sstar = sstar.T
-        xstar = xstar.T
-        pstar = pstar.T
-        s -= sstar   # hopefully broadcasting works here  (np.ones(ns,1),:)  #todo make sure!!
-        xlq = xstar + s @ X.T  #(np.ones(1,ns),:)
-        plq = pstar + s @ P.T   #(np.ones(1,ns),:)
-        vlq = vstar + s @ pstar.T + 0.5 * np.sum(s * (s @ P.T), axis=1,keepdims=True)
-
-        self.Value[:] = vlq.T[:]
-        self.Value_j[:]= vlq.T[:]
-        self.Policy[:] = xlq.T[:]
-        self.Policy_j[:] = xlq.T[:]
-
-        data = self.solution(self.Value.nodes, resid=False)
-
-        if steady:
-            ss0 = {a: b for a, b in zip(self.labels.s, sstar)}
-            ss0.update({a: b for a, b in zip(self.labels.x, xstar)})
-            ss0['value'] = vstar
-            ss0['shadow'] = pstar
-            return data, ss0
-        else:
-            return data
+        return LQmodel(f0, fs, fx, fss, fsx, fxx, g0, gs, gx, delta,self.labels.s, self.labels.x)
 
 
     def __solve_backwards(self):
