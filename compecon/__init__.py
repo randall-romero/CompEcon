@@ -14,6 +14,7 @@ from .dpmodel import DPmodel, DPoptions
 from .tools import *
 from .quad import *
 from .ddpmodel import DDPmodel
+from .lqmodel import LQmodel
 from .demos.setup import demo
 
 import pkgutil
