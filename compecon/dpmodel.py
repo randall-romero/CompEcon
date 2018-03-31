@@ -378,17 +378,6 @@ class DPmodel(object):
 
         return (f, fx, fxx) if derivative else f
 
-        #  ======OLD VERSION BELOW THIS LINE=======
-        # if self.options.D_reward_provided:
-        #     f, fx, fxx = self.__f(s, x, i, j)
-        #     if self.options.discretized:
-        #         return f.reshape(1, ns)
-        #     else:
-        #         return f.reshape(1, ns), fx.reshape(dx, ns), fxx.reshape(dx, dx, ns)
-        # elif self.options.discretized:
-        #     return self.__f(s, x, i, j).reshape(1, ns)
-        # else:
-        #     return self.getDerivative('reward', s, x, i, j)
 
     def transition(self, s, x, i, j, in_, e, derivative=False):  # --> (g, gx, gxx)
         """ Returns the next-period continuous state and its first- and second-derivatives.
@@ -407,17 +396,6 @@ class DPmodel(object):
 
         return (g, gx, gxx) if derivative else g
 
-        #  ======OLD VERSION BELOW THIS LINE=======
-        # if dx > 0 and self.options.D_transition_provided:
-        #     g, gx, gxx = self.__g(s, x, i, j, in_, e)
-        #     if self.options.discretized or not derivative:
-        #         return g.reshape(ds, ns)
-        #     else:
-        #         return g.reshape(ds, ns), gx.reshape(dx, ds, ns), gxx.reshape(dx, dx, ds, ns)
-        # elif self.options.discretized:
-        #     return self.__g(s, x, i, j, in_, e).reshape(ds, ns)
-        # else:
-        #     return self.getDerivative('transition', s, x, i, j, in_, e)
 
     def solve(self, v=None, x=None, nr=10, **kwargs):
         """ Solves the model
@@ -557,26 +535,6 @@ class DPmodel(object):
 
 
         return DATA
-
-
-
-    ''' NO LONGER NEEDED
-    def __as_categorical(self, vals, labels):
-        """
-        Converts vector of integers (representing states or actions) to a pandas categorical variable.
-        Args:
-            vals: vector of integers, representing discrete states or actions
-            labels: labels to apply to the categories
-
-        Returns:
-            A pandas categorical series.
-
-        """
-        temp = pd.Categorical(vals.astype(int))
-        temp.categories = labels
-        return temp
-    '''
-
 
 
     def simulate(self, nper, sinit, iinit=0, seed=None):
@@ -736,30 +694,6 @@ class DPmodel(object):
 
         return DATA
 
-        ''' OLD IMPLEMENTATION OF DATABASE
-        data = list()
-        data.append(pd.Series(tsim, name='time'))
-        if ni > 1:
-            idata = [self.labels.i[k] for k in isim.flatten()]  # todo this looks ugly, find other way to put labels to category
-            if isinstance(self.labels.i[0], str):
-                data.append(pd.Series(idata, name='i', dtype="category"))
-            else:
-                data.append(pd.Series(idata, name='i'))
-
-        data.append(pd.DataFrame(ssim.swapaxes(0, 1).reshape((ds, -1)).T, columns=self.labels.s))
-
-        if nj > 1:
-            jdata = [self.labels.j[k] for k in jsim.flatten()]  # todo this looks ugly, find other way to put labels to category
-            data.append(pd.Series(jdata, name='j', dtype="category"))
-
-        if dx > 0:
-            data.append(pd.DataFrame(xsim.swapaxes(0, 1).reshape((dx, -1)).T, columns=self.labels.x))
-
-        if nrep > 1:
-            data.append(pd.Series(rsim, name='_rep'))
-
-        return pd.concat(data, axis=1,copy=False)
-        '''
 
     def lqapprox(self, s0, x0, steady=False):
 
@@ -861,56 +795,6 @@ class DPmodel(object):
             return data, ss0
         else:
             return data
-
-
-        ''' OLD IMPLEMENTATION
-        #MAKE PANDAS DATAFRAME
-        ni, nj, dx = self.dims['ni', 'nj', 'dx']
-
-        sr = self.Value.nodes.copy()
-        discrete_indices = np.indices(vlq.shape)[:2].reshape(2, -1)
-        data = np.vstack((
-            discrete_indices,
-            np.tile(sr, ni * nj),
-            vlq.T.flatten()
-        ))
-
-        columns = ["i", "j"] + self.labels.s + ['value_j' if nj > 1 else 'value']
-
-        # Add continuous action
-        if dx:
-            xlq = np.rollaxis(xlq, -2)
-            xlq.shape = (dx, -1)
-            data = np.vstack((data, xlq))
-            columns = columns + list(self.labels.x)
-
-        data = pd.DataFrame(data.T, columns=columns)
-
-        # Add value
-        if nj > 1:
-            data['value'] = np.nan
-            data.value[data.j == 0] = vlq.flatten()
-
-        # eliminate singleton dimensions, label non-singleton dimensions
-        if ni > 1:
-            data['i'] = self.__as_categorical(data.i, self.labels.i)
-        else:
-            del data['i']
-
-        if nj > 1:
-            data['j'] = self.__as_categorical(data.j, self.labels.j)
-        else:
-            del data['j']
-
-        if steady:
-            ss0 = {a: b for a, b in zip(self.labels.s, sstar)}
-            ss0.update({a: b for a, b in zip(self.labels.x, xstar)})
-            ss0['value'] = vstar
-            ss0['shadow'] = pstar
-
-        return (data, ss0) if steady else data
-        '''
-
 
 
     def __solve_backwards(self):
