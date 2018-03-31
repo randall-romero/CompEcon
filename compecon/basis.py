@@ -595,6 +595,7 @@ class Basis(object):
         """
 
         d = self.d
+        x = np.atleast_1d(x)
 
         if type(order) is str:
             if order is 'jac':
