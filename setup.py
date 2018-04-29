@@ -1,20 +1,45 @@
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
-   
-config = {
-    'description': 'A Python version of CompEcon',
-    'author': 'Randall Romero',
-    'url': 'URL to get it at.',
-    'download_url': 'Where do download it.',
-    'author_email': 'randall.romero@outlook.com',
-    'version': '0.1',
-    'install_requires': ['nose'],
-    'packages': ['compecon'],
-    'scripts': [],
-    'name': 'compecon'
+""" The CompEcon package setup.
+Based on setuptools
+
+Randall Romero-Aguilar, 2015-2018
+"""
+
+
+from setuptools import setup
+from codecs import open
+from os import path
+
+here = path.abspath(path.dirname(__file__))
+
+with open(path.join(here,'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
+
+setup(
+    name='compecon',
+    version='2018.04',
+    description='A Computational Economics Toolbox',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
+    url='http://randall-romero.com/code/compecon',
+    author='Randall Romero-Aguilar',
+    author_email='randall.romero@outlook.com',
+    classifiers=['Development Status :: 4 - Beta',
+                 'Intended Audience :: Computational Economists',
+                 'Topic :: Numerical Methods for Economics',
+                 'License :: OSI Approved :: MIT License',
+                 'Programming Language :: Python :: 3.6'],
+    keywords='computations economics numerical methods',
+    packages=['compecon', 'compecon.demos','textbook','notebooks'],
+    python_requires='>=3.6',
+    install_requires=[
+        'numpy',
+        'scipy',
+        'matplotlib',
+        'seaborn',
+        'numba',
+        'nose'],
+    project_urls={
+        'Bug Reports': 'https://github.com/randall-romero/CompEcon-python/issues',
+        'Source': 'https://github.com/randall-romero/CompEcon-python/'
     }
-    
-# setup(requires=['nose', 'numpy', 'scipy', 'matplotlib', 'matplotlib', 'seaborn', 'numba'], **config)  # fixme Uncomment when numba is available for python 3.5
-setup(requires=['nose', 'numpy', 'scipy', 'pandas', 'matplotlib', 'matplotlib', 'seaborn','ggplot'], **config)
+)
