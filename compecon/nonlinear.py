@@ -68,7 +68,7 @@ class NLPoptions(Options_Container):
     description = 'Options for solving a NLP'
 
     def __init__(self, method='newton', maxit=100, maxsteps=10, tol=SQEPS,
-                 print=False, initb=None, initi=False, transform='ssmooth', all_x=False):
+                 show=False, initb=None, initi=False, transform='ssmooth', all_x=False,print=None):
         self.method = method
         self.maxit = maxit
         self.maxsteps = maxsteps
@@ -76,17 +76,20 @@ class NLPoptions(Options_Container):
         self.initb = initb
         self.initi = initi
         self.transform = transform
-        self.print = print
+        self.show = show
         self.all_x = all_x
+        if print is not None:
+            warnings.warn("'print=' keyword is deprecated, use 'show=' instead")
+            self.show=print
 
     def print_header(self):
-        if self.print:
+        if self.show:
             print("Solving nonlinear equations by {}'s method".format(self.method.capitalize()))
             print('{:4}  {:4}  {:6}'.format('it', 'bstep', 'change'))
             print('-' * 20)
 
     def print_current_iteration(self, it, backstep, fnormnew):
-        if self.print:
+        if self.show:
             print('{:4}  {:4}  {:6.2e}'.format(it, backstep, fnormnew))
 
     def print_last_iteration(self, it, x):
@@ -149,7 +152,7 @@ class NLP(Options_Container):
         if type(self) in (MCP, LCP):
             # This step is important, as it sets the proper transformation (minmax, ssmooth) in case the original
             # problem has complementarity conditions
-            if self.opts.print:
+            if self.opts.show:
                 print('Using the %s transformation' % self.opts.transform.upper())
             self.transform_problem()
 
