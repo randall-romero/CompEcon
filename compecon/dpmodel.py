@@ -12,7 +12,7 @@ from scipy.sparse.linalg import spsolve
 from compecon.tools import jacobian, hessian, gridmake, indices
 from inspect import getargspec
 #from .lcpstep import lcpstep  # todo: is it worth to add lcpstep?
-
+import warnings
 
 
 #fixme In docstrings, indicate that discrete model should not include x in definitions
@@ -140,20 +140,23 @@ class DPoptions(Options_Container):
 
     def __init__(self, algorithm='newton', tol=np.sqrt(np.spacing(1)), ncpmethod='minmax',
                  maxit=80, maxitncp=50, discretized=False, X=None,
-                 knownFunctions=None, print=True):
+                 knownFunctions=None, show=True, print=None):
         self.algorithm = algorithm
         self.tol = tol
         self.ncpmethod = ncpmethod
         self.maxit = maxit
         self.maxitncp = maxitncp
-        self.print = print
+        self.show = show
         self.discretized = discretized
         self.X = X
         self.knownFunctions = knownFunctions
+        if print is not None:
+            warnings.warn("Keyword 'print=' is deprecated. Use 'show=' instead.")
+
 
     def print_header(self, method, horizon):
         horizon = 'infinite' if np.isinf(horizon) else 'finite'
-        if self.print:
+        if self.show:
             print('Solving %s-horizon model collocation equation by %s method' % (horizon, method))
             print('{:4s} {:12s} {:8s}'.format('iter', 'change', 'time'))
             print('-' * 30)
@@ -169,7 +172,7 @@ class DPoptions(Options_Container):
         Returns:
           prints output to screen
         """
-        if self.print:
+        if self.show:
             print('{:4d}  {:12.1e}  {:8.4f}'.format(it, change, time.time() - tic))
 
     def print_last_iteration(self, tic, change):
@@ -973,7 +976,7 @@ class DPmodel(object):
         xlv, xuv, xijv = map(lambda z: z.flatten('F'), (xl, xu, xij))  # vectorize
 
         FOCs = MCP(kkt, xlv, xuv, xijv)
-        xij[:] = FOCs.zero(print=False, transform=self.options.ncpmethod).reshape((ns, dx)).T
+        xij[:] = FOCs.zero(show=False, transform=self.options.ncpmethod).reshape((ns, dx)).T
 
         return self.__Bellman_rhs(Value, s, xij, i, j)[0][0]
 

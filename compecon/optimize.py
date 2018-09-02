@@ -27,7 +27,7 @@ class OPoptions(Options_Container):
     description = 'Options for solving a Unconstraint Optimization Problem'
 
     def __init__(self, SearchMeth='bfgs', StepMeth='bt', maxit=250, maxsteps=50, tol=SQEPS,
-                 print=False, eps0=1.0, eps1=1.e-12,all_x=False):
+                 show=False, eps0=1.0, eps1=1.e-12,all_x=False, print=None):
         self.SearchMeth = SearchMeth
         self.StepMeth = StepMeth
         self.maxit = maxit
@@ -35,17 +35,20 @@ class OPoptions(Options_Container):
         self.tol = tol
         self.eps0 = eps0
         self.eps1 = eps1
-        self.print = print
+        self.show = show
         self.all_x = all_x
+        if print is not None:
+            warnings.warn("Keyword 'print=' is deprecated. Use 'show=' instead")
+            self.show = print
 
     def print_header(self):
-        if self.print:
+        if self.show:
             print("Solving nonlinear equations by {}'s method".format(self.SearchMeth.capitalize()))
             print('{:4}  {:4}  {:6}'.format('it', 'bstep', 'change'))
             print('-' * 20)
 
     def print_current_iteration(self, it, backstep, fnormnew):
-        if self.print:
+        if self.show:
             print('{:4}  {:4}  {:6.2e}'.format(it, backstep, fnormnew))
 
     def print_last_iteration(self, it):
