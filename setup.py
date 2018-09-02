@@ -16,7 +16,7 @@ with open(path.join(here,'README.md'), encoding='utf-8') as f:
 
 setup(
     name='compecon',
-    version='2018.04',
+    version='2018.08',
     description='A Computational Economics Toolbox',
     long_description=long_description,
     long_description_content_type='text/markdown',
