@@ -101,10 +101,20 @@ class demo(object):
         return plt.plot(data.pivot(index=x,columns=color, values=y))
 
 
-    def savefig(*args, name=None):
+    def savefig(*args, name=None, format=['pdf', 'png']):
+        """
+        Saves a list of figures to disk, in the specified formats
+        :param args: a collection of matplotlib figure objects
+        :param name: a string, root name for saved files
+        :param format: a string of list of strings indicating file formats.
+        :return: None
+        """
         name = name if name else 'figures/' + os.path.basename(inspect.stack()[1].filename)[:-3]
+        formats = format if isinstance(format, list) else [format]
+
         for n, fig in enumerate(*args):
-            fname = name + '--%02d.pdf' % (n+1)
-            fig.savefig(fname, bbox_inches='tight')
+            for ext in formats:
+                fname = f'{name}--{n+1:02d}.{ext}'
+                fig.savefig(fname, bbox_inches='tight')
 
 
