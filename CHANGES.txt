@@ -1,0 +1,7 @@
+
+VERSION 2018.08:
+    --Changed "print=" keyword to "show=" in several solvers. This is to avoid
+    confusion with the python "print" reserved keyword. As of this version, using
+    the all keyword will raise a warning. Future version will raise an error.
+
+    --Added an option to demo.savefig to specified file formats
