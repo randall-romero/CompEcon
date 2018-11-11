@@ -185,7 +185,7 @@ class DPoptions(Options_Container):
         Returns:
           prints output to screen
         """
-        if self.print:
+        if self.show:
             if change >= self.tol:
                 print('Failure to converge in DPmodel.solve()')
             print('Elapsed Time = {:7.2f} Seconds'.format(time.time() - tic))
