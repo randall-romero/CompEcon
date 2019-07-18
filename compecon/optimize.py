@@ -128,29 +128,27 @@ class OP(Options_Container):
         # Update solution options using kwargs
         self.opts[kwargs.keys()] = kwargs.values()
         self.opts.method = 'golden'
-        alpha1 = (3 - np.sqrt(5)) / 2
-        alpha2 = (np.sqrt(5) - 1) / 2
+        φ = (np.sqrt(5) - 1) / 2  # golden ratio
 
         if a > b:
             a, b = b, a
 
-        d = b - a
-        x1 = a + alpha1 * d
-        x2 = a + alpha2 * d
+        Δ = (b - a) * (1 - φ)
+        x = a + Δ
+        y = b - Δ
+        fx, fy = self.f(x), self.f(y)
 
-        f1, f2 = self.f(x1), self.f(x2)
+        Δ *= φ
+        while Δ > self.opts.tol:
+            Δ *= φ
+            if fy < fx: # y is new upper bound
+                x, y = x - Δ, x
+                fx, fy = self.f(x), fx
+            else:  # x is new lower bound
+                x, y = y, y + Δ
+                fx, fy = fy, self.f(y)
 
-        d *= (alpha1 * alpha2)
-        while d > self.opts.tol:
-            d *= alpha2
-            if f2 < f1: # x2 is new upper bound
-                x2, x1 = x1, x1 - d
-                f2, f1 = f1, self.f(x1)
-            else:  # x1 is new lower bound
-                x1, x2 = x2, x2 + d
-                f1, f2 = f2, self.f(x2)
-
-        return x1 if f1 > f2 else x2
+        return x if fx > fy else y
 
     def qnewton(self, x0=None, A=None, **kwargs):
 

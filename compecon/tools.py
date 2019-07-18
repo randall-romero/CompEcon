@@ -122,7 +122,7 @@ def jacobian(func, x, *args, **kwargs):
     #     F = lambda x: func(x, *args, **kwargs)
     F = lambda z: func(z, *args, **kwargs)
 
-    x = x.flatten()
+    x = np.asarray(x).flatten()
     dx = x.size
     f = F(x)
     df = f.size
@@ -150,9 +150,49 @@ def jacobian(func, x, *args, **kwargs):
     return fx.T
 
 
+def hess1(func, x, *args, **kwargs):
+
+    F = lambda z: func(z, *args, **kwargs)
+    x = np.asarray(x).flatten().astype(float)
+
+    k = x.size
+    fx = F(x)
+
+    '''Compute stepsize'''
+    tol = np.spacing(1) ** (1 / 4)
+    h = tol * np.maximum(np.abs(x), 1)
+    xh = x + h
+    h = xh - x
+    ee = np.diag(h)
+
+    '''Compute forward and backward steps'''
+    gplus = np.zeros_like(x)
+    gminus = np.zeros_like(x)
+    for i, ei in enumerate(ee):
+        gplus[i] = F(x + ei)
+        gminus[i] = F(x - ei)
+
+    H = np.outer(h, h)
+
+    for i in range(k):
+        for j in range(k):
+            if i==j:
+                H[i, i] = (gplus[i] + gminus[i] - 2*fx) / H[i, i]
+            else:
+                fxx = F(x + ee[i] - ee[j])
+                H[i, j] = (gplus[i] + gminus[j] - fx - fxx) / H[i, j]
+
+    return (H + H.T) / 2
+
+
+
+
+
+
 def hessian(func, x, *args, **kwargs):
 
     F = lambda z: func(z, *args, **kwargs)
+    x = np.asarray(x).flatten().astype(float)
     if x.ndim < 2:
         x = np.atleast_2d(x).T
 
@@ -198,7 +238,7 @@ def hessian(func, x, *args, **kwargs):
                 fxx[k, h] = (fpp + fmm - fpm - fmp) / (4 * deltaX[k] * deltaX[h])
 
     fxx = (fxx + fxx.swapaxes(0, 1)) / 2
-    return fxx
+    return fxx.squeeze()
 
 
 tic = lambda: time.time()
