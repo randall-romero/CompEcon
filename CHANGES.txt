@@ -6,6 +6,7 @@ VERSION 2019.07:
     --hessian and jacobian can take lists of numbers as evaluation points; they will
     be converted to numpy arrays.
     --Simplified notation in implementation of golden search method.
+    --Added Gauss-Jacobi and Gauss-Seidel solvers for linear equations.
 
 
 VERSION 2018.08:
