@@ -9,6 +9,7 @@ from .basisChebyshev import BasisChebyshev
 from .basisSpline import BasisSpline
 from .basisLinear import BasisLinear
 from .nonlinear import MCP, NLP, LCP
+from .linear import gjacobi, gseidel
 from .optimize import OP, MLE
 from .dpmodel import DPmodel, DPoptions
 from .tools import *
