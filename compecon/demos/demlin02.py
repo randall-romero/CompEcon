@@ -6,7 +6,7 @@ from numpy.linalg import norm, cond, solve
 #fixme: There seems to be a problem with the computation of eigenvalues by numpy.linalg
 
 # Compute approximation error and matrix condition number
-n = np.arange(6, 12)
+n = np.arange(6, 100).astype(float)
 nn = n.size
 
 errv = np.zeros(nn)
@@ -14,33 +14,28 @@ conv = np.zeros(nn)
 
 for i in range(nn):
     v = np.vander(1 + np.arange(n[i]))
-    errv[i] = np.log10(norm(np.identity(n[i]) - solve(v, v)))
-    conv[i] = np.log10(cond(v))
+    errv[i] = norm(np.identity(v.shape[0]) - solve(v, v))
+    conv[i] = cond(v)
 
-print('errv = ', errv)
+
 # Smooth using quadratic function
 X = np.vstack([np.ones(nn), n]).T
-b = np.linalg.lstsq(X, errv)[0]
+b = np.linalg.lstsq(X, np.log10(errv))[0]
 print('b = ', b)
-errv = np.dot(X, b)
-b = np.linalg.lstsq(X, conv)[0]
+errv = 10 ** np.dot(X, b)
+b = np.linalg.lstsq(X, np.log10(conv))[0]
 print('b = ', b)
-conv = np.dot(X, b)
+conv = 10 ** np.dot(X, b)
 
 # Plot matrix condition numbers
-fig = plt.figure(figsize=[12, 5])
-plt.subplot(1, 2, 1)
-plt.plot(n, conv)
-plt.xlabel('n')
-plt.ylabel('$\log_{10}$ Condition Number')
-plt.title('Vandermonde Matrix Condition Numbers')
+fig, ax = plt.subplots(figsize=[12, 7])
 
-# Plot approximation errors
-plt.subplot(1, 2, 2)
-plt.plot(n,errv)
-plt.xlabel('n')
-plt.ylabel('$\log_{10}$ Error')
-plt.title(r'Approximation Error for $I - V^{-1}V$')
+ax.plot(n, conv, label='Condition Number')
+ax.plot(n,errv, label= '$||I - V^{-1}V||_\infty$')
+ax.set_xlabel('n')
+ax.set_yscale('log')
+ax.set_yticks(10.0 ** np.array([0,50,100,150,200]))
+ax.legend()
 
-plt.show()
+fig.show()
 demo.savefig([fig])
