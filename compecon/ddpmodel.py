@@ -1,5 +1,6 @@
 __author__ = 'Randall'
 import numpy as np
+import pandas as pd
 import scipy as sp
 from compecon.tools import tic, toc, Options_Container, markov
 from scipy.sparse import csc_matrix, diags, tril, identity
@@ -19,16 +20,16 @@ class DDPoptions(Options_Container):
     description = "Solver options for a DPmodel"
 
     def __init__(self, algorithm='newton', tol=np.sqrt(np.spacing(1)),
-                 maxit=200, vterm=None, print=False):
+                 maxit=200, vterm=None, show=False):
         self.algorithm = algorithm
         self.tol = tol
         self.maxit = maxit
         self.vterm = vterm
-        self.print = print
+        self.show = show
 
     def print_header(self, method, horizon):
         horizon = 'infinite' if np.isinf(horizon) else 'finite'
-        if self.print:
+        if self.show:
             print('Solving %s-horizon discrete model by %s method' % (horizon, method))
             print('{:4s} {:12s} {:8s}'.format('iter', 'change', 'time'))
             print('-' * 30)
@@ -44,7 +45,7 @@ class DDPoptions(Options_Container):
         Returns:
           prints output to screen
         """
-        if self.print:
+        if self.show:
             print('{:4d}  {:12.1e}  {:8.4f}'.format(it, change, toc(t0)))
 
     def print_last_iteration(self, t0, change):
@@ -57,7 +58,7 @@ class DDPoptions(Options_Container):
         Returns:
           prints output to screen
         """
-        if self.print:
+        if self.show:
             if change >= self.tol:
                 print('Failure to converge in DPmodel.solve()')
             print('Elapsed Time = {:7.2f} Seconds'.format(toc(t0)))
@@ -80,8 +81,15 @@ class DDPdims(Options_Container):
 class DDPmodel(object):
     def __init__(self, reward, dynamics,
                  discount, horizon=np.inf,
-                 S = None, X = None,
                  **kwargs):
+        """
+
+        :param reward: m X n array, m discrete actions vs n discrete states
+        :param dynamics:
+        :param discount: float, discount factor (scalar)
+        :param horizon: int, planning horizon
+        :param kwargs: options for solving the problem
+        """
 
         assert reward.ndim == 2, 'reward must be a 2-dimensional array'
 
@@ -193,6 +201,10 @@ class DDPmodel(object):
                 break
         self.transition = self.__valpol(self.policy)[0]
         self.opts.print_last_iteration(t0, change)
+
+    def solution(self):
+        #TODO: Return model solution as pandas dataframe?
+        pass
 
     def simulate(self, s0, nper):
 

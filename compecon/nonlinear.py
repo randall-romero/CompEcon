@@ -62,7 +62,7 @@ class NLPoptions(Options_Container):
         initi:      if True, use the identity matrix to initialize Jacobian,
                     if [False], a numerical Jacobian will be used
         transform:  either ['ssmooth'] or 'minmax', required for MC problems
-        print: print to screen if [True], quiet if False
+        show:       print to screen if [True], quiet if False
         all_x:      whether to output the full solution sequence too [False]
     """
     description = 'Options for solving a NLP'
