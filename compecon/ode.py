@@ -1,6 +1,12 @@
 # This module has tools to solve ordinary differential equations
 
+# The ODE class defined in this module combines the following function from original MATLAB version
+#    * odecol
+#    * oderk4
+#    * odespx
+#    * odephase
 
+# TODO: Add a OCmodel class, that combines docsolve and socsolve
 
 import numpy as np
 import pandas as pd
@@ -8,7 +14,7 @@ import matplotlib.pyplot as plt
 from compecon import BasisChebyshev, BasisSpline, NLP, jacobian
 
 
-class ode:
+class ODE:
     def __init__(self, f, T, bv, *params):
         self.f = lambda x: f(x, *params)
         self.T = T
