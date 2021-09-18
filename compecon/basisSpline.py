@@ -7,8 +7,49 @@ __author__ = 'Randall'
 # todo: compare performance of csr_matrix and csc_matrix to deal with sparse interpolation operators
 # fixme: interpolation is 25 slower than in matlab when 2 dimensions!! 2x slower with only one
 
+
+
 class BasisSpline(Basis):
     def __init__(self, *args, k=3, **kwargs):
+        """
+        Initialize a spline basis
+
+        Parameters
+        ----------
+        *args : either one tuple or three array-like parameters
+            Parameters to define the breakpoints of the spline (see notes for details)
+        k : int (optional, 3 by default)
+            the degree of the spline polynomials
+        **kwargs : dict
+            options passed to :ref:`BasisOptions`.
+
+        Notes
+        -----
+        1. If only 1 positional argument is provided, it must be a tuple of 'd' array-like, each of them containing the breaks for one dimension.
+        2. If 3 positional parameters are provided, then they are interpreted as `n`, `a`, `b`, where
+            - n : int or array_like, number of nodes per dimension.
+            - a : int or array_like, lower bound(s) for interpolation.
+            - b : int or array_like, upper bound(s) for interpolation.
+
+        Examples
+        --------
+        1. A cubic spline basis to interpolate a function of wealth.
+
+        >>> BasisSpline(15, -2, 3, labels=['wealth'])
+
+        2. A linear spline basis to interpolate income as a function of wealth, for employed and unemployed workers.
+
+        >>> income = BasisSpline(15, -2, 3, k=1, labels=['wealth'], l=['employed', 'unemployed')
+
+        3. A 2-dimensional basis, using 9 nodes in each dimension, and forming grid by tensor product (81 nodes total)
+
+        >>> BasisSpline(9, [0, 0], [2, 3])
+
+        4. A cubic spline basis, with 7 user-defined nodes (note that they are passed as tuple)
+
+        >>> BasisSpline(([0, 0.1, 0.3, 0.6, 1.0, 1.5, 2.1],))
+
+        """
 
         nargs = len(args)
         if nargs == 1:
@@ -44,10 +85,7 @@ class BasisSpline(Basis):
         self._set_nodes()
 
     def _set_nodes(self):
-        """
-            Sets the basis nodes
-            :return: None
-        """
+        # Sets the basis nodes
         n = self.n
         k = self.k
 
@@ -68,10 +106,15 @@ class BasisSpline(Basis):
 
     def _update_diff_operators(self, i, order):
         """
-        Updates the list _D of differentiation operators
+        Updates the list _D of differentiation operators in the basis
 
-        :param order: order of required derivative
-        :return: None
+        Parameters
+        ----------
+        i : int
+            dimension for which the derivative is required.
+        order : int
+            order of required derivative (if positive) or integral (if negative)
+
         """
         keys = set(self._diff_operators[i].keys())
 
@@ -130,17 +173,38 @@ class BasisSpline(Basis):
         """
         Computes interpolation matrices for given data x and order of differentiation 'order' (integration if negative)
 
-        :param x:  evaluation points (defaults to nodes)
-        :param order: a list of orders for differentiation (+) / integration (-)
-        :return a: dictionary with interpolation matrices, keys given by unique elements of order.
+        Parameters
+        ----------
+        i : int
+            dimension for which the derivative is required.
+        x : array_like
+            nx floats, evaluation points (defaults to nodes)
+        order : array_like
+            array with m ints, orders for differentiation (+) / integration (-)
 
-        Example: Create a basis with 5 nodes, get the interpolation matrix evaluated at 20 points::
+        Returns
+        -------
+        interpolation matrices : np.ndarray, m differentiation basis matrices (one of each order)
+             Each value is a sparse interpolation matrices, nx times n.
 
-                n, a, b = 5, 0, 4
-                x = numpy.linspace(a,b, 20)
-                Phi = BasisSpline(n, a, b)
-                Phi.Phi(x)
-                Phi(x)
+        Notes
+        -----
+        1. `order` may have repeated values, since this function is tipically needed to evaluate partial derivatives.
+        2. To save on computational cost, only unique values in `order` are evaluated once, then results are rearranged by this function.
+        3. Future version of this function will make use of @cached_property to acomplish this savings.
+        4. This function takes care of only one dimension of the basis. The :ref:`Basis` class (on which `BasisSpline` is based) has a method `Phi` that takes care of combining these interpolation matrices.
+
+        Examples
+        --------
+
+        Create a basis with 5 nodes, get the interpolation matrix evaluated at 20 points:
+
+        >>> import numpy as np
+        >>> n, a, b = 5, 0, 4
+        >>> x = np.linspace(a,b, 20)
+        >>> basis = BasisSpline(n, a, b)
+        >>> basis._phi1d(0, x, order=[0, 1])
+
 
         Calling an instance directly (as in the last line) is equivalent to calling the interpolation method.
         """

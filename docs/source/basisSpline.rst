@@ -1,9 +1,8 @@
-BasisChebyshev
+BasisSpline
 ==============
 
-About Chebyshev basis:
-**********************
-A Chebyshev basis is a linear combination of Chebyshev polynomials :math:`\phi(x)` used to approximate a function :math:`f(x)`:
+
+A spline basis is a linear combination of spline polynomials :math:`\phi(x)` used to approximate a function :math:`f(x)`:
 
 .. math::
     f(x) \approx \sum_{i=1}^{n} c_i\phi_i(x)
@@ -12,11 +11,11 @@ where :math:`c_i` are the collocation coefficients. The approximation uses :math
 
 ---------------------------
 
+BasisSpline class
+--------------------
 
-.. autoclass:: compecon.BasisChebyshev
-    :members:
+.. autoclass:: compecon.BasisSpline
+    :members: _phi1d
     :undoc-members:
     :show-inheritance:
-    :special-members: __call__
-
-
+    :special-members: __init__, __call__

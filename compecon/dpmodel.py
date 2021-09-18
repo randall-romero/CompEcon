@@ -21,13 +21,17 @@ __author__ = 'Randall'
 
 
 class DPtime(Options_Container):
-    """ Container for the time parameters of a DPmodel object
-
-    Attributes:
-        discount  scalar, discount factor in the interval (0,1)
-        horizon   scalar, agents horizon
-    """
     def __init__(self, discount=0.0, horizon=np.inf):
+        """
+        A container class to store time parameters of a DPmodel object
+
+        Parameters
+        ----------
+        discount : float
+            scalar, discount factor in the interval (0, 1)
+        horizon: int or np.inf
+            agents horizon
+        """
         self.discount = discount
         self.horizon = horizon
 

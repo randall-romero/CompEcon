@@ -39,7 +39,7 @@ setup(
         'numba',
         'nose'],
     project_urls={
-        'Bug Reports': 'https://github.com/randall-romero/CompEcon-python/issues',
-        'Source': 'https://github.com/randall-romero/CompEcon-python/'
+        'Bug Reports': 'https://github.com/randall-romero/CompEcon/issues',
+        'Source': 'https://github.com/randall-romero/CompEcon/'
     }
 )

@@ -104,7 +104,7 @@ def qnwequi(n, a, b, kind="N", equidist_pp=None):
         - R - pseudo Random
 
     equidist_pp : array_like, optional(default=None)
-        TODO: I don't know what this does
+
 
     Returns
     -------

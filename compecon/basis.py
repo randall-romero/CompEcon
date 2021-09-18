@@ -1,3 +1,7 @@
+"""
+basis.py: A module to implement a base basis class.
+"""
+
 from warnings import warn
 import numpy as np
 import scipy as sp
@@ -11,102 +15,126 @@ __author__ = 'Randall'
 
 
 class Basis(object):
-    """ A class for function interpolation.
+    """
+    A class for function interpolation.
 
-    The CompEcon toolbox includes the classes BasisChebyshev, BasisSpline, and BasisLinear for function interpolation.
-    All of them inherit methods from this class to deal with common functionality.
+    ---
 
-    Attributes:
-        d (int): Number of dimensions of the basis space.
-        n (numpy array): Number of nodes for each dimension (d-array).
-        a (numpy array): Lower bounds for each dimension (d-array).
-        b (numpy array): Upper bound for each dimension (d-array).
-        N (int): Total number of nodes.
-        M (int): Total number of polynomials.
-        nodes (numpy array): Basis nodes (d.N array).
-        x (numpy array): Same as nodes.
-        y (numpy array):  Value of interpolated function(s) at basis nodes (s0...sk.N array).
-        c (numpy array):  Coefficients of interpolated function(s) at basis nodes (s0...sk.M array).
-        shape (tuple): Dimensions of interpolated function, i.e. (s0, s1, ..., sk).
-        shape_N (tuple): Shape of y. Same as shape, N.
-        size (int): Total number of interpolated functions, i.e. s0 x ... x sk.
-        ndim (int): Number of dimension of interpolated functions, i.e.  k+1.
-        opts (BasisOptions): Options for basis (see BasisOptions class for details).
-        _diff_operators (list): Operators to differentiate/integrate (a list of d dictionaries).
-        _Phi (numpy array): Interpolation array (basis functions evaluated at nodes, N.M array).
-        _PhiT (numpy array): Transpose of _Phi (stored to updated y given c).
-        _PhiInvT (numpy array): Inverse of _PhiT (stored to update c given y).
-        _cIsOutdated (numpy array): Boolean array indicating which coefficients are outdated (following a change in y).
-        _yIsOutdated (numpy array): Boolean array indicating which function values are outdated (following a change in c).
-
-    Methods:
-        Phi: Computes interpolation matrix at arbitrary values.
-        plot: Plots interpolation basis functions.
-        copy: Returns a shallow copy of a Basis instance.
-        duplicate: Similar to copy, but allows to specify new functions to be interpolated.
-        update_y: Update function values (called after changing c).
-        update_c: Update interpolation coefficients (called after changing y).
-        _phi1d: Computes interpolation matrix for a given basis dimension.
-        _diff: Returns a specified differentiation operator.
-        _update_diff_operators: Compute differentiation operators, storing them in _diff_operators.
-        _set_function_values: Sets values of y and c attributes.
-        _expand_nodes: Compute the nodes grid (required when d > 1).
-        _lookup: find nearest node to given point (required by spline and linear bases).
-        __init__: Return new instance of Basis. Should be called directly by Basis subclasses only.
-        __repr__: String representation of a Basis contents.
-        __getitem__: Return a copy of Basis for specified item.
-        __setitem__: Modify the y values for a specified item.
-        __call__: Evaluate the interpolated function at arbitrary values.
+    Attributes
+    ----------
+    d : int
+        Number of dimensions of the basis space.
+    n : np.ndarray
+        Number of nodes for each dimension (d-array).
+    a : np.ndarray
+       Lower bounds for each dimension (d-array).
+    b : np.ndarray
+        Upper bound for each dimension (d-array).
+    N : int
+        Total number of nodes.
+    M : int
+        Total number of polynomials.
+    nodes : np.ndarray
+        Basis nodes (d.N array).
+    x : np.ndarray
+        Same as nodes.
+    y : np.ndarray
+        Value of interpolated function(s) at basis nodes (s0...sk.N array).
+    c : np.ndarray
+        Coefficients of interpolated function(s) at basis nodes (s0...sk.M array).
+    shape : tuple
+        Dimensions of interpolated function, i.e. (s0, s1, ..., sk).
+    shape_N : tuple
+        Shape of y. Same as shape, N.
+    size : int
+        Total number of interpolated functions, i.e. s0 x ... x sk.
+    ndim : int
+        Number of dimension of interpolated functions, i.e.  k+1.
+    opts : BasisOptions
+        Options for basis (see BasisOptions class for details).
 
 
-    See Also:
-        BasisChebyshev class
-        BasisSpline class
-        BasisLinear class
+    See Also
+    --------
+    BasisChebyshev class
+    BasisSpline class
+    BasisLinear class
 
-    Notes:
-        The code in this class and its subclasses is based on Miranda and Fackler's CompEcon 2014 toolbox. In particular,
-        the following functions were used or their functionality is replicated by Basis and its subclasses:
-            * chebbase, chebbasex, chebdef, chebdop chebnode (Chebyshev interpolation)
-            * linbase, lindef, lindop, linnode (Linear interpolation)
-            * splibase, splidef, splidop, splinode (Spline interpolation)
-            * funbase, funbasex, fundef, fundefn, funeval, funfitf, funfitxy, funnode (similar to the above functions)
-            * lookup (for linear and spline interpolation).
+    Notes
+    -----
+    The code in this class and its subclasses is based on Miranda and Fackler's CompEcon 2014 toolbox [1]_. In particular,
+    the following functions were used or their functionality is replicated by Basis and its subclasses:
 
-        Unlike the original Matlab implementation, in which a basis definition (as created by calling fundefn) is coded
-        as a structure and the interpolation coefficients are kept separately in an array, this Python implementation
-        combines both elements into a single class. This simplifies the code by reducing the number of arguments passed
-        to interpolation functions. For example, to evaluate a 'basis' at 'x' with coefficients 'c', in Matlab one needs
-        to call funeval(c, basis, x) whereas in Python it simplies to basis(x).
+    - chebbase, chebbasex, chebdef, chebdop chebnode (Chebyshev interpolation)
+    - linbase, lindef, lindop, linnode (Linear interpolation)
+    - splibase, splidef, splidop, splinode (Spline interpolation)
+    - funbase, funbasex, fundef, fundefn, funeval, funfitf, funfitxy, funnode (similar to the above functions)
+    - lookup (for linear and spline interpolation).
 
-    References:
-        Miranda and Fackler 2002 Applied Computational Economics and Finance. MIT Press.
-        Judd, Maliar, Maliar, Valero 2013 Smolyak Method for Solving Dynamic Economic Models. NBER Working Paper 19326
+    Unlike the original Matlab implementation, in which a basis definition (as created by calling fundefn) is coded
+    as a structure and the interpolation coefficients are kept separately in an array, this Python implementation
+    combines both elements into a single class. This simplifies the code by reducing the number of arguments passed
+    to interpolation functions. For example, to evaluate a `basis` at `x` with coefficients `c`, in Matlab one needs
+    to call `funeval(c, basis, x)` whereas in Python it is just `basis(x)`.
+
+    Furthermore, this class has the option implements Smolyak interpolation [2]_ for multidimensional bases.
+
+    References
+    ----------
+    .. [1] Miranda and Fackler 2002 Applied Computational Economics and Finance. MIT Press.
     """
 
+
+
+
+
+    # The CompEcon toolbox also includes these "private" attributes and methods for implementing its functionality.
+    #
+    # Private Attributes:
+    #    _diff_operators (list): Operators to differentiate/integrate (a list of d dictionaries).
+    #    _Phi : np.ndarray Interpolation array (basis functions evaluated at nodes, N.M array).
+    #    _PhiT : np.ndarray Transpose of _Phi (stored to updated y given c).
+    #    _PhiInvT : np.ndarray Inverse of _PhiT (stored to update c given y).
+    #    _cIsOutdated : np.ndarray Boolean array indicating which coefficients are outdated (following a change in y).
+    #    _yIsOutdated : np.ndarray Boolean array indicating which function values are outdated (following a change in c).
+
+    # Private Methods:
+    #    _phi1d: Computes interpolation matrix for a given basis dimension.
+    #    _diff: Returns a specified differentiation operator.
+    #    _update_diff_operators: Compute differentiation operators, storing them in _diff_operators.
+    #    _set_function_values: Sets values of y and c attributes.
+    #    _expand_nodes: Compute the nodes grid (required when d > 1).
+    #    _lookup: find nearest node to given point (required by spline and linear bases).
+    #    __init__: Return new instance of Basis. Should be called directly by Basis subclasses only.
+    #    __repr__: String representation of a Basis contents.
+    #    __getitem__: Return a copy of Basis for specified item.
+    #    __setitem__: Modify the y values for a specified item.
+
+
+
     def __init__(self, n, a, b, **kwargs):
-        """ Create an instance of Basis.
-
-        Args:
-            n: number of nodes per dimension
-            a: lower bounds
-            b: upper bounds
-            **kwargs: options passed to BasisOptions
-
-            The dimension of the basis is inferred from the number of elements in n, a, b. If all of them are scalars,
-            then d = 1. Otherwise, they are broadcast to a common size array.
-
-            Notice that only one of the keyword arguments f, y, c, s, l can be specified. If none is, then s=1.
-
-        Notes:
-            Users should not create Basis instances directly, as they would be useless (class Basis does not implement
-            methods to compute nodes nor interpolation matrices). Instead, they should create instances of the classes
-            BasisChebyshev, BasisSpline or BasisLinear.
-
-        Returns:
-            A Basis instance.
-
         """
+        Create an instance of Basis.
+
+        Parameters
+        ----------
+        n : int or array_like
+            number of nodes per dimension.
+        a : int or array_like
+            lower bound(s) for interpolation.
+        b : int or array_like
+            upper bound(s) for interpolation.
+        **kwargs
+            options passed to BasisOptions
+
+        Notes
+        -----
+
+        1. The dimension of the basis is inferred from the number of elements in `n`, `a`, `b`. If all of them are scalars, then `d` = 1. Otherwise, they are broadcast to a common size array.
+        2. Notice that only one of the keyword arguments `f`, `y`, `c`, `s`, `l` can be specified. If none is, then `s=1`.
+        3. Users should not create `Basis` instances directly, as they would be useless (class `Basis` does not implement methods to compute nodes nor interpolation matrices). Instead, users should create instances of the classes             `BasisChebyshev`, `BasisSpline` or `BasisLinear`.
+        """
+
         n, a, b = np.broadcast_arrays(*np.atleast_1d(n, a, b))
         assert np.all(n > 2), 'n must be at least 3'
         assert np.all(a < b), 'lower bound must be less than upper bound'
@@ -146,8 +174,8 @@ class Basis(object):
 
         Args:
             i (int): The required dimension (scalar between 0 and d-1)
-            x (numpy array): vector of 'nx' evaluation points. If None, then basis nodes are used.
-            order (numpy array): vector of 'no' integers, indicating orders of differentiation (integration if negative).
+            x : np.ndarray vector of 'nx' evaluation points. If None, then basis nodes are used.
+            order : np.ndarray vector of 'no' integers, indicating orders of differentiation (integration if negative).
             Default is zero.
 
         Returns:
@@ -241,7 +269,7 @@ class Basis(object):
         self.nodes = np.array([self._nodes[k][ix[k]] for k in range(self.d)])
         phi = self.Phi()
         self._PhiT = phi.T
-        if self.opts.basistype is 'chebyshev':
+        if self.opts.basistype == 'chebyshev':
             self._PhiInvT = np.linalg.pinv(phi).T
         else:
             self._PhiInvT = sp.sparse.linalg.inv(phi).T
@@ -249,11 +277,7 @@ class Basis(object):
 
     @property
     def _Phi(self):
-        """ Interpolation matrix at basis nodes.
-
-        Returns:
-            numpy array with dimensions N.M
-        """
+        # Interpolation matrix at basis nodes.
         return self._PhiT.T
 
     def _diff(self, i, m):
@@ -274,18 +298,25 @@ class Basis(object):
         return self._diff_operators[i][m]
 
     def Phi(self, x=None, order=None, dropdim=True):
-        """Compute the interpolation matrix :math:`\Phi(x)`
-
-
-        Args:
-            x: evaluation points. Either a d.nx numpy array of domain values at which function is evaluated or
-               d list of arrays of coordinates in each domain dimension.
-            order (d.no numpy array): order of derivatives (integrals if negative), default is zero (no derivative).
-            dropdim (bool): squeeze dimensions if True (default).
-
-        Returns:
-            A numpy array with interpolation matrices
         """
+        Compute the interpolation matrix :math:`\Phi(x)`.
+
+        Parameters
+        ----------
+        x : array_like, optional
+            Evaluation points: Either a d.nx numpy array of domain values at which function is evaluated or
+               d list of arrays of coordinates in each domain dimension.
+        order : array_like, optional
+            A d.no numpy array with order of derivatives (integrals if negative), default is None (no derivative).
+        dropdim : (bool)
+            Squeeze dimensions if True (default).
+
+        Returns
+        -------
+        np.ndarray
+            Interpolation matrices
+        """
+
         if np.all([x is None, order is None, self._PhiT is not None, dropdim == True]):
             return self._Phi
 
@@ -324,7 +355,7 @@ class Basis(object):
         ''' Call _phi1d method for each dimension, then reduce the matrix '''
         oo = np.arange(order.shape[1])
 
-        if self.opts.basistype is 'chebyshev':
+        if self.opts.basistype == 'chebyshev':
             PHI = (self._phi1d(k, x[k], order[k])[np.ix_(oo, r[k], c[k])] for k in range(self.d))
             phi = reduce(np.multiply, PHI)
         else:  # results come in sparse matrices
@@ -362,7 +393,7 @@ class Basis(object):
         vnames = self.opts.labels
         vnamelen = str(max(len(v) for v in vnames))
 
-        if basistype is 'spline':
+        if basistype == 'spline':
             term = ['linear', 'quadratic', 'cubic']
             if self.k < 4:
                 basistype = term[self.k - 1] + ' spline'
@@ -383,18 +414,28 @@ class Basis(object):
         return bstr
 
     def plot(self, order=0, m=None, i=0, nx=120, shape=None):
-        """ Plots interpolation basis functions.
-
-        Args:
-            order (int): Order of derivative (zero)
-            m (int): How many basis function to plot,  m <= n[i],  n[i] if None
-            i: Dimension to be plotted (0 by default)
-            nx: Number of points to evaluate the polynomials (120)
-            shape: subplot grid, to plot each polynomial in its own axis. All together if None.
-
-        Returns:
-            A matplotlib.pyplot instance.
         """
+        Plots interpolation basis functions.
+
+        Parameters
+        ----------
+        order : int, optional
+            Order of derivative (zero)
+        m : int, optional
+            Number of basis function to plot,  m <= n[i],  n[i] if None
+        i : int, optional
+            Dimension to be plotted (0 by default)
+        nx : int, optional
+            Number of points to evaluate the polynomials (120)
+        shape : array_like
+            Number of subplots (n_rows, n_columns), to plot each polynomial in its own axis. Default is (1, 1)
+
+        Returns
+        -------
+        plt.figure
+            A handle to the figure.
+        """
+
         i = min(i, self.d-1)
 
         a = self.a[i]
@@ -408,7 +449,7 @@ class Basis(object):
         nodes = self._nodes[i]
         x = np.linspace(a, b, nx)
         y = self._phi1d(i, x, order)[0][:, :m]
-        if self.opts.basistype is 'spline':
+        if self.opts.basistype == 'spline':
             y = y.toarray()
 
         if shape is None:
@@ -420,7 +461,7 @@ class Basis(object):
 
 
             basistype = self.opts.basistype
-            if basistype is 'spline':
+            if basistype == 'spline':
                 if self.k < 4:
                     basistype = ['linear', 'quadratic', 'cubic'][self.k - 1] + ' spline'
                 else:
@@ -437,38 +478,56 @@ class Basis(object):
                 plt.xlim(a, b)
                 # plt.xlabel(self.opts.labels[i])
 
+        return plt.gcf()
+
     @property
     def x(self):
-        """ Interpolation nodes """
+        # Interpolation nodes
         return self.nodes
 
     def update_y(self):
-        """ Update function values (called after changing c).
+        """
+        Update function values at nodes.
 
-        It computes :math:`y = \Phi(x)c`, where x are the basis nodes.
+        Returns
+        -------
+        None
+            Basis is update inplace.
 
-        Returns:
-            None
+        Notes
+        -----
+        1. The `Basis` instances are updated by changing either their coefficients `c` or their function values `y` at the nodes.
+        2. This function is used to update the `y` values after the user has changed the `c` values.
+        3. This is computed by :math:`y = \Phi(x)c`, where x are the basis nodes.
+
         """
         # todo: try to update only the outdated values. Can't yet figure out how to index them
         # ii = self._yIsOutdated
-        if self.opts.basistype is 'chebyshev':
+        if self.opts.basistype == 'chebyshev':
             self._y = np.dot(self._c, self._PhiT)
         else:
             self._y = self._c * self._PhiT
         self._yIsOutdated = np.full(self._yIsOutdated.shape, False)
 
     def update_c(self):
-        """ Update interpolation coefficients (called after changing y).
+        """
+        Update interpolation coefficients.
 
-        It computes :math:`c = \Phi(x)^{-1}y`, where x are the basis nodes.
+        Returns
+        -------
+        None
+            Basis is update inplace.
 
-        Returns:
-            None
+        Notes
+        -----
+        1. The `Basis` instances are updated by changing either their coefficients `c` or their function values `y` at the nodes.
+        2. This function is used to update the `c` values after the user has changed the `y` values.
+        3. This is computed by :math:`c = \Phi(x)^{-1}y`, where x are the basis nodes.
+
         """
         # todo: try to update only the outdated values. Can't yet figure out how to index them
         ii = self._cIsOutdated
-        if self.opts.basistype is 'chebyshev':
+        if self.opts.basistype == 'chebyshev':
             self._c = np.dot(self._y, self._PhiInvT)
         else:
             try:
@@ -480,7 +539,7 @@ class Basis(object):
 
     @property
     def shape(self):
-        """ Dimensions of interpolated function, i.e. the tuple (s0, s1, ..., sk). """
+        # Dimensions of interpolated function, i.e. the tuple (s0, s1, ..., sk).
         if np.any(self._yIsOutdated):
             return self._c.shape[:-1]
         else:
@@ -488,17 +547,17 @@ class Basis(object):
 
     @property
     def size(self):
-        """ Total number of interpolated functions, i.e. s0 x ... x sk. """
+        # Total number of interpolated functions, i.e. s0 x ... x sk.
         return np.prod(self.shape)
 
     @property
     def ndim(self):
-        """ Number of dimension of interpolated functions. """
+        # Number of dimension of interpolated functions.
         return len(self.shape) - 1
 
     @property
     def shape_N(self):
-        """ Shape of y. Same as shape, N. """
+        # Shape of y. Same as shape, N.
         temp = list(self.shape)
         temp.append(self.N)
         return temp
@@ -507,8 +566,9 @@ class Basis(object):
         """ Returns a shallow copy of a Basis instance. """
         return copy.copy(self)
 
-    def duplicate(self, y=None, c=None, f=None, s=None, l=None):
-        """ A shallow copy of the basis, allowing to specify new functions to be interpolated.
+    def duplicate(self, *, y=None, c=None, f=None, s=None, l=None):
+        """
+        Copy the basis.
 
         Makes a shallow copy of the basis, allowing the new instance to have its own approximation coefficients
         while sharing the nodes and interpolation matrices.  New instance values are specified with the same
@@ -517,25 +577,31 @@ class Basis(object):
 
         copy_instance = original_instance[:]
 
-        Args: Only one of these arguments must be provided.
-            y: a numpy array with N elements in last dimension, sets Basis.y = y.
-            c: a numpy array with M elements in last dimension, sets Basis.c = c.
-            f: a callable (lambda or def), sets Basis.y = f(Basis.nodes).
-            s: a numpy array of integers, sets Basis.y = numpy.zeros([s, N]).
-            l: a list of lists, sets s = [len(labels) for labels in l], then Basis.y = numpy.zeros([s, N]).
+        This method allows to specify new functions to be interpolated using the same interpolation matrix.
 
-        Returns:
+        Parameters
+        ----------
+        y : np.ndarray
+            A numpy array with N elements in last dimension, sets new_Basis.y = y.
+        c : np.ndarray
+            A numpy array with M elements in last dimension, sets new_Basis.c = c.
+        f : function
+            A callable (lambda or def), sets new_Basis.y = f(new_Basis.nodes).
+        s : array_like of ints
+            A numpy array of integers, sets new_Basis.y = np.zeros([s, N]).
+        l : list of lists
+            Sets s = [len(labels) for labels in l], then Basis.y = np.zeros([s, N]).
+
+        Returns
+        -------
+        Basis
             A new Basis instance with same interpolation matrices but different interpolated functions.
 
+        Notes
+        -----
+        1. This function must be called with exactly one of its arguments.
         """
 
-        """ Duplicate the basis
-
-
-
-
-
-        """
         nfunckw = sum([z is not None for z in [y, c, f, s, l]])
         assert nfunckw < 2, 'To specify the function, only one keyword from [y, c, f, s] should be used.'
         if nfunckw == 0:
@@ -548,14 +614,14 @@ class Basis(object):
 
     @property
     def y(self):
-        """ Value of interpolated function(s) at basis nodes (s0...sk.N array)."""
+        # Value of interpolated function(s) at basis nodes (s0...sk.N array).
         if np.any(self._yIsOutdated):
             self.update_y()
         return self._y
 
     @property
     def c(self):
-        """ Coefficients of interpolated function(s) at basis nodes (s0...sk.M array). """
+        # Coefficients of interpolated function(s) at basis nodes (s0...sk.M array).
         if np.any(self._cIsOutdated):
             self.update_c()
         return self._c
@@ -582,29 +648,38 @@ class Basis(object):
     def __call__(self, x=None, order=None, dropdim=True):
         """ Evaluate the interpolated function at arbitrary values.
 
-        Args:
-            x: evaluation points. Either a d.nx numpy array of domain values at which function is evaluated or
-               d list of arrays of coordinates in each domain dimension.
-            order (d.no numpy array): order of derivatives (integrals if negative), default is zero (no derivative).
-            dropdim (bool): squeeze dimensions if True (default).
+        Parameters
+        ----------
+        x: np.ndarray or list
+            Evaluation points. Either a d.nx numpy array of domain values at which function is evaluated or a d-list of arrays of coordinates in each domain dimension.
+        order : np.ndarray
+            A d.no numpy array indicating order of derivatives (integrals if negative), default is zero (no derivative).
+        dropdim :  bool
+            Squeeze dimensions if `True` (default).
 
-        Notice that all arguments are defined as in the Phi() method.
-
-        Returns:
+        Returns
+        -------
+        np.ndarray
             Interpolated values.
+
+        Notes
+        -----
+        1. Notice that all arguments are defined as in the Phi() method.
         """
+
+
 
         d = self.d
         x = np.atleast_1d(x)
 
         if type(order) is str:
-            if order is 'jac':
+            if order == 'jac':
                 order_array = np.identity(d, int)
-            elif order is 'fjac':
+            elif order == 'fjac':
                 order_array = np.hstack([np.zeros([d, 1],int), np.identity(d,int)])
-            elif order is 'hess':
+            elif order == 'hess':
                 order_array, mapping = hess_order(d)
-            elif order is 'all':
+            elif order == 'all':
                 order_array, mapping = hess_order(d)
                 order_array = np.hstack([np.zeros([d, 1],int), np.identity(d,int), order_array])
                 mapping += 1 + d
@@ -618,7 +693,7 @@ class Basis(object):
         # if Phix.ndim == 2:
         #     Phix = Phix[np.newaxis]
 
-        if self.opts.basistype is 'chebyshev':
+        if self.opts.basistype == 'chebyshev':
             cPhix = np.array([np.dot(self.c, phix.T) for phix in Phix])
         else:
             try:
@@ -641,7 +716,7 @@ class Basis(object):
             for i in range(d):
                 for j in range(d):
                     Hess[i,j] = cPhix[mapping[i,j]]
-            if order is 'hess':
+            if order == 'hess':
                 return clean(Hess)
             else:
                 return clean(cPhix[0]), clean(cPhix[1:(1 + d)]), clean(Hess)
@@ -649,22 +724,35 @@ class Basis(object):
             raise ValueError
 
     def __getitem__(self, item):
-        """ Return a copy of Basis for specified item.
-
-        Args:
-            item: Index for the required functions. Either an int, a slice, or a string (see examples below).
-
-        Examples:
-            income = Basis(n, a, b, l=[['employed', 'unemployed'], ['male', 'female']])
-            z = income[0]  # Basis with income for employed.
-            z = income['employed']  # same as previous line.
-            z = income[:, 'female']  # Basis with income for female, both employed and unemployed.
-            z = income[1, 0]  # Basis for income of unemployed male.
-            z = income['unemployed', 'male']  # same as previous line.
-
-        Returns:
-            The same Basis but to interpolate only the required functions.
         """
+        Make a copy of Basis for specified item.
+
+        Parameters
+        ----------
+        item : int, a slice, or a string
+            Index for the required functions.
+
+        Returns
+        -------
+        Basis
+            The same Basis but to interpolate only the required functions.
+
+        Examples
+        --------
+        Suppose we make a basis to interpolate the income of different population segments:
+
+        >>> income = Basis(n, a, b, l=[['employed', 'unemployed'], ['male', 'female']])
+
+        Then we can obtain a basis to interpolate the income of one of the subgroups with
+
+        >>> income[0]  # Basis with income for employed.
+        >>> income['employed']  # same as previous line.
+        >>> income[:, 'female']  # Basis with income for female, both employed and unemployed.
+        >>> income[1, 0]  # Basis for income of unemployed male.
+        >>> income['unemployed', 'male']  # same as previous line.
+
+        """
+
         litem = list(item) if isinstance(item, tuple) else [item]
 
         for j, k in enumerate(litem):
@@ -724,6 +812,56 @@ class BasisOptions(Options_Container):
     Options for Basis class.
 
     This class stores options for creating a Basis class. It takes care of validating options given by user to Basis constructor.
+
+    Attributes
+    ----------
+    d : int
+        Number of dimensions of the basis space.
+    basistype : {'chebyshev', 'spline', 'linear'}
+        The kind of interpolation basis.
+    nodetype : str
+        The kind of interpolation nodes. Valid types depend on `basistype` 'chebyshev': {'gaussian', 'lobatto', 'endpoint', 'uniform'}, 'spline': {'canonical', 'user'}, 'linear': {'canonical', 'user'}
+    method : {'tensor', 'smolyak', 'complete', 'cluster', 'zcluster'}
+        The method  used to expand the basis into a multidimensional basis (only available to 'chebyshev' basis, other use 'tensor')
+    qn : int
+        Node parameter, to guide the selection of node combinations in multidimensional basis.
+    qp : int
+        Polynomial parameter, to guide the selection of polynomial combinations in multidimensional basis.
+    labels : list of strings
+        Labels to identify node variable dimensions.
+    ylabels : list of strings
+        Labels to identify dimensions of interpolated functions.
+    ix : np.ndarray
+        Valid combination of nodes, for multidimensional basis.
+    ip: np.ndarray
+        Valid combination of basis polynomials, for multidimensional basis.
+    y : np.ndarray
+        A numpy array with N elements in last dimension, sets new_Basis.y = y.
+    c : np.ndarray
+        A numpy array with M elements in last dimension, sets new_Basis.c = c.
+    f : function
+        A callable (lambda or def), sets new_Basis.y = f(new_Basis.nodes).
+    s : array_like of ints
+        A numpy array of integers, sets new_Basis.y = np.zeros([s, N]).
+    l : list of lists
+        Sets s = [len(labels) for labels in l], then Basis.y = np.zeros([s, N]).
+
+    See Also
+    --------
+    BasisChebyshev class
+    BasisSpline class
+    BasisLinear class
+
+    Notes
+    -----
+    1. This class is not needed by users. It is used directly by the __init__ method of Basis and all its subclasses.
+    2. This is a container for all possible options, not all of which are required by a specific basis.
+    3. These options could be grouped into several categories, depending on what they control:
+
+        * Interpolation strategy --> basistype, nodetype
+        * Multidimensional basis --> method, qn, qp, ix, ip
+        * Setting of initial coefficients --> y, c, f, s, l
+
     """
     valid_basis_types = ['chebyshev', 'spline', 'linear']
     valid_node_types = {'chebyshev': ['gaussian', 'lobatto', 'endpoint', 'uniform'],
@@ -733,13 +871,41 @@ class BasisOptions(Options_Container):
                      'spline': ['tensor'],
                      'linear': ['tensor']}
 
-    def __init__(self, n: np.array, basistype=None, nodetype=None, method=None, qn=None, qp=None, labels=None,
+    def __init__(self, n: np.ndarray, basistype, nodetype=None, method=None, qn=None, qp=None, labels=None,
                  f=None, y=None, c=None, s=None, l=None):
         """
-        Make default options dictionary
-        :param int n: number of nodes per dimension
-        :return: an object with default values for Basis.opts
+        Make and validate options for Basis
+
+        Parameters
+        ----------
+        n : np.ndarray
+            Number of nodes for each dimension (d-array).
+        basistype : {'chebyshev', 'spline', 'linear'}
+            The kind of interpolation basis.
+        nodetype : str
+            The kind of interpolation nodes. Valid types depend on `basistype` 'chebyshev': {'gaussian', 'lobatto', 'endpoint', 'uniform'}, 'spline': {'canonical', 'user'}, 'linear': {'canonical', 'user'}
+        method : {'tensor', 'smolyak', 'complete', 'cluster', 'zcluster'}
+            The method  used to expand the basis into a multidimensional basis (only available to 'chebyshev' basis, other use 'tensor')
+        qn : int or array_like
+            Node parameter, to guide the selection of node combinations in multidimensional basis.
+        qp : int or array_like
+            Polynomial parameter, to guide the selection of polynomial combinations in multidimensional basis.
+        labels : list of strings
+            Labels to identify node variable dimensions.
+        f : function
+            A callable (lambda or def), sets new_Basis.y = f(new_Basis.nodes).
+        y : np.ndarray
+            A numpy array with N elements in last dimension, sets new_Basis.y = y.
+        c : np.ndarray
+            A numpy array with M elements in last dimension, sets new_Basis.c = c.
+        s : array_like of ints
+            A numpy array of integers, sets new_Basis.y = np.zeros([s, N]).
+        l : list of lists
+            Sets s = [len(labels) for labels in l], then Basis.y = np.zeros([s, N]).
+
         """
+
+
         method = method if method else self.valid_methods[basistype][0]
         nodetype = nodetype if nodetype else self.valid_node_types[basistype][0]
 
@@ -765,6 +931,28 @@ class BasisOptions(Options_Container):
         self.expandGrid(n)
 
     def add_data(self, y, c, f, s, l):
+        """
+        Validates the data initialization parameters.
+
+        Only one of the can be specified at a time. If none, it sets `s=1`.
+
+        Parameters
+        ----------
+        f : function
+            A callable (lambda or def), sets new_Basis.y = f(new_Basis.nodes).
+        y : np.ndarray
+            A numpy array with N elements in last dimension, sets new_Basis.y = y.
+        c : np.ndarray
+            A numpy array with M elements in last dimension, sets new_Basis.c = c.
+        s : array_like of ints
+            A numpy array of integers, sets new_Basis.y = np.zeros([s, N]).
+        l : list of lists
+            Sets s = [len(labels) for labels in l], then Basis.y = np.zeros([s, N]).
+
+        Returns
+        -------
+        None
+        """
         nfunckw = sum([z is not None for z in [y, c, f, s, l]])
         assert nfunckw < 2, 'To specify the function, only one keyword from [y, c, f, s] should be used.'
         if nfunckw == 0:
@@ -778,35 +966,45 @@ class BasisOptions(Options_Container):
 
 
     def clear_data(self):
+        """
+        Clear all the data initialization parameters, setting them to `None`
+
+        Returns
+        -------
+        None
+        """
         self.y = None
         self.c = None
         self.f = None
         self.s = None
         self.l = None
 
-    ''' Properties'''
+    '''================ Properties=================='''
+
     @property
     def ix(self):
-        """  numpy array with valid combination of nodes """
+        #  numpy array with valid combination of nodes
         return self._ix
 
     @property
     def ip(self):
-        """  numpy array with valid combination of basis polynomials """
+        #  numpy array with valid combination of basis polynomials
         return self._ip
 
     @property
     def labels(self):
-        """  list of variable names """
+        #  list of variable names
         return self._labels
 
     @property
     def keys(self):
-        """ list of available options in BasisOptions """
+        """ Enumerates all public options contained in this class"""
+
         return([name for name in BasisOptions.__dict__ if not name.startswith('_')])
 
 
-    ''' Setters '''
+    ''' ================Setters ================='''
+    # All these setters make sure that the provided values have the proper dimensions for the attribute they modify.
     @ix.setter
     def ix(self, value):
         if isinstance(value, np.ndarray) and value.ndim == 2 and value.shape[0] == self.d:
@@ -827,6 +1025,8 @@ class BasisOptions(Options_Container):
             self._labels = value
         else:
             raise ValueError('labels must be a list of {} strings'.format(self.d))
+
+
 
     def validateChebyshev(self, n):
         """ Validates the options given for a Chebyshev Basis """
@@ -860,26 +1060,36 @@ class BasisOptions(Options_Container):
 
     def expandGrid(self, n):
         """
-             Compute nodes for multidimensional basis and other auxiliary fields required to keep track
-             of the basis (how to combine unidimensional nodes bases). It is called by the constructor method, and as
-             such is not directly needed by the user. expandGrid updates the following fields
+        Set up a multidimensional basis
 
-             * validPhi: indices to combine unidimensional bases
-             * validX:   indices to combine unidimensional nodes
+        Notes
+        -----
 
-             Combining polynomials depends on value of input "method":
+        This method computes nodes for multidimensional basis and other auxiliary fields required to keep track
+        of the basis (how to combine unidimensional nodes bases). It is called by the constructor method, and as
+        such is not directly needed by the user.
 
-             * 'tensor' takes all possible combinations
-             * 'smolyak' computes Smolyak basis, given qp parameter
-             * 'complete', 'cluster', and 'zcluster' choose polynomials with degrees not exceeding qp
+        expandGrid updates the following fields:
 
-             Expanding nodes depends on value of field opts.method
+        * validPhi: indices to combine unidimensional bases
+        * validX:   indices to combine unidimensional nodes
 
-             * 'tensor' and 'complete' take all possible combinations
-             * 'smolyak' computes Smolyak basis, given qn parameter
-             * 'cluster' and 'zcluster' compute clusters of the tensor nodes based on qn
+        Combining polynomials depends on value of input "method":
 
-        :return: None
+        * 'tensor' takes all possible combinations
+        * 'smolyak' computes Smolyak basis, given qp parameter
+        * 'complete', 'cluster', and 'zcluster' choose polynomials with degrees not exceeding qp
+
+        Expanding nodes depends on value of field opts.method
+
+        * 'tensor' and 'complete' take all possible combinations
+        * 'smolyak' computes Smolyak basis, given qn parameter
+        * 'cluster' and 'zcluster' compute clusters of the tensor nodes based on qn
+
+        Returns
+        -------
+        None
+            All results are updated in this class directly.
         """
         if self.d == 1:
             self.ix = np.arange(n, dtype=int).reshape(1, -1)
@@ -912,13 +1122,42 @@ class BasisOptions(Options_Container):
 
 def SmolyakGrid(n, qn, qp=None):
     """
+    Smolyak method to make a grid for multidimensional interpolation [2]_.
 
-    :param n: number of nodes per dimension
-    :param qn: cut-off parameters for node selection (array)
-    :param qp: cut-off parameters for polynomial selection(array)
-    :return: a (node_indices, polynomial_indices) tuple to form the Smolyak grid from univariate nodes and polynomials
+    Parameters
+    ----------
+    n : array_like
+        number of nodes per dimension (d ints)
+    qn : int or array_like
+        Cut-off parameters for node selection
+    qp : int or array_like
+        Cut-off parameters for polynomial selection
+
+    Returns
+    -------
+    theNodes : np.ndarray
+        d.N array with indices (one row per dimension) to select the nodes
+    thePolys : np.ndarray
+        d.M array with indices (one row per dimension) to select the polynomials
+
+    Notes
+    -----
+
+    This implementation provides both isotropic and  anisotropic grids, depending on parameters `qn` and `qp`.
+
+    References
+    ----------
+    .. [2] Judd, Maliar, Maliar, Valero 2014 Smolyak Method for Solving Dynamic Economic Models. Journal of Economic Dynamics & Control 44, pp92-123
+
+    Examples
+    --------
+
+    >>> SmolyakGrid([9, 9], 2)
+    (array([[0, 0, 0, 2, 4, 4, 4, 4, 4, 6, 8, 8, 8],
+            [2, 1, 2, 1, 2, 3, 1, 3, 2, 1, 2, 1, 2]]),
+     array([[0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 4],
+            [1, 2, 2, 3, 3, 1, 2, 2, 1, 2, 2, 1, 1]]))
     """
-
     n = np.atleast_1d(n)
     qn = np.atleast_1d(qn)
     qp = qn if qp is None else np.atleast_1d(qp)
@@ -989,12 +1228,32 @@ def ndgrid2(Indices, indSum, newDim, q, qk):
     """
     Expanding a Smolyak grid, 2 dimensions
 
-    :param Indices: Previous iteration smolyak grid
-    :param newDim: new indices to be combined with Indices
-    :param q: cutt-off parameter for new sum of indices
-    :param qk: adjustment for anisotropic grids
-    :return: Updated "Indices" and "groupsum"
+    Parameters
+    ----------
+    Indices : np.ndarray
+        Previous iteration smolyak grid
+    indSum : np.ndarray
+
+    newDim :np.ndarray
+        new indices to be combined with Indices
+    q : int
+        cutt-off parameter for new sum of indices
+    qk : float
+        adjustment for anisotropic grids
+
+    Returns
+    -------
+    Indices : np.ndarray
+        Updated indices
+    groupsum : np.ndarray
+        updated group sum
+
+    Notes
+    -----
+
+    This function is needed only by Smolyakgrid as part of an iterative process to determine the Smolyak grid.
     """
+
     idx = np.indices((indSum.size, newDim.size)).reshape(2, -1)
     NewSum = indSum[idx[0]] + newDim[idx[1]]
     isValid = NewSum <= q
@@ -1008,18 +1267,44 @@ def ndgrid2(Indices, indSum, newDim, q, qk):
 
 
 def hess_order(n):
-    """ Order array to evaluate Hessian matrices.
+    """
+    Order array to evaluate Hessian matrices.
 
     Returns orders required to evaluate the Hessian matrix for a function with n variables
     and location of hessian entries in resulting array.
 
-    Args:
-        n: Number of variables in function domain.
+    Parameters
+    ----------
+    n : int
+        Number of variables in function domain, i.e. f: R^n --> R
 
-    Returns:
-        Array with orders of derivatives.
-        Array with location of hessian entries.
+    Returns
+    -------
+    A : np.ndarray
+        n.(0.5*n*(n+1)) array with indices indicating order of partial derivatives (each column is a partial derivative)
+    C: np.ndarray
+        n.n array, each location corresponds to a hessian derivative, entry refers to column in A that evaluates such derivative.
+
+    Notes
+    -----
+
+    1. The purpose of this function is to avoid computing repeated cross derivatives, taking advantage of the symmetry of the Hessian matrix.
+
+    Examples
+    --------
+
+    >>> hess_order(3)
+    (array([[0, 0, 0, 1, 1, 2],
+            [0, 1, 2, 0, 1, 0],
+            [2, 1, 0, 1, 0, 0]]),
+    array([[5, 4, 3],
+           [4, 2, 1],
+           [3, 1, 0]]))
+
+
     """
+
+
     A = np.array([a.flatten() for a in np.indices(3*np.ones(n, int))])
     A = A[:,A.sum(0)==2]
 

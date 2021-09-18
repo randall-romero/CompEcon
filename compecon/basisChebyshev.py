@@ -11,47 +11,50 @@ __author__ = 'Randall'
 
 class BasisChebyshev(Basis):
     def __init__(self, n, a, b, **kwargs):
-        """ Create an instance of BasisChebyshev.
+        """
+        Initialize a Chebyshev basis
 
-        Args:
-            n: number of nodes per dimension
-            a: lower bounds
-            b: upper bounds
-            **kwargs: options passed to BasisOptions (see Keyword Args below)
+        Parameters
+        ----------
+        n : int or array_like
+            number of nodes per dimension.
+        a : int or array_like
+            lower bound(s) for interpolation.
+        b : int or array_like
+            upper bound(s) for interpolation.
+        **kwargs : dict
+            options passed to :ref:`BasisOptions`.
 
-            The dimension of the basis is inferred from the number of elements in n, a, b. If all of them are scalars,
-            then d = 1. Otherwise, they are broadcast to a common size array.
+        Notes
+        -----
 
-        Keyword Args:
-            nodetype (str): type of nodes to use, either 'gaussian', 'lobatto', 'endpoint', or 'uniform'.
-            method (str): method to combine basis dimensions (relevant only if d > 1). Valid options are 'tensor',
-                'smolyak', 'complete', 'cluster', and 'zcluster'.
-            qn (int or array of ints): if method is 'smolyak', qn controls depth of node selection. Isotropic grid if qn
-                is scalar, anisotropic grid if qn is an array on ints.
-            qp (int or array of ints): if method is 'smolyak', qp controls depth of polynomial selection. Isotropic grid
-                if qp is scalar, anisotropic grid if qp is an array on ints. If method is 'complete', then qp controls
-                maximum degree of interpolation polynomials.
-            labels (list of strings): Labels to identify basis dimensions.
-            f (callable): a function to compute value of interpolated function at nodes.
-            y (numpy array): value of interpolated function at nodes.
-            c (numpy array): interpolation coefficients.
-            s (list of scalars): number of function for each dimension.
-            l (list of strings): labels for each of the function dimensions.
+        1. Methods 'cluster' and 'zcluster' have not been implemented yet.
+        2. If defining a multidimensional basis with Smolyak grid,
 
-            Notice that only one of the keyword arguments f, y, c, s, l can be specified. If none is, then s=1.
+            - `qn` controls depth of node selection. Isotropic grid if `qn` is an int, anisotropic grid if `qn` is an array of ints.
+            - `qp` ontrols depth of polynomial selection. Isotropic grid if qp is an int, anisotropic grid if qp is an array of ints.
 
-        Notes:
-            Methods 'cluster' and 'zcluster' have not been implemented yet.
+        3. If defining a multidimensional basis with "complete" grid, then `qp` controls  maximum degree of interpolation polynomials.
+        4. The dimension of the basis is inferred from the number of elements in n, a, b. If all of them are scalars, then d = 1. Otherwise, they are broadcast to a common size array.
+        5. This class uses a **numba** optimized function to compute the interpolation polynomials.
 
-        Examples:
-            BasisChebyshev(15, -2, 3, labels=['wealth']) # a basis to interpolate a function of wealth.
-            income = BasisChebyshev(15, -2, 3, labels=['wealth'], l=['employed', 'unemployed') # a basis to interpolate
-                income as a function of wealth, for employed and unemployed workers.
-            BasisChebyshev(9, [0, 0], [2, 3])  # it uses 9 nodes in each dimension, uses tensor product (81 nodes total)
-            BasisChebyshev(9, [0, 0], [2, 3], method='smolyak', qn=3, qp=3)  # Smolyak grid, 29 nodes (as opposed to 81)
+        Examples
+        --------
+        1. A basis to interpolate a function of wealth.
 
-        Returns:
-            A BasisChebyshev instance.
+        >>> BasisChebyshev(15, -2, 3, labels=['wealth'])
+
+        2. A basis to interpolate income as a function of wealth, for employed and unemployed workers.
+
+        >>> income = BasisChebyshev(15, -2, 3, labels=['wealth'], l=['employed', 'unemployed')
+
+        3. A 2-dimensional basis, using 9 nodes in each dimension, and forming grid by tensor product (81 nodes total)
+
+        >>> BasisChebyshev(9, [0, 0], [2, 3])
+
+        4. A 2-dimensional basis, using 9 nodes in each dimension, and forming grid by Smolyak method (29 nodes as opposed to 81)
+
+        >>> BasisChebyshev(9, [0, 0], [2, 3], method='smolyak', qn=3, qp=3)
 
         """
 
@@ -60,6 +63,7 @@ class BasisChebyshev(Basis):
         self._set_nodes()
 
     def _set_nodes(self):
+        # Sets the basis nodes
         nodetype = self.opts.nodetype
 
         for i in range(self.d):
@@ -99,6 +103,17 @@ class BasisChebyshev(Basis):
         return (2 / (b - a)) * (x - (a + b) / 2)
 
     def _update_diff_operators(self, i, order):
+        """
+        Updates the list _D of differentiation operators in the basis
+
+        Parameters
+        ----------
+        i : int
+            dimension for which the derivative is required.
+        order : int
+            order of required derivative (if positive) or integral (if negative)
+
+        """
 
         keys = set(self._diff_operators[i].keys())
 
@@ -162,7 +177,40 @@ class BasisChebyshev(Basis):
         Interpolation methods
     """
     def _phi1d(self, i, x=None, order=0):
+        """
+        Computes interpolation matrices for given data x and order of differentiation 'order' (integration if negative)
 
+        Parameters
+        ----------
+        i : int
+            dimension for which the derivative is required.
+        x : array_like
+            nx floats, evaluation points (defaults to nodes)
+        order : array_like
+            array with m ints, orders for differentiation (+) / integration (-)
+
+        Returns
+        -------
+        interpolation matrices : np.ndarray, of shape m.nx.n
+             Each first index refers to a nx times n interpolation matrix.
+
+        Notes
+        -----
+        1. `order` may have repeated values, since this function is tipically needed to evaluate partial derivatives.
+        2. To save on computational cost, only unique values in `order` are evaluated once, then results are rearranged by this function.
+        3. Future version of this function will make use of @cached_property to acomplish this savings.
+        4. This function takes care of only one dimension of the basis. The :ref:`Basis` class (on which `BasisChebyshev` is based) has a method `Phi` that takes care of combining these interpolation matrices.
+        Examples
+        --------
+
+        Create a basis with 5 nodes, get the interpolation matrix evaluated at 20 points::
+
+        >>> n, a, b = 5, 0, 4
+        >>> x = np.linspace(a,b, 20)
+        >>> basis = BasisChebyshev(n, a, b)
+        >>> basis._phi1d(0, x, order=[0, 1])
+
+        """
         if order is None:
             order = 0
 
