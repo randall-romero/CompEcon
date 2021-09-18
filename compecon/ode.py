@@ -11,7 +11,10 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from compecon import BasisChebyshev, BasisSpline, NLP, jacobian
+from .basisChebyshev import BasisChebyshev
+from .basisSpline import BasisSpline
+from .nonlinear import NLP
+from .tools import jacobian, gridmake
 
 
 class ODE:
@@ -30,6 +33,7 @@ class ODE:
             bx = np.arange(len(self.bv))
 
         basis = BasisChebyshev if btype.lower() == 'cheb' else BasisSpline
+        T = self.T
 
         # compute collocation nodes
         t = basis(n - 1, 0, T).nodes
