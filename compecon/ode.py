@@ -11,6 +11,9 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+from IPython.display import HTML
+
 from .basisChebyshev import BasisChebyshev
 from .basisSpline import BasisSpline
 from .nonlinear import NLP
@@ -157,10 +160,12 @@ class ODE:
 
         self.xspx = x[j].T
 
-    def phase(self, x1lim, x2lim, *, x=None, xstst=None, xnulls=None, ax=None, **ax_kwargs):
+    def phase(self, x1lim, x2lim, *, x=None, xstst=None, xnulls=None, ax=None, animated=2.5, **ax_kwargs):
 
         if ax is None:
             fig, ax = plt.subplots()
+        else:
+            fig = ax.figure
 
         ax.set(xlim=x1lim, ylim=x2lim, **ax_kwargs)
 
@@ -187,20 +192,7 @@ class ODE:
         if np.ndim(x) < 3:
             x = np.rollaxis(np.atleast_3d(x), 2)  # ejemplo, variable, tiempo
         n = x.shape[-1]
-        m = max(1, np.floor(n / 100))
-
-        for k in range(x.shape[0]):
-            ax.plot(x[k, 0, 0], x[k, 1, 0], marker='o', ms=10, color='C2')
-            # if nargin<12:
-            #    for j=m+1:n
-            #        if mod(j-1,m)==0:
-            #            plot(x(j-m:j,1,k),x(j-m:j,2,k),'r','LineWidth',2)
-            #            getframe;
-            #            if x(j-m,1,k)<x1lim(1)||x(j-m,1,k)>x1lim(2)||x(j-m,2,k)<x2lim(1)||x(j-m,2,k)>x2lim(2):
-            #                break
-            # else:
-
-            ax.plot(*x[k], color='C2', lw=2)
+        nInitialValues = x.shape[0]
 
         # Plot Steady State
         if xstst is not None:
@@ -208,4 +200,31 @@ class ODE:
                 ax.plot(*xss, color='C2', marker='*', ms=12)
 
         ax.legend(loc='lower center', ncol=3)
-        return ax
+
+        ## plot dynamics
+        # initializing a line variable
+        empty_data = np.zeros([0, nInitialValues])
+        lines = ax.plot(empty_data, empty_data, color='C2', lw=2)
+
+        for k in range(nInitialValues):
+            ax.plot(x[k, 0, 0], x[k, 1, 0], marker='o', ms=10, color='C2')
+
+        if animated:
+            fps = 25
+            total_frames = int(animated * fps)
+            interval = int(1000 / fps)
+
+            step = max(1, int(n / total_frames))
+
+            def animate(i):
+                for line, xx in zip(lines, x):
+                    line.set_data(xx[0, :i * step], xx[1, :i * step])
+                return line,
+
+            ani = FuncAnimation(fig, animate, frames=total_frames, interval=interval, repeat=False)
+            return HTML(ani.to_html5_video())
+
+        else:
+            for line, xx in zip(lines, x):
+                line.set_data(xx[0], xx[1])
+            return ax
