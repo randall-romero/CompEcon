@@ -160,7 +160,9 @@ class ODE:
 
         self.xspx = x[j].T
 
-    def phase(self, x1lim, x2lim, *, x=None, xstst=None, xnulls=None, ax=None, animated=2.5, **ax_kwargs):
+    def phase(self, x1lim, x2lim, *, x=None, xstst=None, xnulls=None, ax=None, animated=2.5,
+              xnulls_kw=dict(), xstst_kw=dict(), path_kw=dict(), **ax_kwargs):
+
 
         if ax is None:
             fig, ax = plt.subplots()
@@ -179,11 +181,15 @@ class ODE:
 
         # Plot Separatrix
         if self.xspx is not None:
-            ax.plot(*self.xspx, color='0.2', ls='--', lw=2, label='Separatrix')
+            options_xspx = dict(color='0.2', ls='--', lw=2, label='Separatrix')
+            options_xspx.update(xstst_kw)
+            ax.plot(*self.xspx, **options_xspx)
 
         # Plot Nullclines
+        options_xnulls = dict(color='C1', lw=2)
+        options_xnulls.update(xnulls_kw)
         if xnulls is not None:
-            xnulls.plot(ax=ax, lw=2)
+            xnulls.plot(ax=ax, **options_xnulls)
 
         # Plot State Path
         if x is None:
@@ -196,18 +202,22 @@ class ODE:
 
         # Plot Steady State
         if xstst is not None:
-            for xss in np.atleast_2d(xstst):
-                ax.plot(*xss, color='C2', marker='*', ms=12)
 
-        ax.legend(loc='lower center', ncol=3)
+            for xss in np.atleast_2d(xstst):
+                ax.plot(*xss, color=options_xnulls['color'], marker='*', ms=12)
+
+        if ax.get_legend_handles_labels()[1]:
+            ax.legend(loc='lower center', ncol=3)
 
         ## plot dynamics
         # initializing a line variable
         empty_data = np.zeros([0, nInitialValues])
-        lines = ax.plot(empty_data, empty_data, color='C2', lw=2)
+        options_path = dict(color='C2', lw=2)
+        options_path.update(path_kw)
+        lines = ax.plot(empty_data, empty_data, **options_path)
 
         for k in range(nInitialValues):
-            ax.plot(x[k, 0, 0], x[k, 1, 0], marker='o', ms=10, color='C2')
+            ax.plot(x[k, 0, 0], x[k, 1, 0], marker='o', ms=10, color=options_path['color'])
 
         if animated:
             fps = 25
