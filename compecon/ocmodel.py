@@ -4,8 +4,8 @@
 import numpy as np
 import pandas as pd
 
-from compecon import ODE
-from compecon.tools import Options_Container, gridmake
+from .ode import ODE
+from .tools import Options_Container, gridmake
 import time
 
 
