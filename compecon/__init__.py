@@ -12,6 +12,7 @@ from .nonlinear import MCP, NLP, LCP
 from .linear import gjacobi, gseidel
 from .optimize import OP, MLE
 from .dpmodel import DPmodel, DPoptions
+from .ocmodel import OCmodel, OCoptions
 from .ode import ODE
 from .tools import *
 from .quad import *
