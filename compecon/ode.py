@@ -21,13 +21,19 @@ from .tools import jacobian, gridmake
 
 
 class ODE:
-    def __init__(self, f, T, bv, *params):
+    def __init__(self, f, T, bv, *params, labels=None):
         self.f = lambda x: f(x, *params)
         self.T = T
         self.bv = bv
         self._d = len(self.bv)
         self.fsol = None
         self.xspx = None
+
+        if labels is not None:
+            assert len(labels) ==self._d, "ERROR, number of labels must equal number of variables in system."
+            self.labels = labels
+        else:
+            self.labels = [f'$y_{j}$' for j in range(self._d)]
 
     def solve_collocation(self, *, n=100, bt=None, bx=None, btype='cheb', c=None, nf=10):
         if bt is None:
@@ -42,8 +48,7 @@ class ODE:
         t = basis(n - 1, 0, T).nodes
 
         # Approximation structure
-        labels = [f'$x_{j}$' for j in range(self._d)]
-        self.fsol = basis(n, 0, T, l=labels, labels=['Time'])  # falta inicializar los coeficientes
+        self.fsol = basis(n, 0, T, l=self.labels, labels=['Time'])  # falta inicializar los coeficientes
 
         # residual function for nonlinear problem formulation
         def residual(c):
@@ -77,10 +82,14 @@ class ODE:
         dx = self.fsol(t, 1)
         resid = dx - self.f(x)
 
-        self.x = pd.DataFrame(x.T, index=t, columns=labels)
-        self.resid = pd.DataFrame(resid.T, index=t, columns=labels)
+        self.x = pd.DataFrame(x.T, index=t, columns=self.labels)
+        self.resid = pd.DataFrame(resid.T, index=t, columns=self.labels)
 
     def rk4(self, n=1000, xnames=None):
+
+        if xnames:
+            print("PARAMETER xnames NO LONGER VALID. SET labels= AT OBJECT CREATION")
+
         t = np.linspace(0, self.T, n)
         x0 = np.asarray(self.bv)
 
@@ -96,10 +105,32 @@ class ODE:
             x0 = x0 + (f1 + f2 + f3 + f4) / 3
             x[i] = x0
 
-        self.x = pd.DataFrame(x, index=t, columns=xnames)
-        # self.resid = pd.DataFrame(resid.T, index=t, columns=labels)
+        self.x = pd.DataFrame(x, index=t, columns=self.labels)
+
 
     def spx(self, x0=None, T=None, n=1000):
+        """
+        Generates separatrix through saddle point of 2-dimensional ODE
+
+        Specifically, generates velocity field for 2-dimensionnal 1st-order ODE
+
+            x'(t) = f(x(t)), t in [0,T]
+
+        by solving the ODE backwards in time, starting from near the saddle  point in the directions of the stable
+        eigenvector. Here, x is 2.1 vector-valued function defined on time domain [0,T] and x' is its 2.1  vector-valued
+        derivative with respect to time.
+
+
+        Parameters
+        ----------
+        x0: 2.1 saddle point
+        T: time horizon in direction of stable eigenvector
+        n: grid points
+
+        Returns
+        -------
+
+        """
 
         f = self.f
         if x0 is None:
@@ -158,7 +189,8 @@ class ODE:
         x = np.r_[xsn[::-1], np.atleast_2d(x0), xsp]
         j = np.isfinite(x).all(axis=1)
 
-        self.xspx = x[j].T
+        xspx = pd.DataFrame(x[j], columns=self.labels)
+        self.xspx = xspx[xspx.all(axis=1)]  #TODO: this eliminates (0,0) from dataframe, not sure where exactly it comes from.
 
     def phase(self, x1lim, x2lim, *, x=None, xstst=None, xnulls=None, ax=None, animated=2.5,
               xnulls_kw=dict(), xstst_kw=dict(), path_kw=dict(), **ax_kwargs):
@@ -169,7 +201,9 @@ class ODE:
         else:
             fig = ax.figure
 
-        ax.set(xlim=x1lim, ylim=x2lim, **ax_kwargs)
+        ax.set(xlim=x1lim, ylim=x2lim,
+               xlabel=self.labels[0], ylabel=self.labels[1],
+               **ax_kwargs)
 
         # Plot Velocity Field
         x1 = np.linspace(*x1lim, 15)
@@ -183,7 +217,8 @@ class ODE:
         if self.xspx is not None:
             options_xspx = dict(color='0.2', ls='--', lw=2, label='Separatrix')
             options_xspx.update(xstst_kw)
-            ax.plot(*self.xspx, **options_xspx)
+            #ax.plot(*self.xspx, **options_xspx)
+            self.xspx.plot.line(self.labels[0], self.labels[1], ax=ax, **options_xspx)
 
         # Plot Nullclines
         options_xnulls = dict(color='C1', lw=2)
