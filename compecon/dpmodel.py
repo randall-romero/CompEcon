@@ -893,7 +893,10 @@ class DPmodel(object):
                             if q[j, i, in_] > 0:
                                 snext = self.transition(s[:, is_], x[i, j, :, is_], i , j, in_, ee[:, is_])  #fixme need to know number of output arguments!!!
                                 prob = w[k] * q[j, i, in_,]
-                                vc[is_, i, :, in_] += prob * Value.Phi(snext).toarray().reshape((is_.sum(), ms), order='F')   #fixme I can't find the proper way to index this
+                                try:
+                                    vc[is_, i, :, in_] += prob * Value.Phi(snext).toarray().reshape((is_.sum(), ms), order='F')   #fixme I can't find the proper way to index this
+                                except:
+                                    vc[is_, i, :, in_] += prob * Value.Phi(snext).reshape((is_.sum(), ms), order='F')   #fixme I can't find the proper way to index this
 
             vc = vc.reshape((ns*ni,ms*ni),order='F')
         else:

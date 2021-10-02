@@ -140,6 +140,7 @@ class OCmodel(object):
         if ds == 1:
             slab = DATA[labels[0]]
             DATA.index = slab
+            #DATA.index.name = self.Value.opts._labels
 
         # ADD VALUE FUNCTION
         DATA['value'] = self.Value(sr)
