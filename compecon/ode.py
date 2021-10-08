@@ -35,7 +35,7 @@ class ODE:
         else:
             self.labels = [f'$y_{j}$' for j in range(self._d)]
 
-    def solve_collocation(self, *, n=100, bt=None, bx=None, btype='cheb', c=None, nf=10):
+    def solve_collocation(self, *, n=100, bt=None, bx=None, btype='cheb', y=None, nf=10):
         if bt is None:
             bt = np.zeros_like(self.bv)
         if bx is None:
@@ -49,6 +49,10 @@ class ODE:
 
         # Approximation structure
         self.fsol = basis(n, 0, T, l=self.labels, labels=['Time'])  # falta inicializar los coeficientes
+
+        if y:
+            self.fsol.y += y
+
 
         # residual function for nonlinear problem formulation
         def residual(c):
