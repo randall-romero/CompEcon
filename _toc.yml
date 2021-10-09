@@ -86,7 +86,6 @@ parts:
       - file: notebooks/dp/10 Water Resource Management Model
       - file: notebooks/dp/11 Monetary Policy Model
       - file: notebooks/dp/12 Production Management Model
-      - file: notebooks/dp/16 Linear-Quadratic Model
       - file: notebooks/dp/18 Linear-Quadratic Model
     - file: notebooks/ode/chapter12
       sections:

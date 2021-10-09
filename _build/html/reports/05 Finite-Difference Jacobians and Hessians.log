@@ -25,7 +25,7 @@ np.set_printoptions(precision=15)
 
 [0;31m---------------------------------------------------------------------------[0m
 [0;31mModuleNotFoundError[0m                       Traceback (most recent call last)
-[0;32m/tmp/ipykernel_47246/2352865491.py[0m in [0;36m<module>[0;34m[0m
+[0;32m/tmp/ipykernel_54567/2352865491.py[0m in [0;36m<module>[0;34m[0m
 [0;32m----> 1[0;31m [0;32mfrom[0m [0mcompecon[0m [0;32mimport[0m [0mjacobian[0m[0;34m,[0m [0mhessian[0m[0;34m[0m[0;34m[0m[0m
 [0m[1;32m      2[0m [0;32mimport[0m [0mnumpy[0m [0;32mas[0m [0mnp[0m[0;34m[0m[0;34m[0m[0m
 [1;32m      3[0m [0;34m[0m[0m

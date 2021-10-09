@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Initial tasks &#8212; A Python Implementation of CompEcon</title>
+    <title>Finite-Difference Jacobians and Hessians &#8212; A Python Implementation of CompEcon</title>
     
   <link href="../../_static/css/theme.css" rel="stylesheet" />
   <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -366,7 +366,7 @@
    </li>
    <li class="toctree-l2 current active">
     <a class="current reference internal" href="#">
-     Initial tasks
+     Finite-Difference Jacobians and Hessians
     </a>
    </li>
   </ul>
@@ -726,7 +726,7 @@
         aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
     <div class="dropdown-buttons">
         
-        <a class="binder-button" href="https://mybinder.org/v2/gh/randall-romero/compecon/master?urlpath=lab/tree/notebooks/notebooks/dif/05 Finite-Difference Jacobians and Hessians.ipynb"><button type="button"
+        <a class="binder-button" href="https://mybinder.org/v2/gh/randall-romero/compecon/master?urlpath=lab/tree/notebooks/dif/05 Finite-Difference Jacobians and Hessians.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
                 data-placement="left"><img class="binder-button-logo"
                     src="../../_static/images/logo_binder.svg"
@@ -734,7 +734,7 @@
         
         
         
-        <a class="colab-button" href="https://colab.research.google.com/github/randall-romero/compecon/blob/master/notebooks/notebooks/dif/05 Finite-Difference Jacobians and Hessians.ipynb"><button type="button" class="btn btn-secondary topbarbtn"
+        <a class="colab-button" href="https://colab.research.google.com/github/randall-romero/compecon/blob/master/notebooks/dif/05 Finite-Difference Jacobians and Hessians.ipynb"><button type="button" class="btn btn-secondary topbarbtn"
                 title="Launch Colab" data-toggle="tooltip" data-placement="left"><img class="colab-button-logo"
                     src="../../_static/images/logo_colab.png"
                     alt="Interact on Colab">Colab</button></a>
@@ -753,17 +753,17 @@
             </div>
             <nav id="bd-toc-nav" aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
- <li class="toc-h1 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#initial-tasks">
    Initial tasks
   </a>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#example-1">
    Example 1
   </a>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#ejemple-2">
    Ejemple 2
   </a>
@@ -779,7 +779,8 @@
         
               <div>
                 
-  <p>Finite-Difference Jacobians and Hessians</p>
+  <div class="section" id="finite-difference-jacobians-and-hessians">
+<h1>Finite-Difference Jacobians and Hessians<a class="headerlink" href="#finite-difference-jacobians-and-hessians" title="Permalink to this headline">¶</a></h1>
 <p><strong>Randall Romero Aguilar, PhD</strong></p>
 <p>This demo is based on the original Matlab demo accompanying the  <a href="https://mitpress.mit.edu/books/applied-computational-economics-and-finance">Computational Economics and Finance</a> 2001 textbook by Mario Miranda and Paul Fackler.</p>
 <p>Original (Matlab) CompEcon file: <strong>demdif05.m</strong></p>
@@ -789,7 +790,7 @@
 </div>
 <p><i>Last updated: 2021-Oct-01</i></p>
 <hr><div class="section" id="initial-tasks">
-<h1>Initial tasks<a class="headerlink" href="#initial-tasks" title="Permalink to this headline">¶</a></h1>
+<h2>Initial tasks<a class="headerlink" href="#initial-tasks" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">compecon</span> <span class="kn">import</span> <span class="n">jacobian</span><span class="p">,</span> <span class="n">hessian</span>
@@ -802,7 +803,7 @@
 </div>
 </div>
 <div class="section" id="example-1">
-<h1>Example 1<a class="headerlink" href="#example-1" title="Permalink to this headline">¶</a></h1>
+<h2>Example 1<a class="headerlink" href="#example-1" title="Permalink to this headline">¶</a></h2>
 <p>The exact Jacobian of</p>
 <div class="amsmath math notranslate nohighlight">
 \[\begin{equation*}
@@ -836,7 +837,7 @@ f'(x_1,x_2) = \begin{bmatrix}1 &amp; -1 \\ 1 &amp; 2 \\ 0 &amp; 1\end{bmatrix}
 </div>
 </div>
 <div class="section" id="ejemple-2">
-<h1>Ejemple 2<a class="headerlink" href="#ejemple-2" title="Permalink to this headline">¶</a></h1>
+<h2>Ejemple 2<a class="headerlink" href="#ejemple-2" title="Permalink to this headline">¶</a></h2>
 <p>The exact Hessian of</p>
 <div class="amsmath math notranslate nohighlight">
 \[\begin{equation*}
@@ -861,6 +862,7 @@ f''(x_1,x_2) = \begin{bmatrix}2 &amp; -2 \\ -2 &amp;  1\end{bmatrix}.
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 2.               , -2.000000006519258],
        [-2.000000006519258,  0.999999985098839]])
 </pre></div>
+</div>
 </div>
 </div>
 </div>

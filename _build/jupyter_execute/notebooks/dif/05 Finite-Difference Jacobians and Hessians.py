@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Finite-Difference Jacobians and Hessians
+# # Finite-Difference Jacobians and Hessians
 # 
 # **Randall Romero Aguilar, PhD**
 # 
