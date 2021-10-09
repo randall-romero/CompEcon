@@ -1,0 +1,106 @@
+format: jb-book
+root: about
+parts:
+  - caption: About this book
+    chapters:
+    - file: notebooks/interacting
+  - caption: Demos
+    chapters:
+    - file: notebooks/intro/chapter01
+      sections:
+      - file: notebooks/intro/01 Inverse Demand Problem
+      - file: notebooks/intro/02 Rational Expectations Agricultural Market Model
+    - file: notebooks/math/chapter02
+      sections:
+      - file: notebooks/math/01 Taylor Approximations
+      - file: notebooks/math/02 Computing Function Inner Products, Norms, and Metrics
+      - file: notebooks/math/03 Major Distribution CDFs and PDFs
+    - file: notebooks/slv/chapter04
+      sections:
+      - file: notebooks/slv/01 Compute root of f(x)=exp(-x)-1
+      - file: notebooks/slv/02 Compute root of Rosencrantz function
+      - file: notebooks/slv/03 Compute fixedpoint of f(x) = sqrt(x)
+      - file: notebooks/slv/04 Compute fixedpoint of f(x1,x2)= [x1 2+x2 3; x1 x2 - 0.5]
+      - file: notebooks/slv/05 Cournot equilibrium model
+      - file: notebooks/slv/06 Illustrates function iteration, Newton, and secant methods
+      - file: notebooks/slv/07 Linear complementarity problem methods
+      - file: notebooks/slv/08 Nonlinear complementarity problem methods
+      - file: notebooks/slv/09 Hard nonlinear complementarity problem with Billup's function
+      - file: notebooks/slv/10 Illustrates linear complementarity problem
+      - file: notebooks/slv/12 Convergence rates for nonlinear equation methods
+      - file: notebooks/slv/13 Simple nonlinear complementarity problem
+      - file: notebooks/slv/14 Spacial Equilibrium Model
+    - file: notebooks/opt/chapter05
+      sections:
+      - file: notebooks/opt/04 Maximization of banana function by various methods
+      - file: notebooks/opt/05 Optimization with qnewton
+      - file: notebooks/opt/06 KKT conditions for constrained optimization problems
+      - file: notebooks/opt/08 Constrained optimization using scipy
+    - file: notebooks/qua/chapter06
+      sections:
+      - file: notebooks/qua/01bis Computing integral with quasi-Monte Carlo methods
+      - file: notebooks/qua/01 Equidistributed sequences on unit square in R2
+      - file: notebooks/qua/03 Area under 1-D and 2-D curves, various methods
+      - file: notebooks/qua/04 Area under normal pdf using Simpson's rule
+      - file: notebooks/qua/06 Area under a curve
+      - file: notebooks/qua/07 Illustrates integration using Trapezoidal rule
+      - file: notebooks/qua/08 Illustrates integration using Simpson's rule
+      - file: notebooks/qua/10 Monte Carlo Simulation of Time Series
+      - file: notebooks/qua/20 Computing integral with quasi-Monte Carlo methods
+      - file: notebooks/qua/50 Change in consumer surplus
+    - file: notebooks/dif/chapter06
+      sections:
+      - file: notebooks/dif/02 Demonstrates accuracy of one- and two-sided finite-difference derivatives
+      - file: notebooks/dif/05 Finite-Difference Jacobians and Hessians
+    - file: notebooks/app/chapter07
+      sections:
+      - file: notebooks/app/00 Approximation using CompEcon toolbox
+      - file: notebooks/app/01 Approximating function on R
+      - file: notebooks/app/02 Approximating functions on R2
+      - file: notebooks/app/03 Basis functions and standard nodes for major approximation schemes
+      - file: notebooks/app/04 Approximating Runge's function
+      - file: notebooks/app/05 Chebychev polynomial and spline approximantion of various functions
+      - file: notebooks/app/06 Chebychev and cubic spline derivative approximation errors
+      - file: notebooks/app/07 Solve Cournot oligopoly model via collocation
+      - file: notebooks/app/08 Compute function inverse via collocation
+      - file: notebooks/app/09 Linear spline approximation
+      - file: notebooks/app/10 Monopolist's Effective Supply Function
+    - file: notebooks/ddp/chapter08
+      sections:
+      - file: notebooks/ddp/01 Mine management model
+      - file: notebooks/ddp/02 Asset replacement model
+      - file: notebooks/ddp/03 Asset replacement model with maintenance
+    - file: notebooks/dp/chapter09
+      sections:
+      - file: notebooks/dp/01a Timber Harvesting -- 2 nodes
+      - file: notebooks/dp/01b Timber Harvesting -- cubic spline
+      - file: notebooks/dp/01 Timber Harvesting Model - Cubic Spline Approximation
+      - file: notebooks/dp/02 Asset Replacement Model
+      - file: notebooks/dp/03 Industry Entry-Exit Model
+      - file: notebooks/dp/04 Job Search Model
+      - file: notebooks/dp/05 America Put Option Pricing Model
+      - file: notebooks/dp/06 Deterministic Optimal Economic Growth Model
+      - file: notebooks/dp/07 Stochastic Optimal Economic Growth Model
+      - file: notebooks/dp/08 Public Renewable Resource Model
+      - file: notebooks/dp/09 Private Non-Renewable Resource Model
+      - file: notebooks/dp/10 Water Resource Management Model
+      - file: notebooks/dp/11 Monetary Policy Model
+      - file: notebooks/dp/12 Production Management Model
+      - file: notebooks/dp/16 Linear-Quadratic Model
+      - file: notebooks/dp/18 Linear-Quadratic Model
+    - file: notebooks/ode/chapter12
+      sections:
+      - file: notebooks/ode/01 Stability of Linear Homogeneous ODEs
+      - file: notebooks/ode/02 Generic IVP Nonlinear ODE Example
+      - file: notebooks/ode/03  Initial Value Non-Homogeneous Linear ODE Example
+      - file: notebooks/ode/04 Non-IVP Non-Homogeneous Linear ODE Example
+    - file: notebooks/doc/chapter13
+      sections:
+      - file: notebooks/doc/01 Deterministic Optimal Consumption-Investment Model
+      - file: notebooks/doc/02 Deterministic Optimal Economic Growth Model
+      - file: notebooks/doc/03 Deterministic Nonrenewable Resource Model
+      - file: notebooks/doc/04 Deterministic Renewable Resource Model
+      - file: notebooks/doc/05 Deterministic Production Adjustment Model
+    - file: notebooks/soc/chapter14
+      sections:
+      - file: notebooks/soc/00 Ito Processes

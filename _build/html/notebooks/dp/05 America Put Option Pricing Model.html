@@ -1,0 +1,1076 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>American Put Option Pricing Model &#8212; A Python Implementation of CompEcon</title>
+    
+  <link href="../../_static/css/theme.css" rel="stylesheet" />
+  <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinx-book-theme.e2363ea40746bee74734a24ffefccd78.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="canonical" href="https://randall-romero.github.io/compecon/notebooks/dp/05 America Put Option Pricing Model.html" />
+    <link rel="shortcut icon" href="../../_static/r2-logo-icon.png"/>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Deterministic Optimal Economic Growth Model" href="06%20Deterministic%20Optimal%20Economic%20Growth%20Model.html" />
+    <link rel="prev" title="Job Search Model" href="04%20Job%20Search%20Model.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../_static/r2-logo.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">A Python Implementation of CompEcon</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../about.html">
+   A Python Implementation of CompEcon
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  About this book
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../interacting.html">
+   Interacting with this website
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Demos
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../intro/chapter01.html">
+   Introduction
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../intro/01%20Inverse%20Demand%20Problem.html">
+     Inverse Demand Problem
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../intro/02%20Rational%20Expectations%20Agricultural%20Market%20Model.html">
+     Rational Expectations Agricultural Market Model
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../math/chapter02.html">
+   Mathematics Review
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../math/01%20Taylor%20Approximations.html">
+     Taylor Approximations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../math/02%20Computing%20Function%20Inner%20Products%2C%20Norms%2C%20and%20Metrics.html">
+     Computing Function Inner Products, Norms &amp; Metrics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../math/03%20Major%20Distribution%20CDFs%20and%20PDFs.html">
+     Major Distribution CDFs and PDFs
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../slv/chapter04.html">
+   Nonlinear Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../slv/01%20Compute%20root%20of%20f%28x%29%3Dexp%28-x%29-1.html">
+     Compute root of
+     <span class="math notranslate nohighlight">
+      \(f(x)=\exp(-x)-1\)
+     </span>
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../slv/02%20Compute%20root%20of%20Rosencrantz%20function.html">
+     Compute root of Rosencrantz function
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../slv/03%20Compute%20fixedpoint%20of%20f%28x%29%20%3D%20sqrt%28x%29.html">
+     Compute fixedpoint of
+     <span class="math notranslate nohighlight">
+      \(f(x) = x^{0.5}\)
+     </span>
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../slv/04%20Compute%20fixedpoint%20of%20f%28x1%2Cx2%29%3D%20%5Bx1%202%2Bx2%203%3B%20x1%20x2%20-%200.5%5D.html">
+     Compute fixedpoint of
+     <span class="math notranslate nohighlight">
+      \(f(x, y)= [x^2 + y^3; xy - 0.5]\)
+     </span>
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../slv/05%20Cournot%20equilibrium%20model.html">
+     Cournot Equilibrium Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../slv/06%20Illustrates%20function%20iteration%2C%20Newton%2C%20and%20secant%20methods.html">
+     Illustrates function iteration, Newton, and secant methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../slv/07%20Linear%20complementarity%20problem%20methods.html">
+     Linear complementarity problem methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../slv/08%20Nonlinear%20complementarity%20problem%20methods.html">
+     Nonlinear complementarity problem methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../slv/09%20Hard%20nonlinear%20complementarity%20problem%20with%20Billup%27s%20function.html">
+     Hard nonlinear complementarity problem with Billup’s function
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../slv/10%20Illustrates%20linear%20complementarity%20problem.html">
+     Illustrates linear complementarity problem
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../slv/12%20Convergence%20rates%20for%20nonlinear%20equation%20methods.html">
+     Convergence rates for different NLP methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../slv/13%20Simple%20nonlinear%20complementarity%20problem.html">
+     Simple nonlinear complementarity problem
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../slv/14%20Spacial%20Equilibrium%20Model.html">
+     Spacial Equilibrium Model
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../opt/chapter05.html">
+   Finite-Dimensional Optimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../opt/04%20Maximization%20of%20banana%20function%20by%20various%20methods.html">
+     Maximization of banana function by various methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../opt/05%20Optimization%20with%20qnewton.html">
+     Optimization with qnewton
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../opt/06%20KKT%20conditions%20for%20constrained%20optimization%20problems.html">
+     KKT conditions for constrained optimization problems
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../opt/08%20Constrained%20optimization%20using%20scipy.html">
+     Constrained optimization using scipy
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../qua/chapter06.html">
+   Quadrature
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../qua/01bis%20Computing%20integral%20with%20quasi-Monte%20Carlo%20methods.html">
+     Computing integral with quasi-Monte Carlo methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../qua/01%20Equidistributed%20sequences%20on%20unit%20square%20in%20R2.html">
+     Equidistributed sequences on unit square in
+     <span class="math notranslate nohighlight">
+      \(R^2\)
+     </span>
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../qua/03%20Area%20under%201-D%20and%202-D%20curves%2C%20various%20methods.html">
+     Area under 1-D and 2-D curves, various methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../qua/04%20Area%20under%20normal%20pdf%20using%20Simpson%27s%20rule.html">
+     Area under normal pdf using Simpson’s rule
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../qua/06%20Area%20under%20a%20curve.html">
+     Area under a curve
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../qua/07%20Illustrates%20integration%20using%20Trapezoidal%20rule.html">
+     Illustrates integration using Trapezoidal rule
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../qua/08%20Illustrates%20integration%20using%20Simpson%27s%20rule.html">
+     Illustrates integration using Simpson’s rule
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../qua/10%20Monte%20Carlo%20Simulation%20of%20Time%20Series.html">
+     Monte Carlo Simulation of Time Series
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../qua/20%20Computing%20integral%20with%20quasi-Monte%20Carlo%20methods.html">
+     Computing integral with quasi-Monte Carlo methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../qua/50%20Change%20in%20consumer%20surplus.html">
+     Change in Consumer Surplus
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../dif/chapter06.html">
+   Numerical Differentiation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../dif/02%20Demonstrates%20accuracy%20of%20one-%20and%20two-sided%20finite-difference%20derivatives.html">
+     Demonstrates accuracy of one- and two-sided finite-difference derivatives
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../dif/05%20Finite-Difference%20Jacobians%20and%20Hessians.html">
+     Initial tasks
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../app/chapter07.html">
+   Function Approximation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../app/00%20Approximation%20using%20CompEcon%20toolbox.html">
+     Approximating using the CompEcon toolbox
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../app/01%20Approximating%20function%20on%20R.html">
+     Approximating functions on
+     <span class="math notranslate nohighlight">
+      \(R\)
+     </span>
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../app/02%20Approximating%20functions%20on%20R2.html">
+     Approximating functions on
+     <span class="math notranslate nohighlight">
+      \(R^2\)
+     </span>
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../app/03%20Basis%20functions%20and%20standard%20nodes%20for%20major%20approximation%20schemes.html">
+     Basis functions and standard nodes for major approximation schemes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../app/04%20Approximating%20Runge%27s%20function.html">
+     Approximating Runge’s function
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../app/05%20Chebychev%20polynomial%20and%20spline%20approximantion%20of%20various%20functions.html">
+     Chebychev polynomial and spline approximantion of various functions
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../app/06%20Chebychev%20and%20cubic%20spline%20derivative%20approximation%20errors.html">
+     Chebychev and cubic spline derivative approximation errors
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../app/07%20Solve%20Cournot%20oligopoly%20model%20via%20collocation.html">
+     Solve Cournot oligopoly model via collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../app/08%20Compute%20function%20inverse%20via%20collocation.html">
+     Compute function inverse via collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../app/09%20Linear%20spline%20approximation.html">
+     Linear Spline Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../app/10%20Monopolist%27s%20Effective%20Supply%20Function.html">
+     Monopolist’s Effective Supply Function
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../ddp/chapter08.html">
+   Discrete Time Discrete State Dynamic Programming
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
+  <label for="toctree-checkbox-8">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../ddp/01%20Mine%20management%20model.html">
+     Mine management model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../ddp/02%20Asset%20replacement%20model.html">
+     Asset replacement model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../ddp/03%20Asset%20replacement%20model%20with%20maintenance.html">
+     Asset replacement model with maintenance
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="chapter09.html">
+   Discrete Time Continuous State Dynamic Programming
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
+  <label for="toctree-checkbox-9">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="01a%20Timber%20Harvesting%20--%202%20nodes.html">
+     Timber Harvesting – using 2 nodes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="01b%20Timber%20Harvesting%20--%20cubic%20spline.html">
+     Timber Harvesting – using cubic splines
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="01%20Timber%20Harvesting%20Model%20-%20Cubic%20Spline%20Approximation.html">
+     Timber Harvesting Model - Cubic Spline Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="02%20Asset%20Replacement%20Model.html">
+     Asset Replacement Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="03%20Industry%20Entry-Exit%20Model.html">
+     Industry Entry-Exit Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="04%20Job%20Search%20Model.html">
+     Job Search Model
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     American Put Option Pricing Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="06%20Deterministic%20Optimal%20Economic%20Growth%20Model.html">
+     Deterministic Optimal Economic Growth Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="07%20Stochastic%20Optimal%20Economic%20Growth%20Model.html">
+     Stochastic Optimal Economic Growth Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="08%20Public%20Renewable%20Resource%20Model.html">
+     Public Renewable Resource Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="09%20Private%20Non-Renewable%20Resource%20Model.html">
+     Private Non-Renewable Resource Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="10%20Water%20Resource%20Management%20Model.html">
+     Water Resource Management Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="11%20Monetary%20Policy%20Model.html">
+     Monetary Policy Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="12%20Production%20Management%20Model.html">
+     Production Management Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="18%20Linear-Quadratic%20Model.html">
+     Linear-Quadratic Model
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../ode/chapter12.html">
+   Ordinary Differential Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
+  <label for="toctree-checkbox-10">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../ode/01%20Stability%20of%20Linear%20Homogeneous%20ODEs.html">
+     Stability of Linear Homogeneous ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../ode/02%20Generic%20IVP%20Nonlinear%20ODE%20Example.html">
+     Generic IVP Nonlinear ODE Example
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../ode/03%20%20Initial%20Value%20Non-Homogeneous%20Linear%20ODE%20Example.html">
+     Initial Value Non-Homogeneous Linear ODE Example
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../ode/04%20Non-IVP%20Non-Homogeneous%20Linear%20ODE%20Example.html">
+     Non-IVP Non-Homogeneous Linear ODE Example
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../doc/chapter13.html">
+   Continuous Time Deterministic Optimal Control
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
+  <label for="toctree-checkbox-11">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../doc/01%20Deterministic%20Optimal%20Consumption-Investment%20Model.html">
+     Deterministic Optimal Consumption-Investment Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../doc/02%20Deterministic%20Optimal%20Economic%20Growth%20Model.html">
+     Deterministic Optimal Economic Growth Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../doc/03%20Deterministic%20Nonrenewable%20Resource%20Model.html">
+     Deterministic Nonrenewable Resource Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../doc/04%20Deterministic%20Renewable%20Resource%20Model.html">
+     Deterministic Renewable Resource Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../doc/05%20Deterministic%20Production%20Adjustment%20Model.html">
+     Deterministic Production Adjustment Model
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../soc/chapter14.html">
+   Continuous Time Stochastic Optimal Control
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
+  <label for="toctree-checkbox-12">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../soc/00%20Ito%20Processes.html">
+     Ito Processes
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  <a href="http://randall-romero.com">randall-romero.com</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../../_sources/notebooks/dp/05 America Put Option Pricing Model.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/randall-romero/compecon/"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/randall-romero/compecon//issues/new?title=Issue%20on%20page%20%2Fnotebooks/dp/05 America Put Option Pricing Model.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/randall-romero/compecon/master?urlpath=lab/tree/notebooks/notebooks/dp/05 America Put Option Pricing Model.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="../../_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        <a class="colab-button" href="https://colab.research.google.com/github/randall-romero/compecon/blob/master/notebooks/notebooks/dp/05 America Put Option Pricing Model.ipynb"><button type="button" class="btn btn-secondary topbarbtn"
+                title="Launch Colab" data-toggle="tooltip" data-placement="left"><img class="colab-button-logo"
+                    src="../../_static/images/logo_colab.png"
+                    alt="Interact on Colab">Colab</button></a>
+        
+        
+    </div>
+</div>
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav" aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   American Put Option Pricing Model
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#about">
+     About
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#preliminary-tasks">
+   Preliminary tasks
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#formulation">
+     FORMULATION
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#finding-the-critical-exercise-prices">
+     Finding the critical exercise prices
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#print-critical-exercise-price-300-periods-to-expiration">
+       Print Critical Exercise Price 300 Periods to Expiration
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#plot-critical-exercise-prices">
+       Plot Critical Exercise Prices
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="american-put-option-pricing-model">
+<h1>American Put Option Pricing Model<a class="headerlink" href="#american-put-option-pricing-model" title="Permalink to this headline">¶</a></h1>
+<p><strong>Randall Romero Aguilar, PhD</strong></p>
+<p>This demo is based on the original Matlab demo accompanying the  <a href="https://mitpress.mit.edu/books/applied-computational-economics-and-finance">Computational Economics and Finance</a> 2001 textbook by Mario Miranda and Paul Fackler.</p>
+<p>Original (Matlab) CompEcon file: <strong>demdp05.m</strong></p>
+<p>Running this file requires the Python version of CompEcon. This can be installed with pip by running</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>!pip install compecon --upgrade
+</pre></div>
+</div>
+<p><i>Last updated: 2021-Oct-01</i></p>
+<hr><div class="section" id="about">
+<h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
+<p>An American put option gives the holder the right, but not the obligation, to sell a specified quantity of a commodity at a specified strike price <span class="math notranslate nohighlight">\(K\)</span> on or before a specified expiration period <span class="math notranslate nohighlight">\(T\)</span>. In the discrete time, continuous state Black-Scholes option pricing model, the price of the commodity follows an exogenous continuous-valued Markov process</p>
+<div class="amsmath math notranslate nohighlight" id="equation-b347017f-c4ba-45d7-b370-fde9e9f200ce">
+<span class="eqno">(31)<a class="headerlink" href="#equation-b347017f-c4ba-45d7-b370-fde9e9f200ce" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+    P_{t+1} = h(P_t, \epsilon_{t+1})
+\end{equation}\]</div>
+<p><strong>What is the value of an American put option in period <span class="math notranslate nohighlight">\(t\)</span> if the commodity price is <span class="math notranslate nohighlight">\(P\)</span>?</strong> At what critical price is it optimal to exercise the put option, and how does this critical price vary over time?</p>
+<p>This is a finite horizon, stochastic model with time <span class="math notranslate nohighlight">\(t\)</span> measured in periods. The state variables</p>
+<div class="amsmath math notranslate nohighlight" id="equation-4ed47d74-edb7-428c-b73c-721c3e780991">
+<span class="eqno">(32)<a class="headerlink" href="#equation-4ed47d74-edb7-428c-b73c-721c3e780991" title="Permalink to this equation">¶</a></span>\[\begin{align}
+    P &amp;\in (0,\infty) \\
+    d &amp;\in \{0, 1\}
+\end{align}\]</div>
+<p>are the current commodity price, a continuous variable, and the exercise status of the option, a discrete variable that equals 1 if the option has been exercised previously and equals 0 otherwise. The action variable</p>
+<div class="amsmath math notranslate nohighlight" id="equation-cebbcfc1-9c47-4292-b45f-5576a23465c0">
+<span class="eqno">(33)<a class="headerlink" href="#equation-cebbcfc1-9c47-4292-b45f-5576a23465c0" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+    j \in \{0, 1\}
+\end{equation}\]</div>
+<p>is the exercise decision, a discrete variable that equals 1 if the option is exercised and equals 0 otherwise. The state transition function is</p>
+<div class="amsmath math notranslate nohighlight" id="equation-b6a21c04-6d2c-42fb-8de3-3a1d8d5699f1">
+<span class="eqno">(34)<a class="headerlink" href="#equation-b6a21c04-6d2c-42fb-8de3-3a1d8d5699f1" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+    g(P,d,j,\epsilon) = \left(h(P,\epsilon), j\right)
+\end{equation}\]</div>
+<p>The reward function is</p>
+<div class="amsmath math notranslate nohighlight" id="equation-2e994658-3c09-4097-a38b-4ce023b89e88">
+<span class="eqno">(35)<a class="headerlink" href="#equation-2e994658-3c09-4097-a38b-4ce023b89e88" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+    f(P,d,j) = \begin{cases}K − P, &amp;d = 0, j = 1 \\
+    0, &amp;\text{otherwise} \end{cases}
+\end{equation}\]</div>
+<p>The value of an unexercised option in period <span class="math notranslate nohighlight">\(t\)</span>, given that the commodity price is <span class="math notranslate nohighlight">\(P\)</span>, satisfies the Bellman equation</p>
+<div class="amsmath math notranslate nohighlight" id="equation-7cf5a02d-08c2-4225-947d-dc764a969a7b">
+<span class="eqno">(36)<a class="headerlink" href="#equation-7cf5a02d-08c2-4225-947d-dc764a969a7b" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+    V_t(P,0) = \max\left\{K − P, \quad\delta E_\epsilon V_{t+1}\left(h(P,\epsilon), 0\right)\right\}
+\end{equation}\]</div>
+<p>subject to the terminal condition <span class="math notranslate nohighlight">\(V_{T+1}(P,1) = 0\)</span>. The value of a previously exercised option is zero, regardless of the price of the commodity; that is, <span class="math notranslate nohighlight">\(V_t(P,1) = 0\)</span> for all <span class="math notranslate nohighlight">\(P\)</span> and <span class="math notranslate nohighlight">\(t\)</span>.</p>
+</div>
+</div>
+<div class="section" id="preliminary-tasks">
+<h1>Preliminary tasks<a class="headerlink" href="#preliminary-tasks" title="Permalink to this headline">¶</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">compecon</span> <span class="kn">import</span> <span class="n">BasisSpline</span><span class="p">,</span> <span class="n">NLP</span><span class="p">,</span> <span class="n">qnwnorm</span><span class="p">,</span> <span class="n">demo</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="formulation">
+<h2>FORMULATION<a class="headerlink" href="#formulation" title="Permalink to this headline">¶</a></h2>
+<p>In what follows, we are going to solve the problem in term of the log-price, defining <span class="math notranslate nohighlight">\(p\equiv\log(P)\)</span>. We assume that log-price of the commodity follows a random walk:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-7ca5655c-0bca-4af8-8076-a59672110ad4">
+<span class="eqno">(37)<a class="headerlink" href="#equation-7ca5655c-0bca-4af8-8076-a59672110ad4" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+    p_{t+1} = p_t + \epsilon_{t+1}
+\end{equation}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\epsilon\)</span> is a normal <span class="math notranslate nohighlight">\((\mu, \sigma^2)\)</span> shock. We discretize this distribution by using <code class="docutils literal notranslate"><span class="pre">qnwnorm</span></code>, assuming that <span class="math notranslate nohighlight">\(\mu=0.0001,\quad\sigma=0.008\)</span> and setting up <span class="math notranslate nohighlight">\(m=15\)</span> nodes.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span>    <span class="o">=</span> <span class="mf">0.0001</span><span class="p">,</span> <span class="mf">0.0080</span>
+<span class="n">m</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="p">[</span><span class="n">e</span><span class="p">,</span><span class="n">w</span><span class="p">]</span> <span class="o">=</span> <span class="n">qnwnorm</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">mu</span><span class="p">,</span><span class="n">sigma</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We are going to compute the critical exercise price in terms of the time to expiration, up to an horizon of <span class="math notranslate nohighlight">\(T=300\)</span> periods. First we allocate memory for the critical prices:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">pcrit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">T</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The critical exercise price is the price at which the value of exercising the option <span class="math notranslate nohighlight">\(K-\exp(p)\)</span> equals the discounted expected value of keeping the option one more period <span class="math notranslate nohighlight">\(\delta E_\epsilon V(p + \epsilon)\)</span>. To find it, we set it as a nonlinear rootfinding problem by using the <code class="docutils literal notranslate"><span class="pre">NLP</span></code> class; here we assume that the option strike price is <span class="math notranslate nohighlight">\(K=1\)</span> and that the discount factor is <span class="math notranslate nohighlight">\(\delta=0.9998\)</span></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">K</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">delta</span> <span class="o">=</span> <span class="mf">0.9998</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">NLP</span><span class="p">(</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">K</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">-</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">Value</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Notice that we have not defined the <code class="docutils literal notranslate"><span class="pre">Value(p)</span></code> function yet. This function is unknown, so we are going to approximate it with a cubic spline, setting 500 nodes between -1 and 1. Since the basis is expressed in terms of log-prices, this interval corresponds to prices between 0.3679 and 2.7183.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="n">pmin</span>  <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="c1"># minimum log price</span>
+<span class="n">pmax</span>  <span class="o">=</span>  <span class="mi">1</span> <span class="c1"># maximum log price</span>
+<span class="n">Value</span> <span class="o">=</span> <span class="n">BasisSpline</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">pmin</span><span class="p">,</span> <span class="n">pmax</span><span class="p">,</span>
+                    <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;logprice&#39;</span><span class="p">],</span> <span class="n">l</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Value</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>A 1-dimension Cubic spline basis:  using 500 Canonical nodes and 500 polynomials
+___________________________________________________________________________
+	logprice: 500 nodes in [ -1.00,   1.00]
+
+===========================================================================
+WARNING! Class Basis is still work in progress
+</pre></div>
+</div>
+</div>
+</div>
+<p>In the last expression, by passing the option <code class="docutils literal notranslate"><span class="pre">l</span></code> with a one-element list we are telling the <code class="docutils literal notranslate"><span class="pre">BasisSpline</span></code> class that we a single function named “value”. On creation, the function will be set by default to <span class="math notranslate nohighlight">\(V(p)=0\)</span> for all values of <span class="math notranslate nohighlight">\(p\)</span>, which conveniently corresponds to the terminal condition of this problem.</p>
+</div>
+<div class="section" id="finding-the-critical-exercise-prices">
+<h2>Finding the critical exercise prices<a class="headerlink" href="#finding-the-critical-exercise-prices" title="Permalink to this headline">¶</a></h2>
+<p>We are going to find the prices recursively, starting form a option in the expiration date. Notice that the solution to this problem is trivial: since next-period value is zero, the exercise price is <span class="math notranslate nohighlight">\(K\)</span>. Either way, we can find it numerically by calling the <code class="docutils literal notranslate"><span class="pre">zero</span></code> method on the <code class="docutils literal notranslate"><span class="pre">f</span></code> object.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pcrit</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">zero</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next, for each possible price shock, we compute next period log-price by adding the shock to current log-prices (the nodes of the Value object). Then, we use each next-period price to compute the expected value of an option with one-period to maturity (save the values in <code class="docutils literal notranslate"><span class="pre">v</span></code>). We update the value function to reflect the new time-to-maturity and use <code class="docutils literal notranslate"><span class="pre">broyden</span></code> to solve for the critical value. We repeat this procedure until we reach the <span class="math notranslate nohighlight">\(T=300\)</span> horizon.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+        <span class="n">pnext</span> <span class="o">=</span> <span class="n">Value</span><span class="o">.</span><span class="n">nodes</span> <span class="o">+</span> <span class="n">e</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">v</span> <span class="o">+=</span> <span class="n">w</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">K</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">pnext</span><span class="p">),</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">Value</span><span class="p">(</span><span class="n">pnext</span><span class="p">))</span>
+
+    <span class="n">Value</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">v</span>
+    <span class="n">pcrit</span><span class="p">[</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">broyden</span><span class="p">(</span><span class="n">pcrit</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="print-critical-exercise-price-300-periods-to-expiration">
+<h3>Print Critical Exercise Price 300 Periods to Expiration<a class="headerlink" href="#print-critical-exercise-price-300-periods-to-expiration" title="Permalink to this headline">¶</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Critical Price  = </span><span class="si">%5.2f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">pcrit</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Critical Price  =  0.88
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="plot-critical-exercise-prices">
+<h3>Plot Critical Exercise Prices<a class="headerlink" href="#plot-critical-exercise-prices" title="Permalink to this headline">¶</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig1</span> <span class="o">=</span> <span class="n">demo</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="s1">&#39;American Put Option Optimal Exercise Boundary&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Periods Remaining Until Expiration&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;Exercise Price&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">pcrit</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x2c9f4f3ae50&gt;]
+</pre></div>
+</div>
+<img alt="../../_images/05 America Put Option Pricing Model_22_1.png" src="../../_images/05 America Put Option Pricing Model_22_1.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#demo.savefig([fig1])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./notebooks/dp"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        
+            
+
+
+
+<div class='prev-next-bottom'>
+    
+    <div id="prev">
+        <a class="left-prev" href="04%20Job%20Search%20Model.html" title="previous page">
+            <i class="prevnext-label fas fa-angle-left"></i>
+            <div class="prevnext-info">
+                <p class="prevnext-label">previous</p>
+                <p class="prevnext-title">Job Search Model</p>
+            </div>
+        </a>
+    </div>
+     <div id="next">
+        <a class="right-next" href="06%20Deterministic%20Optimal%20Economic%20Growth%20Model.html" title="next page">
+            <div class="prevnext-info">
+                <p class="prevnext-label">next</p>
+                <p class="prevnext-title">Deterministic Optimal Economic Growth Model</p>
+            </div>
+            <i class="prevnext-label fas fa-angle-right"></i>
+        </a>
+     </div>
+
+</div>
+        
+        </div>
+    </div>
+    <footer class="footer">
+    <div class="container">
+      <p>
+        
+          By Randall Romero Aguilar<br/>
+        
+            &copy; Copyright 2021.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script>
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){ dataLayer.push(arguments); }
+                    gtag('config', 'G-DT0DZ59WL5');
+                </script>
+
+  </body>
+</html>
