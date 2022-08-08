@@ -68,13 +68,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -1121,8 +1123,8 @@ const thebe_selector_output = ".output, .cell_output"
 </div>
 </div>
 <p>The true value function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-afd3f149-7794-469b-beda-7e6485306285">
-<span class="eqno">(38)<a class="headerlink" href="#equation-afd3f149-7794-469b-beda-7e6485306285" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-dba9284e-a181-4723-8c90-f3fea486419b">
+<span class="eqno">(38)<a class="headerlink" href="#equation-dba9284e-a181-4723-8c90-f3fea486419b" title="Permalink to this equation">¶</a></span>\[\begin{equation}
 V(s) = v^* + \frac{1}{1-\delta\beta}\left(\log(s) -\log(s^*)\right)
 \end{equation}\]</div>
 <div class="cell docutils container">
@@ -1134,8 +1136,8 @@ V(s) = v^* + \frac{1}{1-\delta\beta}\left(\log(s) -\log(s^*)\right)
 </div>
 </div>
 <p>The true policy function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1414433a-1f5a-43ee-be6b-7d39f7b33d49">
-<span class="eqno">(39)<a class="headerlink" href="#equation-1414433a-1f5a-43ee-be6b-7d39f7b33d49" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8c9ff1ee-29c0-4749-b4fa-a10e4f20652f">
+<span class="eqno">(39)<a class="headerlink" href="#equation-8c9ff1ee-29c0-4749-b4fa-a10e4f20652f" title="Permalink to this equation">¶</a></span>\[\begin{equation}
 k(s) = \delta\beta s
 \end{equation}\]</div>
 <div class="cell docutils container">
@@ -1241,7 +1243,7 @@ V(s) = \max_k\left\{\log(s-k) + \delta V(k^\beta)  \right\}
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Solving infinite-horizon model collocation equation by Newton&#39;s method
 iter change       time    
 ------------------------------
-   0       4.7e-07    0.0040
+   0       4.7e-07    0.0030
    1       1.6e-12    0.0060
 Elapsed Time =    0.01 Seconds
 </pre></div>
@@ -1576,7 +1578,7 @@ Elapsed Time =    0.01 Seconds
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x262bc398ac0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x17555c7b9a0&gt;
 </pre></div>
 </div>
 <img alt="../../_images/06 Deterministic Optimal Economic Growth Model_33_1.png" src="../../_images/06 Deterministic Optimal Economic Growth Model_33_1.png" />
@@ -1597,7 +1599,7 @@ Elapsed Time =    0.01 Seconds
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x262bc7b04c0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x17555f32460&gt;
 </pre></div>
 </div>
 <img alt="../../_images/06 Deterministic Optimal Economic Growth Model_35_1.png" src="../../_images/06 Deterministic Optimal Economic Growth Model_35_1.png" />
@@ -1617,7 +1619,7 @@ Elapsed Time =    0.01 Seconds
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x262bc8385b0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x17556427e50&gt;
 </pre></div>
 </div>
 <img alt="../../_images/06 Deterministic Optimal Economic Growth Model_37_1.png" src="../../_images/06 Deterministic Optimal Economic Growth Model_37_1.png" />
@@ -1664,7 +1666,7 @@ Elapsed Time =    0.01 Seconds
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x262bcda03a0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x175567dfcd0&gt;
 </pre></div>
 </div>
 <img alt="../../_images/06 Deterministic Optimal Economic Growth Model_41_1.png" src="../../_images/06 Deterministic Optimal Economic Growth Model_41_1.png" />

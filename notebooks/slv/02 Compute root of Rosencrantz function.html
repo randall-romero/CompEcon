@@ -68,13 +68,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -901,8 +903,8 @@ const thebe_selector_output = ".output, .cell_output"
 <section id="about">
 <h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
 <p>Compute root of</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e4fda51e-0a88-4460-9382-31edbbb093ee">
-<span class="eqno">(1)<a class="headerlink" href="#equation-e4fda51e-0a88-4460-9382-31edbbb093ee" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-44ba01d5-d88f-4365-9e5c-5272b6d70ce1">
+<span class="eqno">(1)<a class="headerlink" href="#equation-44ba01d5-d88f-4365-9e5c-5272b6d70ce1" title="Permalink to this equation">¶</a></span>\[\begin{equation}
 f(x_1,x_2)= \begin{bmatrix}200x_1(x_2-x_1^2) + 1-x_1 \\ 100(x_1^2-x_2)\end{bmatrix}
 \end{equation}\]</div>
 <p>using Newton and Broyden methods. Initial values generated randomly.  True root is <span class="math notranslate nohighlight">\(x_1=1, \quad x_2=1\)</span>.</p>
@@ -989,7 +991,7 @@ f(x_1,x_2)= \begin{bmatrix}200x_1(x_2-x_1^2) + 1-x_1 \\ 100(x_1^2-x_2)\end{bmatr
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Hundreds of seconds required to compute root of Rosencrantz function
 f(x1,x2)= [200*x1*(x2-x1^2)+1-x1;100*(x1^2-x2)] via Newton and Broyden
-methods, starting at x1 = 1.08 x2 = -0.30
+methods, starting at x1 = -2.23 x2 = 0.22
 </pre></div>
 </div>
 <div class="output text_html"><div>
@@ -1019,17 +1021,17 @@ methods, starting at x1 = 1.08 x2 = -0.30
   <tbody>
     <tr>
       <th>Newton</th>
-      <td>0.299120</td>
-      <td>9.333602e-09</td>
-      <td>1.0</td>
-      <td>1.0</td>
+      <td>2.393651</td>
+      <td>3.247047</td>
+      <td>-1.954572</td>
+      <td>3.819604</td>
     </tr>
     <tr>
       <th>Broyden</th>
-      <td>0.598288</td>
-      <td>1.789236e-09</td>
-      <td>1.0</td>
-      <td>1.0</td>
+      <td>2.792525</td>
+      <td>4.312936</td>
+      <td>-1.791739</td>
+      <td>3.206084</td>
     </tr>
   </tbody>
 </table>

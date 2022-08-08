@@ -68,13 +68,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -1182,13 +1184,13 @@ V(s) = \max_q\left\{\frac{q^{1-\gamma}}{1-\gamma} -\kappa q + \delta V(s')  \rig
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Solving infinite-horizon model collocation equation by Newton&#39;s method
 iter change       time    
 ------------------------------
-   0       1.4e+01    0.0060
-   1       1.9e+01    0.0170
-   2       3.7e-01    0.0239
-   3       1.1e-03    0.0319
-   4       1.5e-08    0.0369
-   5       1.7e-14    0.0389
-Elapsed Time =    0.04 Seconds
+   0       1.4e+01    0.0030
+   1       1.9e+01    0.0110
+   2       3.7e-01    0.0160
+   3       1.1e-03    0.0209
+   4       1.5e-08    0.0239
+   5       1.7e-14    0.0259
+Elapsed Time =    0.03 Seconds
 </pre></div>
 </div>
 </div>
@@ -1309,7 +1311,7 @@ Elapsed Time =    0.04 Seconds
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x1e8e1c0a040&gt;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x20a7a037040&gt;]
 </pre></div>
 </div>
 <img alt="../../_images/08 Public Renewable Resource Model_28_1.png" src="../../_images/08 Public Renewable Resource Model_28_1.png" />
@@ -1326,7 +1328,7 @@ Elapsed Time =    0.04 Seconds
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x1e8e1c6d2b0&gt;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x20a7a09b2b0&gt;]
 </pre></div>
 </div>
 <img alt="../../_images/08 Public Renewable Resource Model_30_1.png" src="../../_images/08 Public Renewable Resource Model_30_1.png" />

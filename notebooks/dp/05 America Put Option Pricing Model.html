@@ -68,13 +68,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -918,36 +920,36 @@ const thebe_selector_output = ".output, .cell_output"
 <hr><section id="about">
 <h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
 <p>An American put option gives the holder the right, but not the obligation, to sell a specified quantity of a commodity at a specified strike price <span class="math notranslate nohighlight">\(K\)</span> on or before a specified expiration period <span class="math notranslate nohighlight">\(T\)</span>. In the discrete time, continuous state Black-Scholes option pricing model, the price of the commodity follows an exogenous continuous-valued Markov process</p>
-<div class="amsmath math notranslate nohighlight" id="equation-902a1de3-cfc5-4b4d-89cb-5286520d3129">
-<span class="eqno">(31)<a class="headerlink" href="#equation-902a1de3-cfc5-4b4d-89cb-5286520d3129" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9275e412-dbf9-4d1b-a056-e49fb0daf82b">
+<span class="eqno">(31)<a class="headerlink" href="#equation-9275e412-dbf9-4d1b-a056-e49fb0daf82b" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     P_{t+1} = h(P_t, \epsilon_{t+1})
 \end{equation}\]</div>
 <p><strong>What is the value of an American put option in period <span class="math notranslate nohighlight">\(t\)</span> if the commodity price is <span class="math notranslate nohighlight">\(P\)</span>?</strong> At what critical price is it optimal to exercise the put option, and how does this critical price vary over time?</p>
 <p>This is a finite horizon, stochastic model with time <span class="math notranslate nohighlight">\(t\)</span> measured in periods. The state variables</p>
-<div class="amsmath math notranslate nohighlight" id="equation-994d0bc3-b457-4d37-bc29-da677a096189">
-<span class="eqno">(32)<a class="headerlink" href="#equation-994d0bc3-b457-4d37-bc29-da677a096189" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-2d67e6d9-ea45-48d4-beb6-f305adce5851">
+<span class="eqno">(32)<a class="headerlink" href="#equation-2d67e6d9-ea45-48d4-beb6-f305adce5851" title="Permalink to this equation">¶</a></span>\[\begin{align}
     P &amp;\in (0,\infty) \\
     d &amp;\in \{0, 1\}
 \end{align}\]</div>
 <p>are the current commodity price, a continuous variable, and the exercise status of the option, a discrete variable that equals 1 if the option has been exercised previously and equals 0 otherwise. The action variable</p>
-<div class="amsmath math notranslate nohighlight" id="equation-59ef06b1-8515-4025-a6af-8bc86a9cb390">
-<span class="eqno">(33)<a class="headerlink" href="#equation-59ef06b1-8515-4025-a6af-8bc86a9cb390" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6906c440-b26d-4d63-8f55-89e768022689">
+<span class="eqno">(33)<a class="headerlink" href="#equation-6906c440-b26d-4d63-8f55-89e768022689" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     j \in \{0, 1\}
 \end{equation}\]</div>
 <p>is the exercise decision, a discrete variable that equals 1 if the option is exercised and equals 0 otherwise. The state transition function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-79d5c1de-9a91-40f7-88ae-63b265088b06">
-<span class="eqno">(34)<a class="headerlink" href="#equation-79d5c1de-9a91-40f7-88ae-63b265088b06" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-167c3409-bc25-43c3-885f-cd41d466714f">
+<span class="eqno">(34)<a class="headerlink" href="#equation-167c3409-bc25-43c3-885f-cd41d466714f" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     g(P,d,j,\epsilon) = \left(h(P,\epsilon), j\right)
 \end{equation}\]</div>
 <p>The reward function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b5cc1080-dcc3-4c03-91c8-6eebbfa57e84">
-<span class="eqno">(35)<a class="headerlink" href="#equation-b5cc1080-dcc3-4c03-91c8-6eebbfa57e84" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-af48fd70-9097-43f6-80d0-7a17610c07fa">
+<span class="eqno">(35)<a class="headerlink" href="#equation-af48fd70-9097-43f6-80d0-7a17610c07fa" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     f(P,d,j) = \begin{cases}K − P, &amp;d = 0, j = 1 \\
     0, &amp;\text{otherwise} \end{cases}
 \end{equation}\]</div>
 <p>The value of an unexercised option in period <span class="math notranslate nohighlight">\(t\)</span>, given that the commodity price is <span class="math notranslate nohighlight">\(P\)</span>, satisfies the Bellman equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-96a402b6-5181-4862-8b1f-d89f6ba11d1e">
-<span class="eqno">(36)<a class="headerlink" href="#equation-96a402b6-5181-4862-8b1f-d89f6ba11d1e" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d5160a05-1fb3-4cc4-8fd7-b515c6a44b35">
+<span class="eqno">(36)<a class="headerlink" href="#equation-d5160a05-1fb3-4cc4-8fd7-b515c6a44b35" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     V_t(P,0) = \max\left\{K − P, \quad\delta E_\epsilon V_{t+1}\left(h(P,\epsilon), 0\right)\right\}
 \end{equation}\]</div>
 <p>subject to the terminal condition <span class="math notranslate nohighlight">\(V_{T+1}(P,1) = 0\)</span>. The value of a previously exercised option is zero, regardless of the price of the commodity; that is, <span class="math notranslate nohighlight">\(V_t(P,1) = 0\)</span> for all <span class="math notranslate nohighlight">\(P\)</span> and <span class="math notranslate nohighlight">\(t\)</span>.</p>
@@ -967,8 +969,8 @@ const thebe_selector_output = ".output, .cell_output"
 <section id="formulation">
 <h2>FORMULATION<a class="headerlink" href="#formulation" title="Permalink to this headline">¶</a></h2>
 <p>In what follows, we are going to solve the problem in term of the log-price, defining <span class="math notranslate nohighlight">\(p\equiv\log(P)\)</span>. We assume that log-price of the commodity follows a random walk:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9116a1d5-ee50-4156-a539-aba83da41dca">
-<span class="eqno">(37)<a class="headerlink" href="#equation-9116a1d5-ee50-4156-a539-aba83da41dca" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-dcbe3a7e-9767-479d-bca1-407dfba8d2d4">
+<span class="eqno">(37)<a class="headerlink" href="#equation-dcbe3a7e-9767-479d-bca1-407dfba8d2d4" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     p_{t+1} = p_t + \epsilon_{t+1}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\epsilon\)</span> is a normal <span class="math notranslate nohighlight">\((\mu, \sigma^2)\)</span> shock. We discretize this distribution by using <code class="docutils literal notranslate"><span class="pre">qnwnorm</span></code>, assuming that <span class="math notranslate nohighlight">\(\mu=0.0001,\quad\sigma=0.008\)</span> and setting up <span class="math notranslate nohighlight">\(m=15\)</span> nodes.</p>
@@ -1077,7 +1079,7 @@ WARNING! Class Basis is still work in progress
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x17c55d71820&gt;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x24137dde820&gt;]
 </pre></div>
 </div>
 <img alt="../../_images/05 America Put Option Pricing Model_22_1.png" src="../../_images/05 America Put Option Pricing Model_22_1.png" />

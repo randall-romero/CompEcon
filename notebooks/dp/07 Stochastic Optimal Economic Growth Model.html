@@ -68,13 +68,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -1220,13 +1222,13 @@ V(s) = \max_k\left\{\log(s-k) + \delta V(k^\beta)  \right\}
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Solving infinite-horizon model collocation equation by Newton&#39;s method
 iter change       time    
 ------------------------------
-   0       8.2e+00    0.0059
-   1       9.6e+00    0.0708
-   2       2.2e+00    0.1087
-   3       3.8e-02    0.1386
-   4       7.0e-06    0.1606
-   5       7.1e-15    0.1646
-Elapsed Time =    0.16 Seconds
+   0       8.2e+00    0.0060
+   1       9.6e+00    0.0748
+   2       2.2e+00    0.1137
+   3       3.8e-02    0.1486
+   4       7.0e-06    0.1736
+   5       7.1e-15    0.1785
+Elapsed Time =    0.18 Seconds
 </pre></div>
 </div>
 </div>
@@ -1453,7 +1455,7 @@ We also compute the shadow price and the approximation error to compare these re
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x2072353d490&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x21cc550d550&gt;
 </pre></div>
 </div>
 <img alt="../../_images/07 Stochastic Optimal Economic Growth Model_29_1.png" src="../../_images/07 Stochastic Optimal Economic Growth Model_29_1.png" />
@@ -1472,7 +1474,7 @@ We also compute the shadow price and the approximation error to compare these re
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x20723a95550&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x21cc5a66520&gt;
 </pre></div>
 </div>
 <img alt="../../_images/07 Stochastic Optimal Economic Growth Model_31_1.png" src="../../_images/07 Stochastic Optimal Economic Growth Model_31_1.png" />
@@ -1491,7 +1493,7 @@ We also compute the shadow price and the approximation error to compare these re
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x2072398a730&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x21cc595c6d0&gt;
 </pre></div>
 </div>
 <img alt="../../_images/07 Stochastic Optimal Economic Growth Model_33_1.png" src="../../_images/07 Stochastic Optimal Economic Growth Model_33_1.png" />
@@ -1530,7 +1532,7 @@ We also compute the shadow price and the approximation error to compare these re
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x20723abd850&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x21cc5a8e880&gt;
 </pre></div>
 </div>
 <img alt="../../_images/07 Stochastic Optimal Economic Growth Model_37_1.png" src="../../_images/07 Stochastic Optimal Economic Growth Model_37_1.png" />
@@ -1630,13 +1632,13 @@ We also compute the shadow price and the approximation error to compare these re
     </tr>
     <tr>
       <th>Ergodic Means</th>
-      <td>7.413277</td>
-      <td>5.606871</td>
+      <td>7.413662</td>
+      <td>5.607115</td>
     </tr>
     <tr>
       <th>Ergodic Standard Deviations</th>
-      <td>0.342345</td>
-      <td>0.221505</td>
+      <td>0.343442</td>
+      <td>0.222214</td>
     </tr>
   </tbody>
 </table>

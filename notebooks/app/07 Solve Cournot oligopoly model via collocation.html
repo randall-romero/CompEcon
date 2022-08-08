@@ -68,13 +68,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -960,16 +962,16 @@ const thebe_selector_output = ".output, .cell_output"
 <hr><section id="about">
 <h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
 <p>To illustrate implementation of the collocation method for implicit function problems, consider the example of Cournot oligopoly. In the standard microeconomic model of the firm, the firm maximizes profit by equating marginal revenue to marginal cost (MC). An oligopolistic firm, recognizing that its actions affect price, takes the marginal revenue to be <span class="math notranslate nohighlight">\(p + q\frac{dp}{dq}\)</span>, where <span class="math notranslate nohighlight">\(p\)</span> is price, <span class="math notranslate nohighlight">\(q\)</span> is quantity produced, and <span class="math notranslate nohighlight">\(\frac{dp}{dq}\)</span> is the marginal impact of output on market price. The Cournot assumption is that the firm acts as if any change in its output will be unmatched by its competitors. This implies that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9e9fc994-8256-4c1e-b66e-5dec3491e2de">
-<span class="eqno">(6)<a class="headerlink" href="#equation-9e9fc994-8256-4c1e-b66e-5dec3491e2de" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6b389fe5-5f7e-48e4-b525-dfd244c3a169">
+<span class="eqno">(6)<a class="headerlink" href="#equation-6b389fe5-5f7e-48e4-b525-dfd244c3a169" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     \frac{dp}{dq} = \frac{1}{D'(p)}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(D(p)\)</span> is the market demand curve.</p>
 <p>Suppose we wish to derive the effective supply function for the firm, which specifies
 the quantity <span class="math notranslate nohighlight">\(q = S(p)\)</span> it will supply at any price. The firm’s effective supply function is
 characterized by the functional equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5a37a2b7-e912-4bf0-b007-efb5394e64d1">
-<span class="eqno">(7)<a class="headerlink" href="#equation-5a37a2b7-e912-4bf0-b007-efb5394e64d1" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-69617021-5f6f-4bbb-8902-451cd29f5771">
+<span class="eqno">(7)<a class="headerlink" href="#equation-69617021-5f6f-4bbb-8902-451cd29f5771" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     p + \frac{S(p)}{D'(p)} - MC(S(p)) = 0
 \end{equation}\]</div>
 <p>for all positive prices <span class="math notranslate nohighlight">\(p\)</span>. In simple cases, this function can be found explicitly.  However,
@@ -1031,13 +1033,13 @@ in more complicated cases, no explicit solution exists.</p>
 <section id="residual-function">
 <h3>Residual function<a class="headerlink" href="#residual-function" title="Permalink to this headline">¶</a></h3>
 <p>Suppose, for example, that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-da57b2ca-b858-40f5-9c88-4259a18aff94">
-<span class="eqno">(8)<a class="headerlink" href="#equation-da57b2ca-b858-40f5-9c88-4259a18aff94" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d7fee604-6fd1-44e7-9402-bc14e73d7db8">
+<span class="eqno">(8)<a class="headerlink" href="#equation-d7fee604-6fd1-44e7-9402-bc14e73d7db8" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     D(p) = p^{-\eta} \quad\text{and}\quad MC(q) = \alpha\sqrt{q} + q^2
 \end{equation}\]</div>
 <p>Then the functional equation to be solved for S(p),</p>
-<div class="amsmath math notranslate nohighlight" id="equation-eb0af0e1-3202-447e-b020-eae95dc426c5">
-<span class="eqno">(9)<a class="headerlink" href="#equation-eb0af0e1-3202-447e-b020-eae95dc426c5" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8199390c-3d5b-4468-8180-3c26dc859552">
+<span class="eqno">(9)<a class="headerlink" href="#equation-8199390c-3d5b-4468-8180-3c26dc859552" title="Permalink to this equation">¶</a></span>\[\begin{equation}
  \left[p - \frac{S(p)p^{\eta+1}}{\eta}\right] -\left[\alpha\sqrt{S(p)} + S(p)^2\right] = 0
 \end{equation}\]</div>
 <p>has no known closed-form solution.</p>

@@ -68,13 +68,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -1082,8 +1084,8 @@ If the asset is replaced, the profit is <span class="math notranslate nohighligh
 <section id="state-transition-function">
 <h3>State Transition Function<a class="headerlink" href="#state-transition-function" title="Permalink to this headline">¶</a></h3>
 <p>The unit profit <span class="math notranslate nohighlight">\(p\)</span> follows a Markov Process</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c97c2377-9db4-4937-800c-1c99dcf3cd3b">
-<span class="eqno">(18)<a class="headerlink" href="#equation-c97c2377-9db4-4937-800c-1c99dcf3cd3b" title="Permalink to this equation">¶</a></span>\[\begin{equation}p' = \bar{p} + \gamma(p-\bar{p}) + \epsilon \end{equation}\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-c262e13f-8c1e-43f0-ae3d-3a8f44427d1a">
+<span class="eqno">(18)<a class="headerlink" href="#equation-c262e13f-8c1e-43f0-ae3d-3a8f44427d1a" title="Permalink to this equation">¶</a></span>\[\begin{equation}p' = \bar{p} + \gamma(p-\bar{p}) + \epsilon \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\epsilon \sim N(0,\sigma^2)\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1141,20 +1143,20 @@ iter change       time
 ------------------------------
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   0       3.7e+02    0.1685
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   0       3.7e+02    0.1506
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   1       4.3e+01    0.3557
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   1       4.3e+01    0.3291
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   2       1.2e+01    0.5333
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   2       1.2e+01    0.5206
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   3       5.7e-01    0.7307
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   3       5.7e-01    0.7276
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   4       4.5e-13    0.9601
-Elapsed Time =    0.96 Seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   4       4.5e-13    0.9450
+Elapsed Time =    0.95 Seconds
 </pre></div>
 </div>
 <div class="output text_html"><div>
@@ -1291,7 +1293,7 @@ Age 4  Profit  0.38
 Age 5  Profit  0.25
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x271dd2eaa30&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x2046763a970&gt;
 </pre></div>
 </div>
 <img alt="../../_images/02 Asset Replacement Model_25_2.png" src="../../_images/02 Asset Replacement Model_25_2.png" />
@@ -1311,7 +1313,7 @@ Age 5  Profit  0.25
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x271e5de9cd0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x2046793cb50&gt;
 </pre></div>
 </div>
 <img alt="../../_images/02 Asset Replacement Model_27_1.png" src="../../_images/02 Asset Replacement Model_27_1.png" />
@@ -1463,7 +1465,7 @@ Ergodic Standard Deviations
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x271e5e4cf10&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x20467c5ef10&gt;
 </pre></div>
 </div>
 <img alt="../../_images/02 Asset Replacement Model_35_1.png" src="../../_images/02 Asset Replacement Model_35_1.png" />
@@ -1482,7 +1484,7 @@ Ergodic Standard Deviations
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x271e5ef0ee0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x20467a02ee0&gt;
 </pre></div>
 </div>
 <img alt="../../_images/02 Asset Replacement Model_37_1.png" src="../../_images/02 Asset Replacement Model_37_1.png" />

@@ -66,13 +66,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -1109,15 +1111,15 @@ dtype: float64
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Solving optimal control model
 iter change       time    
 ------------------------------
-   0       1.3e+00    0.0020
-   1       8.8e-02    0.0020
-   2       4.1e-02    0.0020
-   3       1.6e-02    0.0020
-   4       3.4e-03    0.0030
-   5       1.9e-04    0.0030
-   6       6.2e-07    0.0030
-   7       1.2e-11    0.0040
-Elapsed Time =    0.00 Seconds
+   0       1.3e+00    0.0030
+   1       8.8e-02    0.0030
+   2       4.1e-02    0.0040
+   3       1.6e-02    0.0040
+   4       3.4e-03    0.0040
+   5       1.9e-04    0.0050
+   6       6.2e-07    0.0050
+   7       1.2e-11    0.0060
+Elapsed Time =    0.01 Seconds
 </pre></div>
 </div>
 </div>

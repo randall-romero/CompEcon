@@ -66,13 +66,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -1027,8 +1029,8 @@ const thebe_selector_output = ".output, .cell_output"
 
 Algorithm           Time      Norm   Iterations  Iters/second
 ------------------------------------------------------------
-Newton semismooth   3.52     1e+00       8093    2296.3
-Newton minmax       0.03     0e+00        182    6292.8
+Newton semismooth   2.38     3e-01       5969    2508.7
+Newton minmax       0.02     1e-16        120    6016.1
 </pre></div>
 </div>
 </div>

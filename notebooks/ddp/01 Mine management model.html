@@ -68,13 +68,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -1060,8 +1062,8 @@ action:</p>
 <section id="model-structure">
 <h2>Model Structure<a class="headerlink" href="#model-structure" title="Permalink to this headline">¶</a></h2>
 <p>The value of the mine, given that it contains <span class="math notranslate nohighlight">\(s\)</span> tons of ore at the beginning of year <span class="math notranslate nohighlight">\(t\)</span>, satisfies the Bellman equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a4689a18-d071-49d6-bfa7-9d6467a2c722">
-<span class="eqno">(10)<a class="headerlink" href="#equation-a4689a18-d071-49d6-bfa7-9d6467a2c722" title="Permalink to this equation">¶</a></span>\[\begin{equation} V_t(s) = max_{x\in\{0,1,\dots,s\}} \left\{px−c(s, x) + \delta V_{t+1}(s−x)\right\} \end{equation}\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-ad7a0b4a-9a4f-4cc7-898f-867f5fcf5f2a">
+<span class="eqno">(10)<a class="headerlink" href="#equation-ad7a0b4a-9a4f-4cc7-898f-867f5fcf5f2a" title="Permalink to this equation">¶</a></span>\[\begin{equation} V_t(s) = max_{x\in\{0,1,\dots,s\}} \left\{px−c(s, x) + \delta V_{t+1}(s−x)\right\} \end{equation}\]</div>
 <p>subject to the terminal condition <span class="math notranslate nohighlight">\(V_{T+1}(s) = 0\)</span></p>
 <p>To solve and simulate this model, use the CompEcon class <code class="docutils literal notranslate"><span class="pre">DDPmodel</span></code>.</p>
 <div class="cell docutils container">

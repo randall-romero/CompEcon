@@ -68,13 +68,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -870,8 +872,8 @@ const thebe_selector_output = ".output, .cell_output"
 <hr><section id="about">
 <h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
 <p>The problem is to solve</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1047456e-6c13-4293-8a22-59668f7dd19a">
-<span class="eqno">(4)<a class="headerlink" href="#equation-1047456e-6c13-4293-8a22-59668f7dd19a" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7b4dcf7c-8393-429f-b84d-b986088ae773">
+<span class="eqno">(4)<a class="headerlink" href="#equation-7b4dcf7c-8393-429f-b84d-b986088ae773" title="Permalink to this equation">¶</a></span>\[\begin{equation}
 f(x, y) = \begin{bmatrix}1+xy -2x^3-x\\ 2x^2-y\end{bmatrix}
 \end{equation}\]</div>
 <p>subject to <span class="math notranslate nohighlight">\(0 \leq x, y \leq 1\)</span></p>

@@ -68,13 +68,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -1214,11 +1216,11 @@ V(s) = \max_x\left\{\left(\frac{a_0}{1+a_1}\right)x^{1+a1} + \left(\frac{b_0}{1+
 iter change       time    
 ------------------------------
    0       7.1e-01    0.0100
-   1       1.2e-01    0.0199
-   2       1.2e-02    0.0289
+   1       1.2e-01    0.0200
+   2       1.2e-02    0.0290
    3       1.3e-04    0.0359
    4       1.9e-08    0.0419
-   5       4.6e-15    0.0459
+   5       4.6e-15    0.0469
 Elapsed Time =    0.05 Seconds
 </pre></div>
 </div>
@@ -1410,7 +1412,7 @@ Elapsed Time =    0.05 Seconds
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x1b543dd1550&gt;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x25c52a72820&gt;]
 </pre></div>
 </div>
 <img alt="../../_images/10 Water Resource Management Model_31_1.png" src="../../_images/10 Water Resource Management Model_31_1.png" />
@@ -1427,7 +1429,7 @@ Elapsed Time =    0.05 Seconds
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x1b543e30940&gt;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x25c52ad28e0&gt;]
 </pre></div>
 </div>
 <img alt="../../_images/10 Water Resource Management Model_33_1.png" src="../../_images/10 Water Resource Management Model_33_1.png" />
@@ -1543,13 +1545,13 @@ Elapsed Time =    0.05 Seconds
     </tr>
     <tr>
       <th>Ergodic Means</th>
-      <td>3.763854</td>
-      <td>0.999598</td>
+      <td>3.762669</td>
+      <td>0.999405</td>
     </tr>
     <tr>
       <th>Ergodic Standard Deviations</th>
-      <td>0.358289</td>
-      <td>0.062244</td>
+      <td>0.356852</td>
+      <td>0.062009</td>
     </tr>
   </tbody>
 </table>

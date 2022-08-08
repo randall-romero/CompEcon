@@ -68,13 +68,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -948,35 +950,35 @@ const thebe_selector_output = ".output, .cell_output"
 <hr><section id="about">
 <h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
 <p>A firm operates in an uncertain profit environment. At the beginning of each period, the firm observes its potential short-run operating profit over the coming period <span class="math notranslate nohighlight">\(\pi\)</span>, which may be negative, and decides whether to operate, making a short-run profit <span class="math notranslate nohighlight">\(\pi\)</span>, or not operate, making a short-run profit <span class="math notranslate nohighlight">\(0\)</span>. Although the firm faces no fixed costs, it incurs a shutdown cost <span class="math notranslate nohighlight">\(K_0\)</span> when it closes and a start-up cost <span class="math notranslate nohighlight">\(K_1\)</span> when it reopens. The short-run profit <span class="math notranslate nohighlight">\(\pi\)</span> is an exogenous continuous-valued Markov process</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ef9ed652-0e16-4853-9e56-95700d8fb45f">
-<span class="eqno">(19)<a class="headerlink" href="#equation-ef9ed652-0e16-4853-9e56-95700d8fb45f" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-437b1a8f-eba2-4c4b-b578-cd11f61aa5c5">
+<span class="eqno">(19)<a class="headerlink" href="#equation-437b1a8f-eba2-4c4b-b578-cd11f61aa5c5" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     \pi_{t+1} = h(\pi_t, \epsilon_{t+1})
 \end{equation}\]</div>
 <p><strong>What is the optimal entry-exit policy?</strong> In particular, how low must the short-run profit be for an operating firm to close, and how high must the short-run profit be for nonoperating firm to reopen?</p>
 <p>This is an infinite horizon, stochastic model with time <span class="math notranslate nohighlight">\(t\)</span> measured in years. The state variables</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7e3b7016-6314-4bc8-9cfb-b7f6e9e6c0be">
-<span class="eqno">(20)<a class="headerlink" href="#equation-7e3b7016-6314-4bc8-9cfb-b7f6e9e6c0be" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-bb3f1158-1b63-42e5-bfb3-da76b5fcd498">
+<span class="eqno">(20)<a class="headerlink" href="#equation-bb3f1158-1b63-42e5-bfb3-da76b5fcd498" title="Permalink to this equation">¶</a></span>\[\begin{align}
     \pi &amp;\in (−\infty,\infty)\\
     d &amp;\in \{0, 1\}
 \end{align}\]</div>
 <p>are the current short-run profit, a continuous variable, and the operational status of the firm, a binary variable that equals 1 if the firm is operating and 0 if the firm is not operating. The choice variable</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f2d2cf0e-60a3-48d9-8c95-9ead3b143c0f">
-<span class="eqno">(21)<a class="headerlink" href="#equation-f2d2cf0e-60a3-48d9-8c95-9ead3b143c0f" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c2f73c97-e578-47f9-89ce-e02f086a4f39">
+<span class="eqno">(21)<a class="headerlink" href="#equation-c2f73c97-e578-47f9-89ce-e02f086a4f39" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     j \in \{0, 1\}
 \end{equation}\]</div>
 <p>is the operating decision for the coming year, a binary variable that equals 1 if the firm operates and 0 if does not operate. The state transition function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3f290a03-ba75-435d-850d-a037b1ba2866">
-<span class="eqno">(22)<a class="headerlink" href="#equation-3f290a03-ba75-435d-850d-a037b1ba2866" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6be73c6b-eb51-40f6-a42e-d7627ef4986b">
+<span class="eqno">(22)<a class="headerlink" href="#equation-6be73c6b-eb51-40f6-a42e-d7627ef4986b" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     g(\pi, d, j, \epsilon) = h(\pi, \epsilon), j)
 \end{equation}\]</div>
 <p>The reward function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b1045d1e-5b92-4e3d-824a-aedf0b292786">
-<span class="eqno">(23)<a class="headerlink" href="#equation-b1045d1e-5b92-4e3d-824a-aedf0b292786" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d06f0564-3060-4e16-8d93-186c90aea99f">
+<span class="eqno">(23)<a class="headerlink" href="#equation-d06f0564-3060-4e16-8d93-186c90aea99f" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     f(\pi, d, j) = \pi j − K_1(1 − d)j − K_0 d(1 − j)
 \end{equation}\]</div>
 <p>The value of the firm, given that the current short-run profit is <span class="math notranslate nohighlight">\(\pi\)</span> and the firm’s operational status is <span class="math notranslate nohighlight">\(d\)</span>, satisfies the Bellman equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-02e121f3-fe2c-4dee-8632-8a4b004ee8d3">
-<span class="eqno">(24)<a class="headerlink" href="#equation-02e121f3-fe2c-4dee-8632-8a4b004ee8d3" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e108e330-e5a0-489a-aed8-aa54bdcf7324">
+<span class="eqno">(24)<a class="headerlink" href="#equation-e108e330-e5a0-489a-aed8-aa54bdcf7324" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     V(\pi,d) = \max_{j=0,1}\left\{\pi j − K_1(1−d)j − K_0d(1−j) + \delta E_\epsilon V\left(h(\pi,\epsilon),j\right)\right\}
 \end{equation}\]</div>
 <div class="cell docutils container">
@@ -992,8 +994,8 @@ const thebe_selector_output = ".output, .cell_output"
 <section id="the-reward-function">
 <h3>The reward function<a class="headerlink" href="#the-reward-function" title="Permalink to this headline">¶</a></h3>
 <p>The reward function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c6da0f4c-61bb-4139-b62e-329acaab48b6">
-<span class="eqno">(25)<a class="headerlink" href="#equation-c6da0f4c-61bb-4139-b62e-329acaab48b6" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3fc07970-a7bd-4777-8293-e28b8366f269">
+<span class="eqno">(25)<a class="headerlink" href="#equation-3fc07970-a7bd-4777-8293-e28b8366f269" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     f(\pi, d, j) = \pi j − K_1(1 − d)j − K_0 d(1 − j)
 \end{equation}\]</div>
 <p>where the exit cost is <span class="math notranslate nohighlight">\(K_0=0\)</span> and the entry cost is <span class="math notranslate nohighlight">\(K_1=10\)</span>.</p>
@@ -1012,8 +1014,8 @@ const thebe_selector_output = ".output, .cell_output"
 <section id="the-transition-function">
 <h3>The transition function<a class="headerlink" href="#the-transition-function" title="Permalink to this headline">¶</a></h3>
 <p>Assuming that the short-run profit <span class="math notranslate nohighlight">\(\pi\)</span> is an exogenous Markov process</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a35b5607-0976-4262-a6c1-c02972643136">
-<span class="eqno">(26)<a class="headerlink" href="#equation-a35b5607-0976-4262-a6c1-c02972643136" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-54fea78c-e237-43bb-9faf-4412e5c18447">
+<span class="eqno">(26)<a class="headerlink" href="#equation-54fea78c-e237-43bb-9faf-4412e5c18447" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     \pi_{t+1} = g(\pi_t,\epsilon_{t+1}) = \bar{\pi} + \gamma(\pi_t − \bar{\pi}) + \epsilon_{t+1}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\bar{\pi}=1.0\)</span> and <span class="math notranslate nohighlight">\(\gamma=0.7\)</span>.</p>
@@ -1039,8 +1041,8 @@ const thebe_selector_output = ".output, .cell_output"
 </div>
 </div>
 <p>The collocation method calls for the analyst to select <span class="math notranslate nohighlight">\(n\)</span> basis functions <span class="math notranslate nohighlight">\(\varphi_j\)</span> and <span class="math notranslate nohighlight">\(n\)</span> collocation nodes <span class="math notranslate nohighlight">\((\pi_i,d_i)\)</span>, and form the value function approximant <span class="math notranslate nohighlight">\(V(\pi,d) \approx \sum_{j=1}^{n} c_j\varphi_j(\pi,d)\)</span> whose coefficients <span class="math notranslate nohighlight">\(c_j\)</span> solve the collocation equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c84ea07e-8680-46fe-a77c-9911221be6d1">
-<span class="eqno">(27)<a class="headerlink" href="#equation-c84ea07e-8680-46fe-a77c-9911221be6d1" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-11e8caef-02ae-4aaa-9a8b-3e29a70b2bd8">
+<span class="eqno">(27)<a class="headerlink" href="#equation-11e8caef-02ae-4aaa-9a8b-3e29a70b2bd8" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     \sum_{j=1}^{n} c_j\varphi_j(\pi_i,d_i) = \max_{x\in\{0,1\}}\left\{\pi_i x − K_1(1−d_i)x − K_0 d_i(1−x) + \delta\sum_{k=1}^{m}\sum_{j=1}^{n}w_k c_j \varphi_j(\hat{\pi}_{ik},x)\right\}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\hat\pi_{ik}=g(\pi_i,\epsilon_k)\)</span> and where <span class="math notranslate nohighlight">\(\epsilon_k\)</span> and <span class="math notranslate nohighlight">\(w_k\)</span> represent quadrature nodes and weights for
@@ -1077,8 +1079,8 @@ WARNING! Class Basis is still work in progress
 </div>
 </div>
 <p>The Bellman equation is represeted by a <code class="docutils literal notranslate"><span class="pre">DPmodel</span></code> object, where we assume a discount factor of <span class="math notranslate nohighlight">\(\delta=0.9\)</span>. Notice that the discrete state transition is deterministic, with transition matrix</p>
-<div class="amsmath math notranslate nohighlight" id="equation-124e204c-9d81-4d02-bb52-48887f26e22f">
-<span class="eqno">(28)<a class="headerlink" href="#equation-124e204c-9d81-4d02-bb52-48887f26e22f" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6a5596c6-e6c9-4724-a90d-c5dce70e4e20">
+<span class="eqno">(28)<a class="headerlink" href="#equation-6a5596c6-e6c9-4724-a90d-c5dce70e4e20" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     h=\begin{bmatrix}0&amp;0\\1&amp;1\end{bmatrix}
 \end{equation}\]</div>
 <div class="cell docutils container">
@@ -1109,16 +1111,16 @@ WARNING! Class Basis is still work in progress
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Solving infinite-horizon model collocation equation by Newton&#39;s method
 iter change       time    
 ------------------------------
-   0       6.0e+01    0.0508
-   1       3.2e+01    0.0947
-   2       2.9e+00    0.1446
+   0       6.0e+01    0.0551
+   1       3.2e+01    0.1139
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   3       4.3e-01    0.1964
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   2       2.9e+00    0.1723
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   4       4.9e-14    0.2553
-Elapsed Time =    0.26 Seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   3       4.3e-01    0.2311
+   4       4.9e-14    0.2910
+Elapsed Time =    0.29 Seconds
 </pre></div>
 </div>
 <div class="output text_html"><div>
@@ -1267,7 +1269,7 @@ Elapsed Time =    0.26 Seconds
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x214004e8dc0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x1de484a3ee0&gt;
 </pre></div>
 </div>
 <img alt="../../_images/03 Industry Entry-Exit Model_20_1.png" src="../../_images/03 Industry Entry-Exit Model_20_1.png" />
@@ -1380,7 +1382,7 @@ Ergodic Standard Deviations
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x21400411fd0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x1de481352b0&gt;
 </pre></div>
 </div>
 <img alt="../../_images/03 Industry Entry-Exit Model_28_1.png" src="../../_images/03 Industry Entry-Exit Model_28_1.png" />
@@ -1398,7 +1400,7 @@ Ergodic Standard Deviations
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x21401a88580&gt;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x1de485945b0&gt;]
 </pre></div>
 </div>
 <img alt="../../_images/03 Industry Entry-Exit Model_30_1.png" src="../../_images/03 Industry Entry-Exit Model_30_1.png" />

@@ -68,13 +68,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -1029,7 +1031,7 @@ const thebe_selector_output = ".output, .cell_output"
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Hundredths of seconds required to compute fixed-point of g(x)=sqrt(x)
 using Newton, Broyden, and function iteration methods, starting at
-x = 1.03
+x = 1.17
 </pre></div>
 </div>
 <div class="output text_html"><div>
@@ -1058,21 +1060,21 @@ x = 1.03
   <tbody>
     <tr>
       <th>Newton</th>
-      <td>0.099659</td>
-      <td>4.101099e-09</td>
-      <td>[1.000000008202199]</td>
+      <td>0.096369</td>
+      <td>1.011369e-11</td>
+      <td>[1.0000000000202274]</td>
     </tr>
     <tr>
       <th>Broyden</th>
-      <td>0.398970</td>
-      <td>2.759681e-11</td>
-      <td>[1.0000000000551934]</td>
+      <td>0.498605</td>
+      <td>1.009992e-11</td>
+      <td>[1.0000000000201996]</td>
     </tr>
     <tr>
       <th>Function</th>
       <td>0.000000</td>
-      <td>6.460956e-09</td>
-      <td>[1.0000000129219115]</td>
+      <td>4.801126e-09</td>
+      <td>[1.0000000096022517]</td>
     </tr>
   </tbody>
 </table>

@@ -68,13 +68,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -975,13 +977,13 @@ const thebe_selector_output = ".output, .cell_output"
 <h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
 <p>A central bank must set nominal interest rate so as to minimize deviations of inflation rate and GDP gap from established targets.</p>
 <p>A monetary authority wishes to control the nominal interest rate <span class="math notranslate nohighlight">\(x\)</span> in order to minimize the variation of the inflation rate <span class="math notranslate nohighlight">\(s_1\)</span> and the gross domestic product (GDP) gap <span class="math notranslate nohighlight">\(s_2\)</span> around specified targets <span class="math notranslate nohighlight">\(s^∗_1\)</span> and <span class="math notranslate nohighlight">\(s^∗_2\)</span>, respectively. Specifically, the authority wishes to minimize expected discounted stream of weighted squared deviations</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e52f2b58-7c06-4f94-aecc-992b2a7b7c5a">
-<span class="eqno">(40)<a class="headerlink" href="#equation-e52f2b58-7c06-4f94-aecc-992b2a7b7c5a" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5d5d4cda-ba92-4357-8b83-00446047d5e9">
+<span class="eqno">(40)<a class="headerlink" href="#equation-5d5d4cda-ba92-4357-8b83-00446047d5e9" title="Permalink to this equation">¶</a></span>\[\begin{equation}
 L(s) = \frac{1}{2}(s − s^∗)'\Omega(s − s^∗)
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(s\)</span> is a <span class="math notranslate nohighlight">\(2\times 1\)</span> vector containing the inflation rate and the GDP gap, <span class="math notranslate nohighlight">\(s^∗\)</span> is a <span class="math notranslate nohighlight">\(2\times 1\)</span> vector of  targets, and <span class="math notranslate nohighlight">\(\Omega\)</span> is a <span class="math notranslate nohighlight">\(2 \times 2\)</span> constant positive definite matrix of preference weights. The inflation rate and the GDP gap are a joint controlled exogenous linear Markov process</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2eed07c1-63e7-44ca-9679-5e43e2fede3b">
-<span class="eqno">(41)<a class="headerlink" href="#equation-2eed07c1-63e7-44ca-9679-5e43e2fede3b" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-99178f14-a2dd-4d87-960a-d07e0200fa7b">
+<span class="eqno">(41)<a class="headerlink" href="#equation-99178f14-a2dd-4d87-960a-d07e0200fa7b" title="Permalink to this equation">¶</a></span>\[\begin{equation}
 s_{t+1} = \alpha + \beta s_t + \gamma x_t + \epsilon_{t+1}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\gamma\)</span> are <span class="math notranslate nohighlight">\(2 \times 1\)</span> constant vectors, <span class="math notranslate nohighlight">\(\beta\)</span> is a <span class="math notranslate nohighlight">\(2 \times 2\)</span> constant matrix, and <span class="math notranslate nohighlight">\(\epsilon\)</span> is a <span class="math notranslate nohighlight">\(2 \times 1\)</span> random vector with mean zero. For institutional reasons, the nominal interest rate <span class="math notranslate nohighlight">\(x\)</span> cannot be negative. <strong>What monetary policy minimizes the sum of current and expected future losses?</strong></p>
@@ -989,24 +991,24 @@ s_{t+1} = \alpha + \beta s_t + \gamma x_t + \epsilon_{t+1}
 contains the inflation rate and the GDP gap. The action variable <span class="math notranslate nohighlight">\(x \in [0,\infty)\)</span> is the nominal interest rate. The state transition function is <span class="math notranslate nohighlight">\(g(s, x, \epsilon) = \alpha + \beta s + \gamma x + \epsilon\)</span></p>
 <p>In order to formulate this problem as a maximization problem, one posits a reward function that equals the negative of the loss function <span class="math notranslate nohighlight">\(f(s,x) = −L(s)\)</span></p>
 <p>The sum of current and expected future rewards satisfies the Bellman equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f160a800-36ea-46f4-859e-ecef9833c4f9">
-<span class="eqno">(42)<a class="headerlink" href="#equation-f160a800-36ea-46f4-859e-ecef9833c4f9" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-02e8e863-a218-43c8-bf5e-3193cc240639">
+<span class="eqno">(42)<a class="headerlink" href="#equation-02e8e863-a218-43c8-bf5e-3193cc240639" title="Permalink to this equation">¶</a></span>\[\begin{equation}
 V(s) = \max_{0\leq x}\left\{-L(s) + \delta + E_\epsilon V\left(g(s,x,\epsilon)\right)\right\}
 \end{equation}\]</div>
 <p>Given the structure of the model, one cannot preclude the possibility that the nonnegativity constraint on the optimal nominal interest rate will be binding in certain states. Accordingly, the shadow-price function <span class="math notranslate nohighlight">\(\lambda(s)\)</span> is characterized by the Euler conditions</p>
-<div class="amsmath math notranslate nohighlight" id="equation-de88f770-ef66-4f23-994b-3c1716ba05df">
-<span class="eqno">(43)<a class="headerlink" href="#equation-de88f770-ef66-4f23-994b-3c1716ba05df" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-9d925b71-1b22-4322-bcfe-5715cd70f54c">
+<span class="eqno">(43)<a class="headerlink" href="#equation-9d925b71-1b22-4322-bcfe-5715cd70f54c" title="Permalink to this equation">¶</a></span>\[\begin{align}
     \delta\gamma'E_\epsilon \lambda\left(g(s,x,\epsilon)\right) &amp;= \mu \\
     \lambda(s) &amp;= -\Omega(s-s^*) + \delta\beta'E_\epsilon \lambda\left(g(s,x,\epsilon)\right)
 \end{align}\]</div>
 <p>where the nominal interest rate <span class="math notranslate nohighlight">\(x\)</span> and the long-run marginal reward <span class="math notranslate nohighlight">\(\mu\)</span> from increasing the nominal interest rate must satisfy the complementarity condition</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8ee4c72f-19d4-48dc-8b26-ebb8dfa8ed87">
-<span class="eqno">(44)<a class="headerlink" href="#equation-8ee4c72f-19d4-48dc-8b26-ebb8dfa8ed87" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0e438e57-960a-43b1-bf48-c4bbd4dfc467">
+<span class="eqno">(44)<a class="headerlink" href="#equation-0e438e57-960a-43b1-bf48-c4bbd4dfc467" title="Permalink to this equation">¶</a></span>\[\begin{equation}
 x \geq 0, \qquad \mu \leq 0, \qquad x &gt; 0 \Rightarrow \mu = 0
 \end{equation}\]</div>
 <p>It follows that along the optimal path</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6cfd0444-6ab6-46ff-98c7-0d95c7f25b97">
-<span class="eqno">(45)<a class="headerlink" href="#equation-6cfd0444-6ab6-46ff-98c7-0d95c7f25b97" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-1ab3373b-3c9d-4f79-b608-ae853d0e23f8">
+<span class="eqno">(45)<a class="headerlink" href="#equation-1ab3373b-3c9d-4f79-b608-ae853d0e23f8" title="Permalink to this equation">¶</a></span>\[\begin{align}
     \delta\gamma'E_\epsilon \lambda_{t+1} &amp;= \mu_t \\
     \lambda_t &amp;= -\Omega(s_t-s^*) + \delta\beta'E_\epsilon \lambda_{t+1}\\
     x \geq 0, \qquad \mu \leq 0, &amp;\qquad x &gt; 0 \Rightarrow \mu = 0
@@ -1175,20 +1177,20 @@ iter change       time
 ------------------------------
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   0       6.7e+00    0.3501
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   0       6.7e+00    0.2653
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   1       9.9e-01    1.0093
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   1       9.9e-01    0.7744
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   2       9.1e-04    1.6566
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   2       9.1e-04    1.3018
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   3       8.3e-07    2.1817
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   3       8.3e-07    1.7506
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   4       7.7e-09    2.6834
-Elapsed Time =    2.68 Seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   4       7.7e-09    2.2014
+Elapsed Time =    2.20 Seconds
 </pre></div>
 </div>
 </div>
@@ -1319,15 +1321,15 @@ Elapsed Time =    2.68 Seconds
     </tr>
     <tr>
       <th>Ergodic Means</th>
-      <td>0.590</td>
+      <td>0.585</td>
       <td>0.052</td>
-      <td>0.309</td>
+      <td>0.312</td>
     </tr>
     <tr>
       <th>Ergodic Standard Deviations</th>
       <td>0.318</td>
-      <td>0.334</td>
-      <td>0.722</td>
+      <td>0.329</td>
+      <td>0.720</td>
     </tr>
   </tbody>
 </table>

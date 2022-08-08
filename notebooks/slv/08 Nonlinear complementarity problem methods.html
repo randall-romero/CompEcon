@@ -68,13 +68,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -922,8 +924,8 @@ const thebe_selector_output = ".output, .cell_output"
 <h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
 <p>Solve nonlinear complementarity problem on <span class="math notranslate nohighlight">\(R^2\)</span> using semismooth and minmax methods.</p>
 <p>Function to be solved is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-65084a51-0208-4b55-90f6-fd5282d35666">
-<span class="eqno">(3)<a class="headerlink" href="#equation-65084a51-0208-4b55-90f6-fd5282d35666" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a3254035-4be6-4a20-b1b5-3154d121488b">
+<span class="eqno">(3)<a class="headerlink" href="#equation-a3254035-4be6-4a20-b1b5-3154d121488b" title="Permalink to this equation">¶</a></span>\[\begin{equation}
 f(x,y) = \begin{bmatrix} 
 200x(y - x^2) + 1 - x \\ 100(x^2 - y)
 \end{bmatrix}
@@ -991,7 +993,7 @@ f(x,y) = \begin{bmatrix}
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>All numerical derivatives differ from
 the user-provided ones by less than 8 decimal digits.
 
-The maximum error is 7.37e-09, for row 0 and column 0.
+The maximum error is 7.32e-09, for row 0 and column 0.
 </pre></div>
 </div>
 </div>
@@ -1047,13 +1049,13 @@ The maximum error is 7.37e-09, for row 0 and column 0.
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Hundreds of seconds required to solve nonlinear complementarity 
 problem on R^2 using minmax and semismooth formulations, with 
 randomly generated bounds 
-	a = [1.93, -1.84] 
-	b = [5.69, 2.34]
+	a = [-0.35, -1.15] 
+	b = [1.75, 1.80]
 
 Algorithm           Time      Norm        x1     x2
 --------------------------------------------------------
-Newton minmax         0.200     0e+00      1.93   2.34
-Newton semismooth     0.100     0e+00      1.93   2.34
+Newton minmax         1.300     9e-13      1.00   1.00
+Newton semismooth     9.175     1e-11      1.00   1.00
 </pre></div>
 </div>
 </div>

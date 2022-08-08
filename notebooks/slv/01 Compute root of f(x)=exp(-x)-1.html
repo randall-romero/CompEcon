@@ -68,13 +68,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -1034,7 +1036,7 @@ const thebe_selector_output = ".output, .cell_output"
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Hundredths of seconds required to compute root of exp(-x)-1,
-via Newton and Broyden methods, starting at x = -1.19.
+via Newton and Broyden methods, starting at x = 8.70.
 </pre></div>
 </div>
 <div class="output text_html"><div>
@@ -1063,15 +1065,15 @@ via Newton and Broyden methods, starting at x = -1.19.
   <tbody>
     <tr>
       <th>Newton</th>
-      <td>0.099611</td>
-      <td>8.871770e-11</td>
-      <td>[-8.871777217286437e-11]</td>
+      <td>0.199389</td>
+      <td>1.309561e-08</td>
+      <td>[-1.3095608033766208e-08]</td>
     </tr>
     <tr>
       <th>Broyden</th>
-      <td>0.398970</td>
-      <td>2.043832e-11</td>
-      <td>[-2.0438337836943824e-11]</td>
+      <td>1.898313</td>
+      <td>NaN</td>
+      <td>[nan]</td>
     </tr>
   </tbody>
 </table>

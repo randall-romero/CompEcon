@@ -68,13 +68,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -1039,8 +1041,8 @@ variables</p>
 <section id="reward-function">
 <h3>Reward Function<a class="headerlink" href="#reward-function" title="Permalink to this headline">¶</a></h3>
 <p>The reward function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b7de2e2b-8d27-4a56-806c-e128c3d88de6">
-<span class="eqno">(14)<a class="headerlink" href="#equation-b7de2e2b-8d27-4a56-806c-e128c3d88de6" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a577acfc-13cc-4d40-a574-0808e6b73503">
+<span class="eqno">(14)<a class="headerlink" href="#equation-a577acfc-13cc-4d40-a574-0808e6b73503" title="Permalink to this equation">¶</a></span>\[\begin{equation}
 f (a, s, x) =
 \begin{cases}
 p(a, s),         &amp;x = \text{no action}\\
@@ -1068,8 +1070,8 @@ individually.</p>
 <section id="state-transition-function">
 <h3>State Transition Function<a class="headerlink" href="#state-transition-function" title="Permalink to this headline">¶</a></h3>
 <p>The state transition function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-63a9be6f-a2ea-419e-b31b-3d2220975259">
-<span class="eqno">(15)<a class="headerlink" href="#equation-63a9be6f-a2ea-419e-b31b-3d2220975259" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4f3ca8eb-8dcf-4bc7-8420-58497e59fca5">
+<span class="eqno">(15)<a class="headerlink" href="#equation-4f3ca8eb-8dcf-4bc7-8420-58497e59fca5" title="Permalink to this equation">¶</a></span>\[\begin{equation}
 g(a, s, x) =
 \begin{cases}
 (a + 1, s),     &amp;x = \text{no action}\\
@@ -1094,8 +1096,8 @@ g(a, s, x) =
 <section class="tex2jax_ignore mathjax_ignore" id="model-structure">
 <h1>Model Structure<a class="headerlink" href="#model-structure" title="Permalink to this headline">¶</a></h1>
 <p>The value of asset of age <span class="math notranslate nohighlight">\(a\)</span> that has undergone <span class="math notranslate nohighlight">\(s\)</span> servicings satisfies the Bellman equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-04735712-de93-411b-84ff-c92425bd9b16">
-<span class="eqno">(16)<a class="headerlink" href="#equation-04735712-de93-411b-84ff-c92425bd9b16" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-94c81cee-7370-4cac-a2ae-d777d3314869">
+<span class="eqno">(16)<a class="headerlink" href="#equation-94c81cee-7370-4cac-a2ae-d777d3314869" title="Permalink to this equation">¶</a></span>\[\begin{equation}
 V(a,s) = \max\{p(a,s) + \delta V(a+1,s),\quad p(a,s+1)−k + \delta V(a+1,s+1),
 \quad p(0,0) − c + \delta V(1,0)\}
 \end{equation}\]</div>

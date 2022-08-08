@@ -68,13 +68,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -1029,8 +1031,8 @@ replaced by law. The cost of a new asset is <span class="math notranslate nohigh
 <section id="reward-function">
 <h3>Reward Function<a class="headerlink" href="#reward-function" title="Permalink to this headline">¶</a></h3>
 <p>The reward function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2f0d5956-57fc-49a3-af6e-6e413524f85a">
-<span class="eqno">(11)<a class="headerlink" href="#equation-2f0d5956-57fc-49a3-af6e-6e413524f85a" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d21c5cab-4026-47eb-8415-c11b98732ba6">
+<span class="eqno">(11)<a class="headerlink" href="#equation-d21c5cab-4026-47eb-8415-c11b98732ba6" title="Permalink to this equation">¶</a></span>\[\begin{equation}
 f(a, x) = \begin{cases} p(a), &amp;x = \text{keep} \\
     p(0) - c, &amp;x = \text{replace}
 \end{cases}
@@ -1050,8 +1052,8 @@ f(a, x) = \begin{cases} p(a), &amp;x = \text{keep} \\
 <section id="state-transition-function">
 <h3>State Transition Function<a class="headerlink" href="#state-transition-function" title="Permalink to this headline">¶</a></h3>
 <p>The state transition function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-adaa2acb-c4a8-4170-aff1-73f06c92accf">
-<span class="eqno">(12)<a class="headerlink" href="#equation-adaa2acb-c4a8-4170-aff1-73f06c92accf" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-974c0902-0d9b-4973-8475-89b8e79a9c72">
+<span class="eqno">(12)<a class="headerlink" href="#equation-974c0902-0d9b-4973-8475-89b8e79a9c72" title="Permalink to this equation">¶</a></span>\[\begin{equation}
 g(a, x) = \begin{cases} a + 1, &amp;x = \text{keep} \\
     1, &amp;x = \text{replace}
 \end{cases}
@@ -1070,8 +1072,8 @@ g(a, x) = \begin{cases} a + 1, &amp;x = \text{keep} \\
 <section id="model-structure">
 <h2>Model Structure<a class="headerlink" href="#model-structure" title="Permalink to this headline">¶</a></h2>
 <p>The value of an asset of age a satisfies the Bellman equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-edb5136e-cc0d-4137-b724-e1a3b8f41b43">
-<span class="eqno">(13)<a class="headerlink" href="#equation-edb5136e-cc0d-4137-b724-e1a3b8f41b43" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f329e523-e191-4b6e-86ec-81bb21e2e266">
+<span class="eqno">(13)<a class="headerlink" href="#equation-f329e523-e191-4b6e-86ec-81bb21e2e266" title="Permalink to this equation">¶</a></span>\[\begin{equation}
 V(a) = \max\{p(a) + \delta V(a + 1),\quad p(0) − c + \delta V(1)\}
 \end{equation}\]</div>
 <p>where we set <span class="math notranslate nohighlight">\(p(n) = -\infty\)</span> to enforce replacement of an asset of age <span class="math notranslate nohighlight">\(n\)</span>. The Bellman equation asserts that if the manufacturer keeps an asset of age <span class="math notranslate nohighlight">\(a\)</span>, he earns <span class="math notranslate nohighlight">\(p(a)\)</span> over the coming year and begins the subsequent year with an asset that is one year older and worth <span class="math notranslate nohighlight">\(V(a+1)\)</span>; if he replaces the asset, however, he starts the year with a new asset, earns <span class="math notranslate nohighlight">\(p(0)−c\)</span> over the year, and begins the subsequent year with an asset that is one year old and worth <span class="math notranslate nohighlight">\(V(1)\)</span>. Actually, our language is a little loose here. The value <span class="math notranslate nohighlight">\(V(a)\)</span> measures not only the current and future net earnings of an asset of age <span class="math notranslate nohighlight">\(a\)</span>, but also the net earnings of all future assets that replace it.</p>

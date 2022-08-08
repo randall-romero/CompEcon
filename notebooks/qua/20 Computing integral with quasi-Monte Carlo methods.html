@@ -68,13 +68,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -990,25 +992,25 @@ A &amp;=\int_{-1}^1\int_{-1}^1  e^{-x_1}\cos^2(x_2)dx _1dx_2\\
   <tbody>
     <tr>
       <th>$10^3$</th>
-      <td>-1.628915</td>
+      <td>-1.633600</td>
       <td>-2.879952</td>
       <td>-3.518213</td>
     </tr>
     <tr>
       <th>$10^4$</th>
-      <td>-2.424487</td>
+      <td>-3.260970</td>
       <td>-3.148008</td>
       <td>-3.929531</td>
     </tr>
     <tr>
       <th>$10^5$</th>
-      <td>-3.594581</td>
+      <td>-3.063893</td>
       <td>-3.982252</td>
       <td>-4.377373</td>
     </tr>
     <tr>
       <th>$10^6$</th>
-      <td>-5.750151</td>
+      <td>-3.128315</td>
       <td>-5.449389</td>
       <td>-5.740493</td>
     </tr>

@@ -68,13 +68,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -911,8 +913,8 @@ const thebe_selector_output = ".output, .cell_output"
 <section id="about">
 <h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
 <p>Compute fixedpoint of</p>
-<div class="amsmath math notranslate nohighlight" id="equation-77632469-f197-427b-abfe-958941f0b408">
-<span class="eqno">(2)<a class="headerlink" href="#equation-77632469-f197-427b-abfe-958941f0b408" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1c985f60-8a49-4985-a62e-1bfd4dfac7f6">
+<span class="eqno">(2)<a class="headerlink" href="#equation-1c985f60-8a49-4985-a62e-1bfd4dfac7f6" title="Permalink to this equation">¶</a></span>\[\begin{equation}
 f(x, y)= \begin{bmatrix}x^2 + y^3 \\ xy - 0.5 \end{bmatrix}
 \end{equation}\]</div>
 <p>using Newton, Broyden, and function iteration methods.</p>
@@ -1063,21 +1065,21 @@ using Newton, Broyden, and function iteration methods, starting at
   <tbody>
     <tr>
       <th>Newton</th>
-      <td>0.195289</td>
+      <td>0.099707</td>
       <td>1.665335e-15</td>
       <td>-0.088909</td>
       <td>-0.459175</td>
     </tr>
     <tr>
       <th>Broyden</th>
-      <td>0.598407</td>
+      <td>0.598192</td>
       <td>8.015544e-10</td>
       <td>-0.088909</td>
       <td>-0.459175</td>
     </tr>
     <tr>
       <th>Function</th>
-      <td>0.099635</td>
+      <td>0.000000</td>
       <td>8.421821e-09</td>
       <td>-0.088909</td>
       <td>-0.459175</td>

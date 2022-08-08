@@ -68,13 +68,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -910,8 +912,8 @@ const thebe_selector_output = ".output, .cell_output"
 <hr><section id="about">
 <h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
 <p>Demonstrates Chebychev polynomial, cubic spline, and linear spline approximation for the following functions</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ff0214b3-1fe4-441f-8358-0a38ba313bdd">
-<span class="eqno">(5)<a class="headerlink" href="#equation-ff0214b3-1fe4-441f-8358-0a38ba313bdd" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-cb577514-7910-4871-a915-35a910451276">
+<span class="eqno">(5)<a class="headerlink" href="#equation-cb577514-7910-4871-a915-35a910451276" title="Permalink to this equation">¶</a></span>\[\begin{align}
     y &amp;= 1 + x + 2x^2 - 3x^3 \\
     y &amp;= \exp(-x) \\
     y &amp;= \frac{1}{1+25x^2} \\

@@ -68,13 +68,15 @@ const thebe_selector_output = ".output, .cell_output"
 
     <!-- Google Analytics -->
     
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
 <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -1173,8 +1175,8 @@ const thebe_selector_output = ".output, .cell_output"
 <section id="stochastic-discrete-state-transition-probabilities">
 <h4>Stochastic Discrete State Transition Probabilities<a class="headerlink" href="#stochastic-discrete-state-transition-probabilities" title="Permalink to this headline">¶</a></h4>
 <p>An unemployed worker who is searching for a job has a probability <span class="math notranslate nohighlight">\(p_0=0.2\)</span> of finding it, while an employed worker who doesn’t want to quit his job has a probability <span class="math notranslate nohighlight">\(p_1 = 0.9\)</span> of keeping it. An idle worker (someone who quits or doesn’t search for a job) will definitely be unemployed next period. Thus, the transition probabilities are</p>
-<div class="amsmath math notranslate nohighlight" id="equation-075337c8-45cf-44b8-88fc-65842bd64e0a">
-<span class="eqno">(29)<a class="headerlink" href="#equation-075337c8-45cf-44b8-88fc-65842bd64e0a" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-316ff2a3-5a0a-49a1-8802-1aae05850eaf">
+<span class="eqno">(29)<a class="headerlink" href="#equation-316ff2a3-5a0a-49a1-8802-1aae05850eaf" title="Permalink to this equation">¶</a></span>\[\begin{align}
     q = \begin{bmatrix}1-p_0 &amp;p_0\\1-p_1&amp;p_1\end{bmatrix},&amp;\qquad\text{if active} \\
       = \begin{bmatrix}1 &amp; 0\\1 &amp;0 \end{bmatrix},&amp;\qquad\text{if iddle}
 \end{align}\]</div>
@@ -1195,8 +1197,8 @@ const thebe_selector_output = ".output, .cell_output"
 <section id="stochastic-continuous-state-transition">
 <h4>Stochastic Continuous State Transition<a class="headerlink" href="#stochastic-continuous-state-transition" title="Permalink to this headline">¶</a></h4>
 <p>Assuming that the wage rate <span class="math notranslate nohighlight">\(w\)</span> follows an exogenous Markov process</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6232462a-bebf-48f4-858b-3bc1e8e42dba">
-<span class="eqno">(30)<a class="headerlink" href="#equation-6232462a-bebf-48f4-858b-3bc1e8e42dba" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6d0e9b93-479b-42ad-b96b-10f21257e9c5">
+<span class="eqno">(30)<a class="headerlink" href="#equation-6d0e9b93-479b-42ad-b96b-10f21257e9c5" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     w_{t+1} = \bar{w} + \gamma(w_t − \bar{w}) + \epsilon_{t+1}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\bar{w}=100\)</span> and <span class="math notranslate nohighlight">\(\gamma=0.4\)</span>.</p>
@@ -1262,20 +1264,20 @@ const thebe_selector_output = ".output, .cell_output"
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Solving infinite-horizon model collocation equation by Newton&#39;s method
 iter change       time    
 ------------------------------
-   0       2.1e+03    0.2064
+   0       2.1e+03    0.1652
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   1       3.5e+01    0.4578
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   1       3.5e+01    0.3746
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   2       1.9e+01    0.7041
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   2       1.9e+01    0.5980
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   3       1.4e+00    0.9465
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   3       1.4e+00    0.8274
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   4       2.8e-12    1.1868
-Elapsed Time =    1.19 Seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   4       2.8e-12    1.0667
+Elapsed Time =    1.07 Seconds
 </pre></div>
 </div>
 <div class="output text_html"><div>
@@ -1421,7 +1423,7 @@ Critical Quit Wage   =  79.4
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x1928ee9a910&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x20e4f047dc0&gt;
 </pre></div>
 </div>
 <img alt="../../_images/04 Job Search Model_21_1.png" src="../../_images/04 Job Search Model_21_1.png" />
@@ -1441,7 +1443,7 @@ Critical Quit Wage   =  79.4
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x1928a212670&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x20e4a39dd90&gt;
 </pre></div>
 </div>
 <img alt="../../_images/04 Job Search Model_23_1.png" src="../../_images/04 Job Search Model_23_1.png" />
@@ -1709,7 +1711,7 @@ Ergodic Standard Deviations
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x1928ef9dd00&gt;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x20e4f14cfd0&gt;]
 </pre></div>
 </div>
 <img alt="../../_images/04 Job Search Model_33_1.png" src="../../_images/04 Job Search Model_33_1.png" />
@@ -1729,7 +1731,7 @@ Ergodic Standard Deviations
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x1928f043970&gt;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x20e4f1f6940&gt;]
 </pre></div>
 </div>
 <img alt="../../_images/04 Job Search Model_35_1.png" src="../../_images/04 Job Search Model_35_1.png" />
