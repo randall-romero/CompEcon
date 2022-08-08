@@ -136,7 +136,7 @@ class Basis(object):
         """
 
         n, a, b = np.broadcast_arrays(*np.atleast_1d(n, a, b))
-        assert np.all(n > 2), 'n must be at least 3'
+        #assert np.all(n > 2), 'n must be at least 3'
         assert np.all(a < b), 'lower bound must be less than upper bound'
         self.d = n.size
         self.n = n
