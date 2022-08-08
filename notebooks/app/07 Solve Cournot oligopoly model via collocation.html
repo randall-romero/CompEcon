@@ -4,11 +4,12 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Solve Cournot oligopoly model via collocation &#8212; A Python Implementation of CompEcon</title>
     
-  <link href="../../_static/css/theme.css" rel="stylesheet" />
-  <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+  <link href="../../_static/css/theme.css" rel="stylesheet">
+  <link href="../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -22,8 +23,8 @@
       
 
     
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx-book-theme.e2363ea40746bee74734a24ffefccd78.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
@@ -31,26 +32,28 @@
     <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     
-  <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
+  <link rel="preload" as="script" href="../../_static/js/index.be7d3bbb2ef33a8344ce.js">
 
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/togglebutton.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
-    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="../../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
-    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
-    <script >
-        const thebe_selector = ".thebe"
-        const thebe_selector_input = "pre"
-        const thebe_selector_output = ".output"
-    </script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="canonical" href="https://randall-romero.github.io/compecon/notebooks/app/07 Solve Cournot oligopoly model via collocation.html" />
     <link rel="shortcut icon" href="../../_static/r2-logo-icon.png"/>
@@ -60,8 +63,19 @@
     <link rel="next" title="Compute function inverse via collocation" href="08%20Compute%20function%20inverse%20via%20collocation.html" />
     <link rel="prev" title="Chebychev and cubic spline derivative approximation errors" href="06%20Chebychev%20and%20cubic%20spline%20derivative%20approximation%20errors.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en" />
+    <meta name="docsearch:language" content="None">
     
+
+    <!-- Google Analytics -->
+    
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script>
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){ dataLayer.push(arguments); }
+                    gtag('js', new Date());
+                    gtag('config', 'G-DT0DZ59WL5');
+                </script>
+
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
@@ -99,7 +113,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   About this book
  </span>
@@ -111,7 +125,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   Demos
  </span>
@@ -167,11 +181,38 @@
   </ul>
  </li>
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../slv/chapter04.html">
-   Nonlinear Equations
+  <a class="reference internal" href="../lin/chapter03.html">
+   Linear Equations
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
   <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../lin/01%20Solving%20linear%20equations%20by%20different%20methods.html">
+     Solving linear equations by different methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../lin/02%20Ill-conditioning%20of%20Vandermonde%20matrix.html">
+     Ill-conditioning of Vandermonde matrix
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../lin/03%20Sparse%20linear%20equations.html">
+     Sparse linear equations
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../slv/chapter04.html">
+   Nonlinear Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -256,8 +297,8 @@
   <a class="reference internal" href="../opt/chapter05.html">
    Finite-Dimensional Optimization
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
-  <label for="toctree-checkbox-4">
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -288,8 +329,8 @@
   <a class="reference internal" href="../qua/chapter06.html">
    Quadrature
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
-  <label for="toctree-checkbox-5">
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -353,8 +394,8 @@
   <a class="reference internal" href="../dif/chapter06.html">
    Numerical Differentiation
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
-  <label for="toctree-checkbox-6">
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -366,7 +407,7 @@
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="../dif/05%20Finite-Difference%20Jacobians%20and%20Hessians.html">
-     Initial tasks
+     Finite-Difference Jacobians and Hessians
     </a>
    </li>
   </ul>
@@ -375,8 +416,8 @@
   <a class="reference internal" href="chapter07.html">
    Function Approximation
   </a>
-  <input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
-  <label for="toctree-checkbox-7">
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
+  <label for="toctree-checkbox-8">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -448,8 +489,8 @@
   <a class="reference internal" href="../ddp/chapter08.html">
    Discrete Time Discrete State Dynamic Programming
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
-  <label for="toctree-checkbox-8">
+  <input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
+  <label for="toctree-checkbox-9">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -475,8 +516,8 @@
   <a class="reference internal" href="../dp/chapter09.html">
    Discrete Time Continuous State Dynamic Programming
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
-  <label for="toctree-checkbox-9">
+  <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
+  <label for="toctree-checkbox-10">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -562,8 +603,8 @@
   <a class="reference internal" href="../ode/chapter12.html">
    Ordinary Differential Equations
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
-  <label for="toctree-checkbox-10">
+  <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
+  <label for="toctree-checkbox-11">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -594,8 +635,8 @@
   <a class="reference internal" href="../doc/chapter13.html">
    Continuous Time Deterministic Optimal Control
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
-  <label for="toctree-checkbox-11">
+  <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
+  <label for="toctree-checkbox-12">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -631,8 +672,8 @@
   <a class="reference internal" href="../soc/chapter14.html">
    Continuous Time Stochastic Optimal Control
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
-  <label for="toctree-checkbox-12">
+  <input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/>
+  <label for="toctree-checkbox-13">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -690,7 +731,7 @@
                 data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
-            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
     </div>
 </div>
 
@@ -746,7 +787,7 @@
         </div>
 
         <!-- Table of contents -->
-        <div class="d-none d-md-block col-md-2 bd-toc show">
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
             
             <div class="tocsection onthispage pt-5 pb-3">
                 <i class="fas fa-list"></i> Contents
@@ -823,10 +864,90 @@
 </div>
     <div id="main-content" class="row">
         <div class="col-12 col-md-9 pl-md-3 pr-md-0">
-        
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Solve Cournot oligopoly model via collocation</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#about">
+   About
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#initial-tasks">
+   Initial tasks
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-model">
+   The model
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#parameters">
+     Parameters
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#approximation-structure">
+     Approximation structure
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#residual-function">
+     Residual function
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#solve-for-effective-supply-function">
+     Solve for effective supply function
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#plot-demand-and-effective-supply-for-m-5-firms">
+     Plot demand and effective supply for m=5 firms
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#plot-residual">
+     Plot residual
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#plot-demand-and-effective-supply-for-m-1-3-5-10-15-20-firms">
+     Plot demand and effective supply for m=1, 3, 5, 10, 15, 20 firms
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#plot-equilibrium-price-as-a-function-of-number-of-firms-m">
+     Plot equilibrium price as a function of number of firms m
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#save-all-figures-to-disc">
+     Save all figures to disc
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            
               <div>
                 
-  <div class="section" id="solve-cournot-oligopoly-model-via-collocation">
+  <section class="tex2jax_ignore mathjax_ignore" id="solve-cournot-oligopoly-model-via-collocation">
 <h1>Solve Cournot oligopoly model via collocation<a class="headerlink" href="#solve-cournot-oligopoly-model-via-collocation" title="Permalink to this headline">¶</a></h1>
 <p><strong>Randall Romero Aguilar, PhD</strong></p>
 <p>This demo is based on the original Matlab demo accompanying the  <a href="https://mitpress.mit.edu/books/applied-computational-economics-and-finance">Computational Economics and Finance</a> 2001 textbook by Mario Miranda and Paul Fackler.</p>
@@ -836,25 +957,25 @@
 </pre></div>
 </div>
 <p><i>Last updated: 2021-Oct-01</i></p>
-<hr><div class="section" id="about">
+<hr><section id="about">
 <h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
 <p>To illustrate implementation of the collocation method for implicit function problems, consider the example of Cournot oligopoly. In the standard microeconomic model of the firm, the firm maximizes profit by equating marginal revenue to marginal cost (MC). An oligopolistic firm, recognizing that its actions affect price, takes the marginal revenue to be <span class="math notranslate nohighlight">\(p + q\frac{dp}{dq}\)</span>, where <span class="math notranslate nohighlight">\(p\)</span> is price, <span class="math notranslate nohighlight">\(q\)</span> is quantity produced, and <span class="math notranslate nohighlight">\(\frac{dp}{dq}\)</span> is the marginal impact of output on market price. The Cournot assumption is that the firm acts as if any change in its output will be unmatched by its competitors. This implies that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-20eb6c6c-07bf-4fd2-81b2-13d11bfa3d50">
-<span class="eqno">(6)<a class="headerlink" href="#equation-20eb6c6c-07bf-4fd2-81b2-13d11bfa3d50" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9e9fc994-8256-4c1e-b66e-5dec3491e2de">
+<span class="eqno">(6)<a class="headerlink" href="#equation-9e9fc994-8256-4c1e-b66e-5dec3491e2de" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     \frac{dp}{dq} = \frac{1}{D'(p)}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(D(p)\)</span> is the market demand curve.</p>
 <p>Suppose we wish to derive the effective supply function for the firm, which specifies
 the quantity <span class="math notranslate nohighlight">\(q = S(p)\)</span> it will supply at any price. The firm’s effective supply function is
 characterized by the functional equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-76125952-4514-4615-b435-85530925c197">
-<span class="eqno">(7)<a class="headerlink" href="#equation-76125952-4514-4615-b435-85530925c197" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5a37a2b7-e912-4bf0-b007-efb5394e64d1">
+<span class="eqno">(7)<a class="headerlink" href="#equation-5a37a2b7-e912-4bf0-b007-efb5394e64d1" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     p + \frac{S(p)}{D'(p)} - MC(S(p)) = 0
 \end{equation}\]</div>
 <p>for all positive prices <span class="math notranslate nohighlight">\(p\)</span>. In simple cases, this function can be found explicitly.  However,
 in more complicated cases, no explicit solution exists.</p>
-</div>
-<div class="section" id="initial-tasks">
+</section>
+<section id="initial-tasks">
 <h2>Initial tasks<a class="headerlink" href="#initial-tasks" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -865,10 +986,10 @@ in more complicated cases, no explicit solution exists.</p>
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="the-model">
+</section>
+<section id="the-model">
 <h2>The model<a class="headerlink" href="#the-model" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="parameters">
+<section id="parameters">
 <h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h3>
 <p>Here, the demand elasticity and the marginal cost function parameter are</p>
 <div class="cell docutils container">
@@ -885,8 +1006,8 @@ in more complicated cases, no explicit solution exists.</p>
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="approximation-structure">
+</section>
+<section id="approximation-structure">
 <h3>Approximation structure<a class="headerlink" href="#approximation-structure" title="Permalink to this headline">¶</a></h3>
 <p>A degree-25 Chebychev basis on the interval [0.5, 3.0] is selected; also, the associated collocation nodes <code class="docutils literal notranslate"><span class="pre">p</span></code> are computed.</p>
 <div class="cell docutils container">
@@ -906,17 +1027,17 @@ in more complicated cases, no explicit solution exists.</p>
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="residual-function">
+</section>
+<section id="residual-function">
 <h3>Residual function<a class="headerlink" href="#residual-function" title="Permalink to this headline">¶</a></h3>
 <p>Suppose, for example, that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1c8adf65-5492-4c1d-8836-a12a898dfe59">
-<span class="eqno">(8)<a class="headerlink" href="#equation-1c8adf65-5492-4c1d-8836-a12a898dfe59" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-da57b2ca-b858-40f5-9c88-4259a18aff94">
+<span class="eqno">(8)<a class="headerlink" href="#equation-da57b2ca-b858-40f5-9c88-4259a18aff94" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     D(p) = p^{-\eta} \quad\text{and}\quad MC(q) = \alpha\sqrt{q} + q^2
 \end{equation}\]</div>
 <p>Then the functional equation to be solved for S(p),</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9bed6c18-0012-4f7b-9a6a-d1f6d81558b1">
-<span class="eqno">(9)<a class="headerlink" href="#equation-9bed6c18-0012-4f7b-9a6a-d1f6d81558b1" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-eb0af0e1-3202-447e-b020-eae95dc426c5">
+<span class="eqno">(9)<a class="headerlink" href="#equation-eb0af0e1-3202-447e-b020-eae95dc426c5" title="Permalink to this equation">¶</a></span>\[\begin{equation}
  \left[p - \frac{S(p)p^{\eta+1}}{\eta}\right] -\left[\alpha\sqrt{S(p)} + S(p)^2\right] = 0
 \end{equation}\]</div>
 <p>has no known closed-form solution.</p>
@@ -933,8 +1054,8 @@ in more complicated cases, no explicit solution exists.</p>
 </div>
 </div>
 <p>Notice that <code class="docutils literal notranslate"><span class="pre">resid</span></code> only takes one argument. The other parameters (<code class="docutils literal notranslate"><span class="pre">Q</span></code>, <code class="docutils literal notranslate"><span class="pre">p</span></code>, <code class="docutils literal notranslate"><span class="pre">eta</span></code>, <code class="docutils literal notranslate"><span class="pre">alpha</span></code>) should be declared as such in the main script, were Python’s scoping rules will find them.</p>
-</div>
-<div class="section" id="solve-for-effective-supply-function">
+</section>
+<section id="solve-for-effective-supply-function">
 <h3>Solve for effective supply function<a class="headerlink" href="#solve-for-effective-supply-function" title="Permalink to this headline">¶</a></h3>
 <p>Class <code class="docutils literal notranslate"><span class="pre">NLP</span></code> defines nonlinear problems. It can be used to solve <code class="docutils literal notranslate"><span class="pre">resid</span></code> by Broyden’s method.</p>
 <div class="cell docutils container">
@@ -945,8 +1066,8 @@ in more complicated cases, no explicit solution exists.</p>
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="plot-demand-and-effective-supply-for-m-5-firms">
+</section>
+<section id="plot-demand-and-effective-supply-for-m-5-firms">
 <h3>Plot demand and effective supply for m=5 firms<a class="headerlink" href="#plot-demand-and-effective-supply-for-m-5-firms" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -970,8 +1091,8 @@ in more complicated cases, no explicit solution exists.</p>
 <img alt="../../_images/07 Solve Cournot oligopoly model via collocation_16_0.png" src="../../_images/07 Solve Cournot oligopoly model via collocation_16_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="plot-residual">
+</section>
+<section id="plot-residual">
 <h3>Plot residual<a class="headerlink" href="#plot-residual" title="Permalink to this headline">¶</a></h3>
 <p>Notice that <code class="docutils literal notranslate"><span class="pre">resid</span></code> does not take explicit parameters, so to evaluate it when prices are <code class="docutils literal notranslate"><span class="pre">prices</span></code> we need to assign <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">=</span> <span class="pre">prices</span></code>.</p>
 <p>In order to assess the quality of the approximation, one plots the residual function over the approximation domain. Here, the residual function is plotted by computing the residual at a refined grid of 501 equally spaced points.</p>
@@ -992,8 +1113,8 @@ in more complicated cases, no explicit solution exists.</p>
 <img alt="../../_images/07 Solve Cournot oligopoly model via collocation_19_0.png" src="../../_images/07 Solve Cournot oligopoly model via collocation_19_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="plot-demand-and-effective-supply-for-m-1-3-5-10-15-20-firms">
+</section>
+<section id="plot-demand-and-effective-supply-for-m-1-3-5-10-15-20-firms">
 <h3>Plot demand and effective supply for m=1, 3, 5, 10, 15, 20 firms<a class="headerlink" href="#plot-demand-and-effective-supply-for-m-1-3-5-10-15-20-firms" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1019,8 +1140,8 @@ in more complicated cases, no explicit solution exists.</p>
 <img alt="../../_images/07 Solve Cournot oligopoly model via collocation_21_0.png" src="../../_images/07 Solve Cournot oligopoly model via collocation_21_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="plot-equilibrium-price-as-a-function-of-number-of-firms-m">
+</section>
+<section id="plot-equilibrium-price-as-a-function-of-number-of-firms-m">
 <h3>Plot equilibrium price as a function of number of firms m<a class="headerlink" href="#plot-equilibrium-price-as-a-function-of-number-of-firms-m" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1040,8 +1161,8 @@ in more complicated cases, no explicit solution exists.</p>
 <img alt="../../_images/07 Solve Cournot oligopoly model via collocation_23_0.png" src="../../_images/07 Solve Cournot oligopoly model via collocation_23_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="save-all-figures-to-disc">
+</section>
+<section id="save-all-figures-to-disc">
 <h3>Save all figures to disc<a class="headerlink" href="#save-all-figures-to-disc" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1050,9 +1171,9 @@ in more complicated cases, no explicit solution exists.</p>
 </div>
 </div>
 </div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -1067,7 +1188,7 @@ in more complicated cases, no explicit solution exists.</p>
         },
         kernelOptions: {
             kernelName: "python3",
-            path: "./notebooks/app"
+            path: "./notebooks\app"
         },
         predefinedOutput: true
     }
@@ -1076,61 +1197,42 @@ in more complicated cases, no explicit solution exists.</p>
 
               </div>
               
-        
             
-
-
-
-<div class='prev-next-bottom'>
-    
-    <div id="prev">
-        <a class="left-prev" href="06%20Chebychev%20and%20cubic%20spline%20derivative%20approximation%20errors.html" title="previous page">
-            <i class="prevnext-label fas fa-angle-left"></i>
-            <div class="prevnext-info">
-                <p class="prevnext-label">previous</p>
-                <p class="prevnext-title">Chebychev and cubic spline derivative approximation errors</p>
-            </div>
-        </a>
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="06%20Chebychev%20and%20cubic%20spline%20derivative%20approximation%20errors.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Chebychev and cubic spline derivative approximation errors</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="08%20Compute%20function%20inverse%20via%20collocation.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Compute function inverse via collocation</p>
     </div>
-     <div id="next">
-        <a class="right-next" href="08%20Compute%20function%20inverse%20via%20collocation.html" title="next page">
-            <div class="prevnext-info">
-                <p class="prevnext-label">next</p>
-                <p class="prevnext-title">Compute function inverse via collocation</p>
-            </div>
-            <i class="prevnext-label fas fa-angle-right"></i>
-        </a>
-     </div>
-
+    <i class="fas fa-angle-right"></i>
+    </a>
 </div>
-        
+            
         </div>
     </div>
     <footer class="footer">
-    <div class="container">
-      <p>
-        
-          By Randall Romero Aguilar<br/>
-        
-            &copy; Copyright 2021.<br/>
-      </p>
-    </div>
-  </footer>
+  <p>
+    
+      By Randall Romero Aguilar<br/>
+    
+        &copy; Copyright 2021.<br/>
+  </p>
+</footer>
 </main>
 
 
       </div>
     </div>
   
-  <script src="../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
-
-  
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
-<script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+  <script src="../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
 
   </body>
 </html>

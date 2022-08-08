@@ -4,11 +4,12 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Asset replacement model with maintenance &#8212; A Python Implementation of CompEcon</title>
     
-  <link href="../../_static/css/theme.css" rel="stylesheet" />
-  <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+  <link href="../../_static/css/theme.css" rel="stylesheet">
+  <link href="../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -22,8 +23,8 @@
       
 
     
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx-book-theme.e2363ea40746bee74734a24ffefccd78.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
@@ -31,26 +32,28 @@
     <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     
-  <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
+  <link rel="preload" as="script" href="../../_static/js/index.be7d3bbb2ef33a8344ce.js">
 
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/togglebutton.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
-    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="../../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
-    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
-    <script >
-        const thebe_selector = ".thebe"
-        const thebe_selector_input = "pre"
-        const thebe_selector_output = ".output"
-    </script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="canonical" href="https://randall-romero.github.io/compecon/notebooks/ddp/03 Asset replacement model with maintenance.html" />
     <link rel="shortcut icon" href="../../_static/r2-logo-icon.png"/>
@@ -60,8 +63,19 @@
     <link rel="next" title="Discrete Time Continuous State Dynamic Programming" href="../dp/chapter09.html" />
     <link rel="prev" title="Asset replacement model" href="02%20Asset%20replacement%20model.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en" />
+    <meta name="docsearch:language" content="None">
     
+
+    <!-- Google Analytics -->
+    
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script>
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){ dataLayer.push(arguments); }
+                    gtag('js', new Date());
+                    gtag('config', 'G-DT0DZ59WL5');
+                </script>
+
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
@@ -99,7 +113,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   About this book
  </span>
@@ -111,7 +125,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   Demos
  </span>
@@ -167,11 +181,38 @@
   </ul>
  </li>
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../slv/chapter04.html">
-   Nonlinear Equations
+  <a class="reference internal" href="../lin/chapter03.html">
+   Linear Equations
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
   <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../lin/01%20Solving%20linear%20equations%20by%20different%20methods.html">
+     Solving linear equations by different methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../lin/02%20Ill-conditioning%20of%20Vandermonde%20matrix.html">
+     Ill-conditioning of Vandermonde matrix
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../lin/03%20Sparse%20linear%20equations.html">
+     Sparse linear equations
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../slv/chapter04.html">
+   Nonlinear Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -256,8 +297,8 @@
   <a class="reference internal" href="../opt/chapter05.html">
    Finite-Dimensional Optimization
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
-  <label for="toctree-checkbox-4">
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -288,8 +329,8 @@
   <a class="reference internal" href="../qua/chapter06.html">
    Quadrature
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
-  <label for="toctree-checkbox-5">
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -353,8 +394,8 @@
   <a class="reference internal" href="../dif/chapter06.html">
    Numerical Differentiation
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
-  <label for="toctree-checkbox-6">
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -366,7 +407,7 @@
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="../dif/05%20Finite-Difference%20Jacobians%20and%20Hessians.html">
-     Initial tasks
+     Finite-Difference Jacobians and Hessians
     </a>
    </li>
   </ul>
@@ -375,8 +416,8 @@
   <a class="reference internal" href="../app/chapter07.html">
    Function Approximation
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
-  <label for="toctree-checkbox-7">
+  <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
+  <label for="toctree-checkbox-8">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -448,8 +489,8 @@
   <a class="reference internal" href="chapter08.html">
    Discrete Time Discrete State Dynamic Programming
   </a>
-  <input checked="" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
-  <label for="toctree-checkbox-8">
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
+  <label for="toctree-checkbox-9">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -475,8 +516,8 @@
   <a class="reference internal" href="../dp/chapter09.html">
    Discrete Time Continuous State Dynamic Programming
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
-  <label for="toctree-checkbox-9">
+  <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
+  <label for="toctree-checkbox-10">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -562,8 +603,8 @@
   <a class="reference internal" href="../ode/chapter12.html">
    Ordinary Differential Equations
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
-  <label for="toctree-checkbox-10">
+  <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
+  <label for="toctree-checkbox-11">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -594,8 +635,8 @@
   <a class="reference internal" href="../doc/chapter13.html">
    Continuous Time Deterministic Optimal Control
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
-  <label for="toctree-checkbox-11">
+  <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
+  <label for="toctree-checkbox-12">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -631,8 +672,8 @@
   <a class="reference internal" href="../soc/chapter14.html">
    Continuous Time Stochastic Optimal Control
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
-  <label for="toctree-checkbox-12">
+  <input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/>
+  <label for="toctree-checkbox-13">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -690,7 +731,7 @@
                 data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
-            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
     </div>
 </div>
 
@@ -746,7 +787,7 @@
         </div>
 
         <!-- Table of contents -->
-        <div class="d-none d-md-block col-md-2 bd-toc show">
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
             
             <div class="tocsection onthispage pt-5 pb-3">
                 <i class="fas fa-list"></i> Contents
@@ -829,10 +870,96 @@
 </div>
     <div id="main-content" class="row">
         <div class="col-12 col-md-9 pl-md-3 pr-md-0">
-        
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Asset replacement model with maintenance</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   Asset replacement model with maintenance
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#about">
+     About
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#initial-tasks">
+     Initial tasks
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#model-parameters">
+     Model Parameters
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#state-space">
+       State Space
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#action-space">
+       Action Space
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#reward-function">
+       Reward Function
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#state-transition-function">
+       State Transition Function
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#model-structure">
+   Model Structure
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#analysis">
+     Analysis
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#simulate-model">
+       Simulate Model
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#plot-state-paths-age-and-servicings-and-action-path">
+       Plot State Paths (Age and Servicings) and Action Path
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            
               <div>
                 
-  <div class="section" id="asset-replacement-model-with-maintenance">
+  <section class="tex2jax_ignore mathjax_ignore" id="asset-replacement-model-with-maintenance">
 <h1>Asset replacement model with maintenance<a class="headerlink" href="#asset-replacement-model-with-maintenance" title="Permalink to this headline">¶</a></h1>
 <p><strong>Randall Romero Aguilar, PhD</strong></p>
 <p>This demo is based on the original Matlab demo accompanying the  <a href="https://mitpress.mit.edu/books/applied-computational-economics-and-finance">Computational Economics and Finance</a> 2001 textbook by Mario Miranda and Paul Fackler.</p>
@@ -842,14 +969,14 @@
 </pre></div>
 </div>
 <p><i>Last updated: 2021-Oct-01</i></p>
-<hr><div class="section" id="about">
+<hr><section id="about">
 <h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
 <p>Consider the preceding example, but suppose that the productivity of the asset may be
 enhanced by performing annual service maintenance. Specifically, at the beginning of each
 year, a manufacturer must decide whether to replace the asset with a new one or, if he elects
 to keep the asset, whether to service it. An asset that is <span class="math notranslate nohighlight">\(a\)</span> years old and has been serviced <span class="math notranslate nohighlight">\(s\)</span> times yields a profit contribution <span class="math notranslate nohighlight">\(p(a, s)\)</span> up to an age of <span class="math notranslate nohighlight">\(n\)</span> years, at which point the asset becomes unsafe and must be replaced by law. The cost of a new asset is <span class="math notranslate nohighlight">\(c\)</span>, and the cost of servicing an asset is <span class="math notranslate nohighlight">\(k\)</span>. What replacement-maintenance policy maximizes profits?</p>
-</div>
-<div class="section" id="initial-tasks">
+</section>
+<section id="initial-tasks">
 <h2>Initial tasks<a class="headerlink" href="#initial-tasks" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -861,8 +988,8 @@ to keep the asset, whether to service it. An asset that is <span class="math not
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="model-parameters">
+</section>
+<section id="model-parameters">
 <h2>Model Parameters<a class="headerlink" href="#model-parameters" title="Permalink to this headline">¶</a></h2>
 <p>Assume a maximum asset age of 5 years, asset replacement cost <span class="math notranslate nohighlight">\(c = 75\)</span>, cost of servicing <span class="math notranslate nohighlight">\(k = 10\)</span>, and annual discount factor <span class="math notranslate nohighlight">\(\delta = 0.9\)</span>.</p>
 <div class="cell docutils container">
@@ -875,7 +1002,7 @@ to keep the asset, whether to service it. An asset that is <span class="math not
 </div>
 </div>
 </div>
-<div class="section" id="state-space">
+<section id="state-space">
 <h3>State Space<a class="headerlink" href="#state-space" title="Permalink to this headline">¶</a></h3>
 <p>This is an infinite horizon, deterministic model with time <span class="math notranslate nohighlight">\(t\)</span> measured in years. The state
 variables</p>
@@ -894,8 +1021,8 @@ variables</p>
 </div>
 </div>
 <p>Here, the set of possible asset ages and servicings are generated individually, and then a two-dimensional state grid is constructed by forming their Cartesian product using the CompEcon routine gridmake.</p>
-</div>
-<div class="section" id="action-space">
+</section>
+<section id="action-space">
 <h3>Action Space<a class="headerlink" href="#action-space" title="Permalink to this headline">¶</a></h3>
 <p>The action variable</p>
 <p><span class="math notranslate nohighlight">\(x \in \{\text{no action}, \text{service}, \text{replace}\}\)</span></p>
@@ -908,12 +1035,12 @@ variables</p>
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="reward-function">
+</section>
+<section id="reward-function">
 <h3>Reward Function<a class="headerlink" href="#reward-function" title="Permalink to this headline">¶</a></h3>
 <p>The reward function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b1074eec-48eb-40df-91c9-4e6eb6571b2f">
-<span class="eqno">(14)<a class="headerlink" href="#equation-b1074eec-48eb-40df-91c9-4e6eb6571b2f" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b7de2e2b-8d27-4a56-806c-e128c3d88de6">
+<span class="eqno">(14)<a class="headerlink" href="#equation-b7de2e2b-8d27-4a56-806c-e128c3d88de6" title="Permalink to this equation">¶</a></span>\[\begin{equation}
 f (a, s, x) =
 \begin{cases}
 p(a, s),         &amp;x = \text{no action}\\
@@ -937,12 +1064,12 @@ individually.</p>
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="state-transition-function">
+</section>
+<section id="state-transition-function">
 <h3>State Transition Function<a class="headerlink" href="#state-transition-function" title="Permalink to this headline">¶</a></h3>
 <p>The state transition function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6abfad20-5b13-4d9d-aff0-b346b3826368">
-<span class="eqno">(15)<a class="headerlink" href="#equation-6abfad20-5b13-4d9d-aff0-b346b3826368" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-63a9be6f-a2ea-419e-b31b-3d2220975259">
+<span class="eqno">(15)<a class="headerlink" href="#equation-63a9be6f-a2ea-419e-b31b-3d2220975259" title="Permalink to this equation">¶</a></span>\[\begin{equation}
 g(a, s, x) =
 \begin{cases}
 (a + 1, s),     &amp;x = \text{no action}\\
@@ -961,14 +1088,14 @@ g(a, s, x) =
 </div>
 </div>
 </div>
-</div>
-</div>
-</div>
-<div class="section" id="model-structure">
+</section>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="model-structure">
 <h1>Model Structure<a class="headerlink" href="#model-structure" title="Permalink to this headline">¶</a></h1>
 <p>The value of asset of age <span class="math notranslate nohighlight">\(a\)</span> that has undergone <span class="math notranslate nohighlight">\(s\)</span> servicings satisfies the Bellman equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0caea847-6684-4002-918a-9b04dc5f9c5c">
-<span class="eqno">(16)<a class="headerlink" href="#equation-0caea847-6684-4002-918a-9b04dc5f9c5c" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-04735712-de93-411b-84ff-c92425bd9b16">
+<span class="eqno">(16)<a class="headerlink" href="#equation-04735712-de93-411b-84ff-c92425bd9b16" title="Permalink to this equation">¶</a></span>\[\begin{equation}
 V(a,s) = \max\{p(a,s) + \delta V(a+1,s),\quad p(a,s+1)−k + \delta V(a+1,s+1),
 \quad p(0,0) − c + \delta V(1,0)\}
 \end{equation}\]</div>
@@ -995,9 +1122,9 @@ There are 3 possible actions over 25 possible states
 </div>
 </div>
 </div>
-<div class="section" id="analysis">
+<section id="analysis">
 <h2>Analysis<a class="headerlink" href="#analysis" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="simulate-model">
+<section id="simulate-model">
 <h3>Simulate Model<a class="headerlink" href="#simulate-model" title="Permalink to this headline">¶</a></h3>
 <p>The paths are computed by performing q deterministic simulation of 12 years in duration using the <code class="docutils literal notranslate"><span class="pre">simulate()</span></code> method.</p>
 <div class="cell docutils container">
@@ -1149,8 +1276,8 @@ Categories (3, object): [&#39;no action&#39;, &#39;service&#39;, &#39;replace&#3
 </table>
 </div></div></div>
 </div>
-</div>
-<div class="section" id="plot-state-paths-age-and-servicings-and-action-path">
+</section>
+<section id="plot-state-paths-age-and-servicings-and-action-path">
 <h3>Plot State Paths (Age and Servicings) and Action Path<a class="headerlink" href="#plot-state-paths-age-and-servicings-and-action-path" title="Permalink to this headline">¶</a></h3>
 <p>The asset is replaced every four years, and is serviced twice, at the beginning of the second and third years of operation.</p>
 <div class="cell docutils container">
@@ -1171,9 +1298,9 @@ Categories (3, object): [&#39;no action&#39;, &#39;service&#39;, &#39;replace&#3
 <img alt="../../_images/03 Asset replacement model with maintenance_25_0.png" src="../../_images/03 Asset replacement model with maintenance_25_0.png" />
 </div>
 </div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -1188,7 +1315,7 @@ Categories (3, object): [&#39;no action&#39;, &#39;service&#39;, &#39;replace&#3
         },
         kernelOptions: {
             kernelName: "python3",
-            path: "./notebooks/ddp"
+            path: "./notebooks\ddp"
         },
         predefinedOutput: true
     }
@@ -1197,61 +1324,42 @@ Categories (3, object): [&#39;no action&#39;, &#39;service&#39;, &#39;replace&#3
 
               </div>
               
-        
             
-
-
-
-<div class='prev-next-bottom'>
-    
-    <div id="prev">
-        <a class="left-prev" href="02%20Asset%20replacement%20model.html" title="previous page">
-            <i class="prevnext-label fas fa-angle-left"></i>
-            <div class="prevnext-info">
-                <p class="prevnext-label">previous</p>
-                <p class="prevnext-title">Asset replacement model</p>
-            </div>
-        </a>
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="02%20Asset%20replacement%20model.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Asset replacement model</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="../dp/chapter09.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Discrete Time Continuous State Dynamic Programming</p>
     </div>
-     <div id="next">
-        <a class="right-next" href="../dp/chapter09.html" title="next page">
-            <div class="prevnext-info">
-                <p class="prevnext-label">next</p>
-                <p class="prevnext-title">Discrete Time Continuous State Dynamic Programming</p>
-            </div>
-            <i class="prevnext-label fas fa-angle-right"></i>
-        </a>
-     </div>
-
+    <i class="fas fa-angle-right"></i>
+    </a>
 </div>
-        
+            
         </div>
     </div>
     <footer class="footer">
-    <div class="container">
-      <p>
-        
-          By Randall Romero Aguilar<br/>
-        
-            &copy; Copyright 2021.<br/>
-      </p>
-    </div>
-  </footer>
+  <p>
+    
+      By Randall Romero Aguilar<br/>
+    
+        &copy; Copyright 2021.<br/>
+  </p>
+</footer>
 </main>
 
 
       </div>
     </div>
   
-  <script src="../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
-
-  
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
-<script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+  <script src="../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
 
   </body>
 </html>

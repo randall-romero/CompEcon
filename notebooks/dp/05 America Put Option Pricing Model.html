@@ -4,11 +4,12 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>American Put Option Pricing Model &#8212; A Python Implementation of CompEcon</title>
     
-  <link href="../../_static/css/theme.css" rel="stylesheet" />
-  <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+  <link href="../../_static/css/theme.css" rel="stylesheet">
+  <link href="../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -22,8 +23,8 @@
       
 
     
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx-book-theme.e2363ea40746bee74734a24ffefccd78.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
@@ -31,26 +32,28 @@
     <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     
-  <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
+  <link rel="preload" as="script" href="../../_static/js/index.be7d3bbb2ef33a8344ce.js">
 
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/togglebutton.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
-    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="../../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
-    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
-    <script >
-        const thebe_selector = ".thebe"
-        const thebe_selector_input = "pre"
-        const thebe_selector_output = ".output"
-    </script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="canonical" href="https://randall-romero.github.io/compecon/notebooks/dp/05 America Put Option Pricing Model.html" />
     <link rel="shortcut icon" href="../../_static/r2-logo-icon.png"/>
@@ -60,8 +63,19 @@
     <link rel="next" title="Deterministic Optimal Economic Growth Model" href="06%20Deterministic%20Optimal%20Economic%20Growth%20Model.html" />
     <link rel="prev" title="Job Search Model" href="04%20Job%20Search%20Model.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en" />
+    <meta name="docsearch:language" content="None">
     
+
+    <!-- Google Analytics -->
+    
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script>
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){ dataLayer.push(arguments); }
+                    gtag('js', new Date());
+                    gtag('config', 'G-DT0DZ59WL5');
+                </script>
+
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
@@ -99,7 +113,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   About this book
  </span>
@@ -111,7 +125,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   Demos
  </span>
@@ -167,11 +181,38 @@
   </ul>
  </li>
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../slv/chapter04.html">
-   Nonlinear Equations
+  <a class="reference internal" href="../lin/chapter03.html">
+   Linear Equations
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
   <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../lin/01%20Solving%20linear%20equations%20by%20different%20methods.html">
+     Solving linear equations by different methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../lin/02%20Ill-conditioning%20of%20Vandermonde%20matrix.html">
+     Ill-conditioning of Vandermonde matrix
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../lin/03%20Sparse%20linear%20equations.html">
+     Sparse linear equations
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../slv/chapter04.html">
+   Nonlinear Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -256,8 +297,8 @@
   <a class="reference internal" href="../opt/chapter05.html">
    Finite-Dimensional Optimization
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
-  <label for="toctree-checkbox-4">
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -288,8 +329,8 @@
   <a class="reference internal" href="../qua/chapter06.html">
    Quadrature
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
-  <label for="toctree-checkbox-5">
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -353,8 +394,8 @@
   <a class="reference internal" href="../dif/chapter06.html">
    Numerical Differentiation
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
-  <label for="toctree-checkbox-6">
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -366,7 +407,7 @@
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="../dif/05%20Finite-Difference%20Jacobians%20and%20Hessians.html">
-     Initial tasks
+     Finite-Difference Jacobians and Hessians
     </a>
    </li>
   </ul>
@@ -375,8 +416,8 @@
   <a class="reference internal" href="../app/chapter07.html">
    Function Approximation
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
-  <label for="toctree-checkbox-7">
+  <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
+  <label for="toctree-checkbox-8">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -448,8 +489,8 @@
   <a class="reference internal" href="../ddp/chapter08.html">
    Discrete Time Discrete State Dynamic Programming
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
-  <label for="toctree-checkbox-8">
+  <input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
+  <label for="toctree-checkbox-9">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -475,8 +516,8 @@
   <a class="reference internal" href="chapter09.html">
    Discrete Time Continuous State Dynamic Programming
   </a>
-  <input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
-  <label for="toctree-checkbox-9">
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
+  <label for="toctree-checkbox-10">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -562,8 +603,8 @@
   <a class="reference internal" href="../ode/chapter12.html">
    Ordinary Differential Equations
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
-  <label for="toctree-checkbox-10">
+  <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
+  <label for="toctree-checkbox-11">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -594,8 +635,8 @@
   <a class="reference internal" href="../doc/chapter13.html">
    Continuous Time Deterministic Optimal Control
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
-  <label for="toctree-checkbox-11">
+  <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
+  <label for="toctree-checkbox-12">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -631,8 +672,8 @@
   <a class="reference internal" href="../soc/chapter14.html">
    Continuous Time Stochastic Optimal Control
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
-  <label for="toctree-checkbox-12">
+  <input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/>
+  <label for="toctree-checkbox-13">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -690,7 +731,7 @@
                 data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
-            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
     </div>
 </div>
 
@@ -746,7 +787,7 @@
         </div>
 
         <!-- Table of contents -->
-        <div class="d-none d-md-block col-md-2 bd-toc show">
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
             
             <div class="tocsection onthispage pt-5 pb-3">
                 <i class="fas fa-list"></i> Contents
@@ -802,10 +843,69 @@
 </div>
     <div id="main-content" class="row">
         <div class="col-12 col-md-9 pl-md-3 pr-md-0">
-        
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>American Put Option Pricing Model</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   American Put Option Pricing Model
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#about">
+     About
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#preliminary-tasks">
+   Preliminary tasks
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#formulation">
+     FORMULATION
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#finding-the-critical-exercise-prices">
+     Finding the critical exercise prices
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#print-critical-exercise-price-300-periods-to-expiration">
+       Print Critical Exercise Price 300 Periods to Expiration
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#plot-critical-exercise-prices">
+       Plot Critical Exercise Prices
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            
               <div>
                 
-  <div class="section" id="american-put-option-pricing-model">
+  <section class="tex2jax_ignore mathjax_ignore" id="american-put-option-pricing-model">
 <h1>American Put Option Pricing Model<a class="headerlink" href="#american-put-option-pricing-model" title="Permalink to this headline">¶</a></h1>
 <p><strong>Randall Romero Aguilar, PhD</strong></p>
 <p>This demo is based on the original Matlab demo accompanying the  <a href="https://mitpress.mit.edu/books/applied-computational-economics-and-finance">Computational Economics and Finance</a> 2001 textbook by Mario Miranda and Paul Fackler.</p>
@@ -815,45 +915,45 @@
 </pre></div>
 </div>
 <p><i>Last updated: 2021-Oct-01</i></p>
-<hr><div class="section" id="about">
+<hr><section id="about">
 <h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
 <p>An American put option gives the holder the right, but not the obligation, to sell a specified quantity of a commodity at a specified strike price <span class="math notranslate nohighlight">\(K\)</span> on or before a specified expiration period <span class="math notranslate nohighlight">\(T\)</span>. In the discrete time, continuous state Black-Scholes option pricing model, the price of the commodity follows an exogenous continuous-valued Markov process</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b347017f-c4ba-45d7-b370-fde9e9f200ce">
-<span class="eqno">(31)<a class="headerlink" href="#equation-b347017f-c4ba-45d7-b370-fde9e9f200ce" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-902a1de3-cfc5-4b4d-89cb-5286520d3129">
+<span class="eqno">(31)<a class="headerlink" href="#equation-902a1de3-cfc5-4b4d-89cb-5286520d3129" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     P_{t+1} = h(P_t, \epsilon_{t+1})
 \end{equation}\]</div>
 <p><strong>What is the value of an American put option in period <span class="math notranslate nohighlight">\(t\)</span> if the commodity price is <span class="math notranslate nohighlight">\(P\)</span>?</strong> At what critical price is it optimal to exercise the put option, and how does this critical price vary over time?</p>
 <p>This is a finite horizon, stochastic model with time <span class="math notranslate nohighlight">\(t\)</span> measured in periods. The state variables</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4ed47d74-edb7-428c-b73c-721c3e780991">
-<span class="eqno">(32)<a class="headerlink" href="#equation-4ed47d74-edb7-428c-b73c-721c3e780991" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-994d0bc3-b457-4d37-bc29-da677a096189">
+<span class="eqno">(32)<a class="headerlink" href="#equation-994d0bc3-b457-4d37-bc29-da677a096189" title="Permalink to this equation">¶</a></span>\[\begin{align}
     P &amp;\in (0,\infty) \\
     d &amp;\in \{0, 1\}
 \end{align}\]</div>
 <p>are the current commodity price, a continuous variable, and the exercise status of the option, a discrete variable that equals 1 if the option has been exercised previously and equals 0 otherwise. The action variable</p>
-<div class="amsmath math notranslate nohighlight" id="equation-cebbcfc1-9c47-4292-b45f-5576a23465c0">
-<span class="eqno">(33)<a class="headerlink" href="#equation-cebbcfc1-9c47-4292-b45f-5576a23465c0" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-59ef06b1-8515-4025-a6af-8bc86a9cb390">
+<span class="eqno">(33)<a class="headerlink" href="#equation-59ef06b1-8515-4025-a6af-8bc86a9cb390" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     j \in \{0, 1\}
 \end{equation}\]</div>
 <p>is the exercise decision, a discrete variable that equals 1 if the option is exercised and equals 0 otherwise. The state transition function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b6a21c04-6d2c-42fb-8de3-3a1d8d5699f1">
-<span class="eqno">(34)<a class="headerlink" href="#equation-b6a21c04-6d2c-42fb-8de3-3a1d8d5699f1" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-79d5c1de-9a91-40f7-88ae-63b265088b06">
+<span class="eqno">(34)<a class="headerlink" href="#equation-79d5c1de-9a91-40f7-88ae-63b265088b06" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     g(P,d,j,\epsilon) = \left(h(P,\epsilon), j\right)
 \end{equation}\]</div>
 <p>The reward function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2e994658-3c09-4097-a38b-4ce023b89e88">
-<span class="eqno">(35)<a class="headerlink" href="#equation-2e994658-3c09-4097-a38b-4ce023b89e88" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b5cc1080-dcc3-4c03-91c8-6eebbfa57e84">
+<span class="eqno">(35)<a class="headerlink" href="#equation-b5cc1080-dcc3-4c03-91c8-6eebbfa57e84" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     f(P,d,j) = \begin{cases}K − P, &amp;d = 0, j = 1 \\
     0, &amp;\text{otherwise} \end{cases}
 \end{equation}\]</div>
 <p>The value of an unexercised option in period <span class="math notranslate nohighlight">\(t\)</span>, given that the commodity price is <span class="math notranslate nohighlight">\(P\)</span>, satisfies the Bellman equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7cf5a02d-08c2-4225-947d-dc764a969a7b">
-<span class="eqno">(36)<a class="headerlink" href="#equation-7cf5a02d-08c2-4225-947d-dc764a969a7b" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-96a402b6-5181-4862-8b1f-d89f6ba11d1e">
+<span class="eqno">(36)<a class="headerlink" href="#equation-96a402b6-5181-4862-8b1f-d89f6ba11d1e" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     V_t(P,0) = \max\left\{K − P, \quad\delta E_\epsilon V_{t+1}\left(h(P,\epsilon), 0\right)\right\}
 \end{equation}\]</div>
 <p>subject to the terminal condition <span class="math notranslate nohighlight">\(V_{T+1}(P,1) = 0\)</span>. The value of a previously exercised option is zero, regardless of the price of the commodity; that is, <span class="math notranslate nohighlight">\(V_t(P,1) = 0\)</span> for all <span class="math notranslate nohighlight">\(P\)</span> and <span class="math notranslate nohighlight">\(t\)</span>.</p>
-</div>
-</div>
-<div class="section" id="preliminary-tasks">
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="preliminary-tasks">
 <h1>Preliminary tasks<a class="headerlink" href="#preliminary-tasks" title="Permalink to this headline">¶</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -864,11 +964,11 @@
 </div>
 </div>
 </div>
-<div class="section" id="formulation">
+<section id="formulation">
 <h2>FORMULATION<a class="headerlink" href="#formulation" title="Permalink to this headline">¶</a></h2>
 <p>In what follows, we are going to solve the problem in term of the log-price, defining <span class="math notranslate nohighlight">\(p\equiv\log(P)\)</span>. We assume that log-price of the commodity follows a random walk:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7ca5655c-0bca-4af8-8076-a59672110ad4">
-<span class="eqno">(37)<a class="headerlink" href="#equation-7ca5655c-0bca-4af8-8076-a59672110ad4" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9116a1d5-ee50-4156-a539-aba83da41dca">
+<span class="eqno">(37)<a class="headerlink" href="#equation-9116a1d5-ee50-4156-a539-aba83da41dca" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     p_{t+1} = p_t + \epsilon_{t+1}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\epsilon\)</span> is a normal <span class="math notranslate nohighlight">\((\mu, \sigma^2)\)</span> shock. We discretize this distribution by using <code class="docutils literal notranslate"><span class="pre">qnwnorm</span></code>, assuming that <span class="math notranslate nohighlight">\(\mu=0.0001,\quad\sigma=0.008\)</span> and setting up <span class="math notranslate nohighlight">\(m=15\)</span> nodes.</p>
@@ -924,8 +1024,8 @@ WARNING! Class Basis is still work in progress
 </div>
 </div>
 <p>In the last expression, by passing the option <code class="docutils literal notranslate"><span class="pre">l</span></code> with a one-element list we are telling the <code class="docutils literal notranslate"><span class="pre">BasisSpline</span></code> class that we a single function named “value”. On creation, the function will be set by default to <span class="math notranslate nohighlight">\(V(p)=0\)</span> for all values of <span class="math notranslate nohighlight">\(p\)</span>, which conveniently corresponds to the terminal condition of this problem.</p>
-</div>
-<div class="section" id="finding-the-critical-exercise-prices">
+</section>
+<section id="finding-the-critical-exercise-prices">
 <h2>Finding the critical exercise prices<a class="headerlink" href="#finding-the-critical-exercise-prices" title="Permalink to this headline">¶</a></h2>
 <p>We are going to find the prices recursively, starting form a option in the expiration date. Notice that the solution to this problem is trivial: since next-period value is zero, the exercise price is <span class="math notranslate nohighlight">\(K\)</span>. Either way, we can find it numerically by calling the <code class="docutils literal notranslate"><span class="pre">zero</span></code> method on the <code class="docutils literal notranslate"><span class="pre">f</span></code> object.</p>
 <div class="cell docutils container">
@@ -950,7 +1050,7 @@ WARNING! Class Basis is still work in progress
 </div>
 </div>
 </div>
-<div class="section" id="print-critical-exercise-price-300-periods-to-expiration">
+<section id="print-critical-exercise-price-300-periods-to-expiration">
 <h3>Print Critical Exercise Price 300 Periods to Expiration<a class="headerlink" href="#print-critical-exercise-price-300-periods-to-expiration" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -964,8 +1064,8 @@ WARNING! Class Basis is still work in progress
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="plot-critical-exercise-prices">
+</section>
+<section id="plot-critical-exercise-prices">
 <h3>Plot Critical Exercise Prices<a class="headerlink" href="#plot-critical-exercise-prices" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -977,7 +1077,7 @@ WARNING! Class Basis is still work in progress
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x2c9f4f3ae50&gt;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x17c55d71820&gt;]
 </pre></div>
 </div>
 <img alt="../../_images/05 America Put Option Pricing Model_22_1.png" src="../../_images/05 America Put Option Pricing Model_22_1.png" />
@@ -990,9 +1090,9 @@ WARNING! Class Basis is still work in progress
 </div>
 </div>
 </div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -1007,7 +1107,7 @@ WARNING! Class Basis is still work in progress
         },
         kernelOptions: {
             kernelName: "python3",
-            path: "./notebooks/dp"
+            path: "./notebooks\dp"
         },
         predefinedOutput: true
     }
@@ -1016,61 +1116,42 @@ WARNING! Class Basis is still work in progress
 
               </div>
               
-        
             
-
-
-
-<div class='prev-next-bottom'>
-    
-    <div id="prev">
-        <a class="left-prev" href="04%20Job%20Search%20Model.html" title="previous page">
-            <i class="prevnext-label fas fa-angle-left"></i>
-            <div class="prevnext-info">
-                <p class="prevnext-label">previous</p>
-                <p class="prevnext-title">Job Search Model</p>
-            </div>
-        </a>
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="04%20Job%20Search%20Model.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Job Search Model</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="06%20Deterministic%20Optimal%20Economic%20Growth%20Model.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Deterministic Optimal Economic Growth Model</p>
     </div>
-     <div id="next">
-        <a class="right-next" href="06%20Deterministic%20Optimal%20Economic%20Growth%20Model.html" title="next page">
-            <div class="prevnext-info">
-                <p class="prevnext-label">next</p>
-                <p class="prevnext-title">Deterministic Optimal Economic Growth Model</p>
-            </div>
-            <i class="prevnext-label fas fa-angle-right"></i>
-        </a>
-     </div>
-
+    <i class="fas fa-angle-right"></i>
+    </a>
 </div>
-        
+            
         </div>
     </div>
     <footer class="footer">
-    <div class="container">
-      <p>
-        
-          By Randall Romero Aguilar<br/>
-        
-            &copy; Copyright 2021.<br/>
-      </p>
-    </div>
-  </footer>
+  <p>
+    
+      By Randall Romero Aguilar<br/>
+    
+        &copy; Copyright 2021.<br/>
+  </p>
+</footer>
 </main>
 
 
       </div>
     </div>
   
-  <script src="../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
-
-  
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
-<script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+  <script src="../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
 
   </body>
 </html>

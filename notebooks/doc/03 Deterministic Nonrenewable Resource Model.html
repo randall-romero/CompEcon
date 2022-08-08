@@ -4,11 +4,12 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Deterministic Nonrenewable Resource Model &#8212; A Python Implementation of CompEcon</title>
     
-  <link href="../../_static/css/theme.css" rel="stylesheet" />
-  <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+  <link href="../../_static/css/theme.css" rel="stylesheet">
+  <link href="../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -22,8 +23,8 @@
       
 
     
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx-book-theme.e2363ea40746bee74734a24ffefccd78.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
@@ -31,23 +32,25 @@
     <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     
-  <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
+  <link rel="preload" as="script" href="../../_static/js/index.be7d3bbb2ef33a8344ce.js">
 
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/togglebutton.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
-    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="../../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
-    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
-    <script >
-        const thebe_selector = ".thebe"
-        const thebe_selector_input = "pre"
-        const thebe_selector_output = ".output"
-    </script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="canonical" href="https://randall-romero.github.io/compecon/notebooks/doc/03 Deterministic Nonrenewable Resource Model.html" />
@@ -58,8 +61,19 @@
     <link rel="next" title="Deterministic Renewable Resource Model" href="04%20Deterministic%20Renewable%20Resource%20Model.html" />
     <link rel="prev" title="Deterministic Optimal Economic Growth Model" href="02%20Deterministic%20Optimal%20Economic%20Growth%20Model.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en" />
+    <meta name="docsearch:language" content="None">
     
+
+    <!-- Google Analytics -->
+    
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script>
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){ dataLayer.push(arguments); }
+                    gtag('js', new Date());
+                    gtag('config', 'G-DT0DZ59WL5');
+                </script>
+
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
@@ -97,7 +111,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   About this book
  </span>
@@ -109,7 +123,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   Demos
  </span>
@@ -165,11 +179,38 @@
   </ul>
  </li>
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../slv/chapter04.html">
-   Nonlinear Equations
+  <a class="reference internal" href="../lin/chapter03.html">
+   Linear Equations
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
   <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../lin/01%20Solving%20linear%20equations%20by%20different%20methods.html">
+     Solving linear equations by different methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../lin/02%20Ill-conditioning%20of%20Vandermonde%20matrix.html">
+     Ill-conditioning of Vandermonde matrix
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../lin/03%20Sparse%20linear%20equations.html">
+     Sparse linear equations
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../slv/chapter04.html">
+   Nonlinear Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -254,8 +295,8 @@
   <a class="reference internal" href="../opt/chapter05.html">
    Finite-Dimensional Optimization
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
-  <label for="toctree-checkbox-4">
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -286,8 +327,8 @@
   <a class="reference internal" href="../qua/chapter06.html">
    Quadrature
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
-  <label for="toctree-checkbox-5">
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -351,8 +392,8 @@
   <a class="reference internal" href="../dif/chapter06.html">
    Numerical Differentiation
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
-  <label for="toctree-checkbox-6">
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -364,7 +405,7 @@
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="../dif/05%20Finite-Difference%20Jacobians%20and%20Hessians.html">
-     Initial tasks
+     Finite-Difference Jacobians and Hessians
     </a>
    </li>
   </ul>
@@ -373,8 +414,8 @@
   <a class="reference internal" href="../app/chapter07.html">
    Function Approximation
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
-  <label for="toctree-checkbox-7">
+  <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
+  <label for="toctree-checkbox-8">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -446,8 +487,8 @@
   <a class="reference internal" href="../ddp/chapter08.html">
    Discrete Time Discrete State Dynamic Programming
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
-  <label for="toctree-checkbox-8">
+  <input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
+  <label for="toctree-checkbox-9">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -473,8 +514,8 @@
   <a class="reference internal" href="../dp/chapter09.html">
    Discrete Time Continuous State Dynamic Programming
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
-  <label for="toctree-checkbox-9">
+  <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
+  <label for="toctree-checkbox-10">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -560,8 +601,8 @@
   <a class="reference internal" href="../ode/chapter12.html">
    Ordinary Differential Equations
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
-  <label for="toctree-checkbox-10">
+  <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
+  <label for="toctree-checkbox-11">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -592,8 +633,8 @@
   <a class="reference internal" href="chapter13.html">
    Continuous Time Deterministic Optimal Control
   </a>
-  <input checked="" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
-  <label for="toctree-checkbox-11">
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
+  <label for="toctree-checkbox-12">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -629,8 +670,8 @@
   <a class="reference internal" href="../soc/chapter14.html">
    Continuous Time Stochastic Optimal Control
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
-  <label for="toctree-checkbox-12">
+  <input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/>
+  <label for="toctree-checkbox-13">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -688,7 +729,7 @@
                 data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
-            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
     </div>
 </div>
 
@@ -744,7 +785,7 @@
         </div>
 
         <!-- Table of contents -->
-        <div class="d-none d-md-block col-md-2 bd-toc show">
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
             
             <div class="tocsection onthispage pt-5 pb-3">
                 <i class="fas fa-list"></i> Contents
@@ -835,10 +876,104 @@
 </div>
     <div id="main-content" class="row">
         <div class="col-12 col-md-9 pl-md-3 pr-md-0">
-        
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Deterministic Nonrenewable Resource Model</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#about">
+   About
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#preliminary-tasks">
+   Preliminary tasks
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#import-relevant-packages">
+     Import relevant packages
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#model-parameters">
+     Model parameters
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#approximation-structure">
+     Approximation structure
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#solve-hjb-equation-by-collocation">
+   Solve HJB equation by collocation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#plots">
+   Plots
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#optimal-policy">
+     Optimal policy
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#value-function">
+     Value function
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#shadow-price">
+     Shadow price
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#residual">
+     Residual
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#simulate-the-model">
+   Simulate the model
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#initial-state-and-time-horizon">
+     Initial state and time horizon
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#simulation-and-plot">
+     Simulation and plot
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            
               <div>
                 
-  <div class="section" id="deterministic-nonrenewable-resource-model">
+  <section class="tex2jax_ignore mathjax_ignore" id="deterministic-nonrenewable-resource-model">
 <h1>Deterministic Nonrenewable Resource Model<a class="headerlink" href="#deterministic-nonrenewable-resource-model" title="Permalink to this headline">¶</a></h1>
 <p><strong>Randall Romero Aguilar, PhD</strong></p>
 <p>This demo is based on the original Matlab demo accompanying the  <a href="https://mitpress.mit.edu/books/applied-computational-economics-and-finance">Computational Economics and Finance</a> 2001 textbook by Mario Miranda and Paul Fackler.</p>
@@ -848,7 +983,7 @@
 </pre></div>
 </div>
 <p><i>Last updated: 2021-Oct-01</i></p>
-<hr><div class="section" id="about">
+<hr><section id="about">
 <h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
 <p>Welfare maximizing social planner must decide the rate at which a nonrenewable resource should be harvested.</p>
 <ul class="simple">
@@ -871,26 +1006,26 @@
 </ul>
 </li>
 </ul>
-</div>
-<div class="section" id="preliminary-tasks">
+</section>
+<section id="preliminary-tasks">
 <h2>Preliminary tasks<a class="headerlink" href="#preliminary-tasks" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="import-relevant-packages">
+<section id="import-relevant-packages">
 <h3>Import relevant packages<a class="headerlink" href="#import-relevant-packages" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">compecon</span> <span class="kn">import</span> <span class="n">BasisChebyshev</span><span class="p">,</span> <span class="n">OCmodel</span>
 </pre></div>
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="model-parameters">
+</section>
+<section id="model-parameters">
 <h3>Model parameters<a class="headerlink" href="#model-parameters" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">κ</span> <span class="o">=</span> <span class="mi">10</span>     <span class="c1"># harvest unit cost scale factor</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">κ</span> <span class="o">=</span> <span class="mi">10</span>     <span class="c1"># harvest unit cost scale factor</span>
 <span class="n">γ</span> <span class="o">=</span> <span class="mi">1</span>      <span class="c1"># harvest unit cost elasticity</span>
 <span class="n">η</span> <span class="o">=</span> <span class="mf">1.5</span>    <span class="c1"># inverse elasticity of demand</span>
 <span class="n">𝜌</span> <span class="o">=</span> <span class="mf">0.05</span>   <span class="c1"># continuous discount rate</span>
@@ -898,12 +1033,12 @@
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="approximation-structure">
+</section>
+<section id="approximation-structure">
 <h3>Approximation structure<a class="headerlink" href="#approximation-structure" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="mi">20</span>          <span class="c1"># number of basis functions</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="mi">20</span>          <span class="c1"># number of basis functions</span>
 <span class="n">smin</span> <span class="o">=</span> <span class="mf">0.1</span>        <span class="c1"># minimum state</span>
 <span class="n">smax</span> <span class="o">=</span> <span class="mf">1.0</span>        <span class="c1"># maximum state</span>
 <span class="n">basis</span> <span class="o">=</span> <span class="n">BasisChebyshev</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">smin</span><span class="p">,</span> <span class="n">smax</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;q&#39;</span><span class="p">])</span>  <span class="c1"># basis functions</span>
@@ -911,13 +1046,13 @@
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="solve-hjb-equation-by-collocation">
+</section>
+</section>
+<section id="solve-hjb-equation-by-collocation">
 <h2>Solve HJB equation by collocation<a class="headerlink" href="#solve-hjb-equation-by-collocation" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">control</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">Vs</span><span class="p">,</span> <span class="n">κ</span><span class="p">,</span> <span class="n">γ</span><span class="p">,</span> <span class="n">η</span><span class="p">,</span> <span class="n">𝜌</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">control</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">Vs</span><span class="p">,</span> <span class="n">κ</span><span class="p">,</span> <span class="n">γ</span><span class="p">,</span> <span class="n">η</span><span class="p">,</span> <span class="n">𝜌</span><span class="p">):</span>
     <span class="n">k</span> <span class="o">=</span> <span class="n">κ</span> <span class="o">*</span> <span class="n">s</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">γ</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">Vs</span> <span class="o">+</span> <span class="n">k</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">η</span><span class="p">)</span>
 
@@ -938,27 +1073,27 @@
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Solving optimal control model
 iter change       time    
 ------------------------------
-   0       5.4e+02    0.0030
-   1       1.2e+02    0.0030
-   2       3.2e+01    0.0030
-   3       9.2e+00    0.0040
-   4       1.0e+00    0.0040
-   5       7.2e-03    0.0050
-   6       1.6e-06    0.0050
-   7       4.5e-09    0.0060
-Elapsed Time =    0.01 Seconds
+   0       5.4e+02    0.0010
+   1       1.2e+02    0.0020
+   2       3.2e+01    0.0020
+   3       9.2e+00    0.0020
+   4       1.0e+00    0.0030
+   5       7.2e-03    0.0030
+   6       1.6e-06    0.0040
+   7       4.5e-09    0.0040
+Elapsed Time =    0.00 Seconds
 </pre></div>
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="plots">
+</section>
+<section id="plots">
 <h2>Plots<a class="headerlink" href="#plots" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="optimal-policy">
+<section id="optimal-policy">
 <h3>Optimal policy<a class="headerlink" href="#optimal-policy" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 <span class="n">data</span><span class="p">[</span><span class="s1">&#39;control&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Optimal Harvest Policy&#39;</span><span class="p">,</span>
        <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;Resource Stock&#39;</span><span class="p">,</span>
@@ -975,12 +1110,12 @@ Elapsed Time =    0.01 Seconds
 <img alt="../../_images/03 Deterministic Nonrenewable Resource Model_10_1.png" src="../../_images/03 Deterministic Nonrenewable Resource Model_10_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="value-function">
+</section>
+<section id="value-function">
 <h3>Value function<a class="headerlink" href="#value-function" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 <span class="n">data</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Value Function&#39;</span><span class="p">,</span>
        <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;Resource Stock&#39;</span><span class="p">,</span>
@@ -999,12 +1134,12 @@ Elapsed Time =    0.01 Seconds
 <img alt="../../_images/03 Deterministic Nonrenewable Resource Model_12_1.png" src="../../_images/03 Deterministic Nonrenewable Resource Model_12_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="shadow-price">
+</section>
+<section id="shadow-price">
 <h3>Shadow price<a class="headerlink" href="#shadow-price" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;shadow&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;shadow&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 <span class="n">data</span><span class="p">[</span><span class="s1">&#39;shadow&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
@@ -1025,12 +1160,12 @@ Elapsed Time =    0.01 Seconds
 <img alt="../../_images/03 Deterministic Nonrenewable Resource Model_14_1.png" src="../../_images/03 Deterministic Nonrenewable Resource Model_14_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="residual">
+</section>
+<section id="residual">
 <h3>Residual<a class="headerlink" href="#residual" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 <span class="n">data</span><span class="p">[</span><span class="s1">&#39;resid&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;HJB Equation Residual&#39;</span><span class="p">,</span>
        <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;Capital Stock&#39;</span><span class="p">,</span>
@@ -1043,26 +1178,26 @@ Elapsed Time =    0.01 Seconds
 <img alt="../../_images/03 Deterministic Nonrenewable Resource Model_16_0.png" src="../../_images/03 Deterministic Nonrenewable Resource Model_16_0.png" />
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="simulate-the-model">
+</section>
+</section>
+<section id="simulate-the-model">
 <h2>Simulate the model<a class="headerlink" href="#simulate-the-model" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="initial-state-and-time-horizon">
+<section id="initial-state-and-time-horizon">
 <h3>Initial state and time horizon<a class="headerlink" href="#initial-state-and-time-horizon" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">s0</span> <span class="o">=</span> <span class="n">smax</span>  <span class="c1"># initial capital stock</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">s0</span> <span class="o">=</span> <span class="n">smax</span>  <span class="c1"># initial capital stock</span>
 <span class="n">T</span>  <span class="o">=</span> <span class="mi">40</span>    <span class="c1"># time horizon</span>
 </pre></div>
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="simulation-and-plot">
+</section>
+<section id="simulation-and-plot">
 <h3>Simulation and plot<a class="headerlink" href="#simulation-and-plot" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 <span class="n">model</span><span class="o">.</span><span class="n">simulate</span><span class="p">([</span><span class="n">s0</span><span class="p">],</span> <span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Simulated Resource Stock and Rate of Harvest&#39;</span><span class="p">,</span>
        <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;Time&#39;</span><span class="p">,</span>
@@ -1086,9 +1221,9 @@ Elapsed Time =    0.01 Seconds
 <img alt="../../_images/03 Deterministic Nonrenewable Resource Model_21_2.png" src="../../_images/03 Deterministic Nonrenewable Resource Model_21_2.png" />
 </div>
 </div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -1103,7 +1238,7 @@ Elapsed Time =    0.01 Seconds
         },
         kernelOptions: {
             kernelName: "python3",
-            path: "./notebooks/doc"
+            path: "./notebooks\doc"
         },
         predefinedOutput: true
     }
@@ -1112,61 +1247,42 @@ Elapsed Time =    0.01 Seconds
 
               </div>
               
-        
             
-
-
-
-<div class='prev-next-bottom'>
-    
-    <div id="prev">
-        <a class="left-prev" href="02%20Deterministic%20Optimal%20Economic%20Growth%20Model.html" title="previous page">
-            <i class="prevnext-label fas fa-angle-left"></i>
-            <div class="prevnext-info">
-                <p class="prevnext-label">previous</p>
-                <p class="prevnext-title">Deterministic Optimal Economic Growth Model</p>
-            </div>
-        </a>
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="02%20Deterministic%20Optimal%20Economic%20Growth%20Model.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Deterministic Optimal Economic Growth Model</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="04%20Deterministic%20Renewable%20Resource%20Model.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Deterministic Renewable Resource Model</p>
     </div>
-     <div id="next">
-        <a class="right-next" href="04%20Deterministic%20Renewable%20Resource%20Model.html" title="next page">
-            <div class="prevnext-info">
-                <p class="prevnext-label">next</p>
-                <p class="prevnext-title">Deterministic Renewable Resource Model</p>
-            </div>
-            <i class="prevnext-label fas fa-angle-right"></i>
-        </a>
-     </div>
-
+    <i class="fas fa-angle-right"></i>
+    </a>
 </div>
-        
+            
         </div>
     </div>
     <footer class="footer">
-    <div class="container">
-      <p>
-        
-          By Randall Romero Aguilar<br/>
-        
-            &copy; Copyright 2021.<br/>
-      </p>
-    </div>
-  </footer>
+  <p>
+    
+      By Randall Romero Aguilar<br/>
+    
+        &copy; Copyright 2021.<br/>
+  </p>
+</footer>
 </main>
 
 
       </div>
     </div>
   
-  <script src="../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
-
-  
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
-<script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+  <script src="../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
 
   </body>
 </html>

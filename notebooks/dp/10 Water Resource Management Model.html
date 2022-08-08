@@ -4,11 +4,12 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Water Resource Management Model &#8212; A Python Implementation of CompEcon</title>
     
-  <link href="../../_static/css/theme.css" rel="stylesheet" />
-  <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+  <link href="../../_static/css/theme.css" rel="stylesheet">
+  <link href="../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -22,8 +23,8 @@
       
 
     
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx-book-theme.e2363ea40746bee74734a24ffefccd78.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
@@ -31,26 +32,28 @@
     <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     
-  <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
+  <link rel="preload" as="script" href="../../_static/js/index.be7d3bbb2ef33a8344ce.js">
 
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/togglebutton.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
-    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="../../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
-    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
-    <script >
-        const thebe_selector = ".thebe"
-        const thebe_selector_input = "pre"
-        const thebe_selector_output = ".output"
-    </script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="canonical" href="https://randall-romero.github.io/compecon/notebooks/dp/10 Water Resource Management Model.html" />
     <link rel="shortcut icon" href="../../_static/r2-logo-icon.png"/>
@@ -60,8 +63,19 @@
     <link rel="next" title="Monetary Policy Model" href="11%20Monetary%20Policy%20Model.html" />
     <link rel="prev" title="Private Non-Renewable Resource Model" href="09%20Private%20Non-Renewable%20Resource%20Model.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en" />
+    <meta name="docsearch:language" content="None">
     
+
+    <!-- Google Analytics -->
+    
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script>
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){ dataLayer.push(arguments); }
+                    gtag('js', new Date());
+                    gtag('config', 'G-DT0DZ59WL5');
+                </script>
+
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
@@ -99,7 +113,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   About this book
  </span>
@@ -111,7 +125,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   Demos
  </span>
@@ -167,11 +181,38 @@
   </ul>
  </li>
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../slv/chapter04.html">
-   Nonlinear Equations
+  <a class="reference internal" href="../lin/chapter03.html">
+   Linear Equations
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
   <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../lin/01%20Solving%20linear%20equations%20by%20different%20methods.html">
+     Solving linear equations by different methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../lin/02%20Ill-conditioning%20of%20Vandermonde%20matrix.html">
+     Ill-conditioning of Vandermonde matrix
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../lin/03%20Sparse%20linear%20equations.html">
+     Sparse linear equations
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../slv/chapter04.html">
+   Nonlinear Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -256,8 +297,8 @@
   <a class="reference internal" href="../opt/chapter05.html">
    Finite-Dimensional Optimization
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
-  <label for="toctree-checkbox-4">
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -288,8 +329,8 @@
   <a class="reference internal" href="../qua/chapter06.html">
    Quadrature
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
-  <label for="toctree-checkbox-5">
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -353,8 +394,8 @@
   <a class="reference internal" href="../dif/chapter06.html">
    Numerical Differentiation
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
-  <label for="toctree-checkbox-6">
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -366,7 +407,7 @@
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="../dif/05%20Finite-Difference%20Jacobians%20and%20Hessians.html">
-     Initial tasks
+     Finite-Difference Jacobians and Hessians
     </a>
    </li>
   </ul>
@@ -375,8 +416,8 @@
   <a class="reference internal" href="../app/chapter07.html">
    Function Approximation
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
-  <label for="toctree-checkbox-7">
+  <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
+  <label for="toctree-checkbox-8">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -448,8 +489,8 @@
   <a class="reference internal" href="../ddp/chapter08.html">
    Discrete Time Discrete State Dynamic Programming
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
-  <label for="toctree-checkbox-8">
+  <input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
+  <label for="toctree-checkbox-9">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -475,8 +516,8 @@
   <a class="reference internal" href="chapter09.html">
    Discrete Time Continuous State Dynamic Programming
   </a>
-  <input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
-  <label for="toctree-checkbox-9">
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
+  <label for="toctree-checkbox-10">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -562,8 +603,8 @@
   <a class="reference internal" href="../ode/chapter12.html">
    Ordinary Differential Equations
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
-  <label for="toctree-checkbox-10">
+  <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
+  <label for="toctree-checkbox-11">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -594,8 +635,8 @@
   <a class="reference internal" href="../doc/chapter13.html">
    Continuous Time Deterministic Optimal Control
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
-  <label for="toctree-checkbox-11">
+  <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
+  <label for="toctree-checkbox-12">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -631,8 +672,8 @@
   <a class="reference internal" href="../soc/chapter14.html">
    Continuous Time Stochastic Optimal Control
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
-  <label for="toctree-checkbox-12">
+  <input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/>
+  <label for="toctree-checkbox-13">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -690,7 +731,7 @@
                 data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
-            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
     </div>
 </div>
 
@@ -746,7 +787,7 @@
         </div>
 
         <!-- Table of contents -->
-        <div class="d-none d-md-block col-md-2 bd-toc show">
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
             
             <div class="tocsection onthispage pt-5 pb-3">
                 <i class="fas fa-list"></i> Contents
@@ -864,10 +905,131 @@
 </div>
     <div id="main-content" class="row">
         <div class="col-12 col-md-9 pl-md-3 pr-md-0">
-        
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Water Resource Management Model</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#about">
+   About
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#model-parameters">
+     Model parameters
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#steady-state">
+     Steady-state
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#state-space">
+     State space
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#continuous-state-shock-distribution">
+     Continuous state shock distribution
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#action-space">
+     Action space
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#reward-function">
+     Reward function
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#state-transition-function">
+     State transition function
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#model-structure">
+     Model structure
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#solving-the-model">
+   Solving the model
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#compute-linear-quadratic-approximation-at-collocation-nodes">
+     Compute Linear-Quadratic Approximation at Collocation Nodes
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#plotting-the-results">
+   Plotting the results
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#optimal-policy">
+     Optimal Policy
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#value-function">
+     Value Function
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#shadow-price-function">
+     Shadow Price Function
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#chebychev-collocation-residual">
+     Chebychev Collocation Residual
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#simulating-the-model">
+   Simulating the model
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#simulated-state-and-policy-paths">
+     Simulated State and Policy Paths
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ergodic-wealth-distribution">
+     Ergodic Wealth Distribution
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            
               <div>
                 
-  <div class="section" id="water-resource-management-model">
+  <section class="tex2jax_ignore mathjax_ignore" id="water-resource-management-model">
 <h1>Water Resource Management Model<a class="headerlink" href="#water-resource-management-model" title="Permalink to this headline">¶</a></h1>
 <p><strong>Randall Romero Aguilar, PhD</strong></p>
 <p>This demo is based on the original Matlab demo accompanying the  <a href="https://mitpress.mit.edu/books/applied-computational-economics-and-finance">Computational Economics and Finance</a> 2001 textbook by Mario Miranda and Paul Fackler.</p>
@@ -877,7 +1039,7 @@
 </pre></div>
 </div>
 <p><i>Last updated: 2021-Oct-01</i></p>
-<hr><div class="section" id="about">
+<hr><section id="about">
 <h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
 <p>Public authority must decide how much water to release from a reservoir so as to maximize benefits derived from agricultural and recreational uses.</p>
 <ul>
@@ -918,7 +1080,7 @@
 </div>
 </div>
 </div>
-<div class="section" id="model-parameters">
+<section id="model-parameters">
 <h3>Model parameters<a class="headerlink" href="#model-parameters" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -928,8 +1090,8 @@
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="steady-state">
+</section>
+<section id="steady-state">
 <h3>Steady-state<a class="headerlink" href="#steady-state" title="Permalink to this headline">¶</a></h3>
 <p>The deterministic steady-state values for this model are</p>
 <div class="cell docutils container">
@@ -940,8 +1102,8 @@
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="state-space">
+</section>
+<section id="state-space">
 <h3>State space<a class="headerlink" href="#state-space" title="Permalink to this headline">¶</a></h3>
 <p>The state variable is s=”Reservoir Level”, which we restrict to <span class="math notranslate nohighlight">\(s\in[2, 8]\)</span>.</p>
 <p>Here, we represent it with a Chebyshev basis, with <span class="math notranslate nohighlight">\(n=15\)</span> nodes.</p>
@@ -953,8 +1115,8 @@
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="continuous-state-shock-distribution">
+</section>
+<section id="continuous-state-shock-distribution">
 <h3>Continuous state shock distribution<a class="headerlink" href="#continuous-state-shock-distribution" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -964,8 +1126,8 @@
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="action-space">
+</section>
+<section id="action-space">
 <h3>Action space<a class="headerlink" href="#action-space" title="Permalink to this headline">¶</a></h3>
 <p>The choice variable x=”Irrigation” must be nonnegative.</p>
 <div class="cell docutils container">
@@ -976,8 +1138,8 @@
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="reward-function">
+</section>
+<section id="reward-function">
 <h3>Reward function<a class="headerlink" href="#reward-function" title="Permalink to this headline">¶</a></h3>
 <p>The reward function is</p>
 <div class="cell docutils container">
@@ -992,8 +1154,8 @@
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="state-transition-function">
+</section>
+<section id="state-transition-function">
 <h3>State transition function<a class="headerlink" href="#state-transition-function" title="Permalink to this headline">¶</a></h3>
 <p>Next period, reservoir level wealth will be equal to current level minus irrigation plus random rainfall:</p>
 <div class="cell docutils container">
@@ -1007,8 +1169,8 @@
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="model-structure">
+</section>
+<section id="model-structure">
 <h3>Model structure<a class="headerlink" href="#model-structure" title="Permalink to this headline">¶</a></h3>
 <p>The value of wealth <span class="math notranslate nohighlight">\(s\)</span> satisfies the Bellman equation</p>
 <div class="amsmath math notranslate nohighlight">
@@ -1025,11 +1187,11 @@ V(s) = \max_x\left\{\left(\frac{a_0}{1+a_1}\right)x^{1+a1} + \left(\frac{b_0}{1+
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="solving-the-model">
+</section>
+</section>
+<section id="solving-the-model">
 <h2>Solving the model<a class="headerlink" href="#solving-the-model" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="compute-linear-quadratic-approximation-at-collocation-nodes">
+<section id="compute-linear-quadratic-approximation-at-collocation-nodes">
 <h3>Compute Linear-Quadratic Approximation at Collocation Nodes<a class="headerlink" href="#compute-linear-quadratic-approximation-at-collocation-nodes" title="Permalink to this headline">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">DPmodel.lqapprox</span></code> solves the linear-quadratic approximation, in this case arround the steady-state. It returns a LQmodel which works similar to the DPmodel object. We compute the solution at the basis nodes to use it as initial guess for the Newton’s methods.</p>
 <div class="cell docutils container">
@@ -1051,13 +1213,13 @@ V(s) = \max_x\left\{\left(\frac{a_0}{1+a_1}\right)x^{1+a1} + \left(\frac{b_0}{1+
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Solving infinite-horizon model collocation equation by Newton&#39;s method
 iter change       time    
 ------------------------------
-   0       7.1e-01    0.0239
-   1       1.2e-01    0.0419
-   2       1.2e-02    0.0559
-   3       1.3e-04    0.0678
-   4       1.9e-08    0.0818
-   5       4.6e-15    0.0928
-Elapsed Time =    0.09 Seconds
+   0       7.1e-01    0.0100
+   1       1.2e-01    0.0199
+   2       1.2e-02    0.0289
+   3       1.3e-04    0.0359
+   4       1.9e-08    0.0419
+   5       4.6e-15    0.0459
+Elapsed Time =    0.05 Seconds
 </pre></div>
 </div>
 <div class="output text_html"><div>
@@ -1219,11 +1381,11 @@ Elapsed Time =    0.09 Seconds
 </table>
 </div></div></div>
 </div>
-</div>
-</div>
-<div class="section" id="plotting-the-results">
+</section>
+</section>
+<section id="plotting-the-results">
 <h2>Plotting the results<a class="headerlink" href="#plotting-the-results" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="optimal-policy">
+<section id="optimal-policy">
 <h3>Optimal Policy<a class="headerlink" href="#optimal-policy" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1237,8 +1399,8 @@ Elapsed Time =    0.09 Seconds
 <img alt="../../_images/10 Water Resource Management Model_29_0.png" src="../../_images/10 Water Resource Management Model_29_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="value-function">
+</section>
+<section id="value-function">
 <h3>Value Function<a class="headerlink" href="#value-function" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1248,14 +1410,14 @@ Elapsed Time =    0.09 Seconds
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x1e2e86342b0&gt;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x1b543dd1550&gt;]
 </pre></div>
 </div>
 <img alt="../../_images/10 Water Resource Management Model_31_1.png" src="../../_images/10 Water Resource Management Model_31_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="shadow-price-function">
+</section>
+<section id="shadow-price-function">
 <h3>Shadow Price Function<a class="headerlink" href="#shadow-price-function" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1265,14 +1427,14 @@ Elapsed Time =    0.09 Seconds
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x1e2e8688850&gt;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x1b543e30940&gt;]
 </pre></div>
 </div>
 <img alt="../../_images/10 Water Resource Management Model_33_1.png" src="../../_images/10 Water Resource Management Model_33_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="chebychev-collocation-residual">
+</section>
+<section id="chebychev-collocation-residual">
 <h3>Chebychev Collocation Residual<a class="headerlink" href="#chebychev-collocation-residual" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1287,9 +1449,9 @@ Elapsed Time =    0.09 Seconds
 <img alt="../../_images/10 Water Resource Management Model_35_0.png" src="../../_images/10 Water Resource Management Model_35_0.png" />
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="simulating-the-model">
+</section>
+</section>
+<section id="simulating-the-model">
 <h2>Simulating the model<a class="headerlink" href="#simulating-the-model" title="Permalink to this headline">¶</a></h2>
 <p>We simulate 21 periods of the model starting from <span class="math notranslate nohighlight">\(s=s_{\min}\)</span></p>
 <div class="cell docutils container">
@@ -1301,7 +1463,7 @@ Elapsed Time =    0.09 Seconds
 </div>
 </div>
 </div>
-<div class="section" id="simulated-state-and-policy-paths">
+<section id="simulated-state-and-policy-paths">
 <h3>Simulated State and Policy Paths<a class="headerlink" href="#simulated-state-and-policy-paths" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1337,8 +1499,8 @@ Elapsed Time =    0.09 Seconds
 <img alt="../../_images/10 Water Resource Management Model_41_0.png" src="../../_images/10 Water Resource Management Model_41_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="ergodic-wealth-distribution">
+</section>
+<section id="ergodic-wealth-distribution">
 <h3>Ergodic Wealth Distribution<a class="headerlink" href="#ergodic-wealth-distribution" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1381,13 +1543,13 @@ Elapsed Time =    0.09 Seconds
     </tr>
     <tr>
       <th>Ergodic Means</th>
-      <td>3.761378</td>
-      <td>0.999158</td>
+      <td>3.763854</td>
+      <td>0.999598</td>
     </tr>
     <tr>
       <th>Ergodic Standard Deviations</th>
-      <td>0.358699</td>
-      <td>0.062366</td>
+      <td>0.358289</td>
+      <td>0.062244</td>
     </tr>
   </tbody>
 </table>
@@ -1415,9 +1577,9 @@ Elapsed Time =    0.09 Seconds
 </div>
 </div>
 </div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -1432,7 +1594,7 @@ Elapsed Time =    0.09 Seconds
         },
         kernelOptions: {
             kernelName: "python3",
-            path: "./notebooks/dp"
+            path: "./notebooks\dp"
         },
         predefinedOutput: true
     }
@@ -1441,61 +1603,42 @@ Elapsed Time =    0.09 Seconds
 
               </div>
               
-        
             
-
-
-
-<div class='prev-next-bottom'>
-    
-    <div id="prev">
-        <a class="left-prev" href="09%20Private%20Non-Renewable%20Resource%20Model.html" title="previous page">
-            <i class="prevnext-label fas fa-angle-left"></i>
-            <div class="prevnext-info">
-                <p class="prevnext-label">previous</p>
-                <p class="prevnext-title">Private Non-Renewable Resource Model</p>
-            </div>
-        </a>
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="09%20Private%20Non-Renewable%20Resource%20Model.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Private Non-Renewable Resource Model</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="11%20Monetary%20Policy%20Model.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Monetary Policy Model</p>
     </div>
-     <div id="next">
-        <a class="right-next" href="11%20Monetary%20Policy%20Model.html" title="next page">
-            <div class="prevnext-info">
-                <p class="prevnext-label">next</p>
-                <p class="prevnext-title">Monetary Policy Model</p>
-            </div>
-            <i class="prevnext-label fas fa-angle-right"></i>
-        </a>
-     </div>
-
+    <i class="fas fa-angle-right"></i>
+    </a>
 </div>
-        
+            
         </div>
     </div>
     <footer class="footer">
-    <div class="container">
-      <p>
-        
-          By Randall Romero Aguilar<br/>
-        
-            &copy; Copyright 2021.<br/>
-      </p>
-    </div>
-  </footer>
+  <p>
+    
+      By Randall Romero Aguilar<br/>
+    
+        &copy; Copyright 2021.<br/>
+  </p>
+</footer>
 </main>
 
 
       </div>
     </div>
   
-  <script src="../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
-
-  
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
-<script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+  <script src="../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
 
   </body>
 </html>

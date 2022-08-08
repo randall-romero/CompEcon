@@ -4,11 +4,12 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Industry Entry-Exit Model &#8212; A Python Implementation of CompEcon</title>
     
-  <link href="../../_static/css/theme.css" rel="stylesheet" />
-  <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+  <link href="../../_static/css/theme.css" rel="stylesheet">
+  <link href="../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -22,8 +23,8 @@
       
 
     
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx-book-theme.e2363ea40746bee74734a24ffefccd78.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
@@ -31,26 +32,28 @@
     <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     
-  <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
+  <link rel="preload" as="script" href="../../_static/js/index.be7d3bbb2ef33a8344ce.js">
 
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/togglebutton.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
-    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="../../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
-    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
-    <script >
-        const thebe_selector = ".thebe"
-        const thebe_selector_input = "pre"
-        const thebe_selector_output = ".output"
-    </script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="canonical" href="https://randall-romero.github.io/compecon/notebooks/dp/03 Industry Entry-Exit Model.html" />
     <link rel="shortcut icon" href="../../_static/r2-logo-icon.png"/>
@@ -60,8 +63,19 @@
     <link rel="next" title="Job Search Model" href="04%20Job%20Search%20Model.html" />
     <link rel="prev" title="Asset Replacement Model" href="02%20Asset%20Replacement%20Model.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en" />
+    <meta name="docsearch:language" content="None">
     
+
+    <!-- Google Analytics -->
+    
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
+<script>
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){ dataLayer.push(arguments); }
+                    gtag('js', new Date());
+                    gtag('config', 'G-DT0DZ59WL5');
+                </script>
+
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
@@ -99,7 +113,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   About this book
  </span>
@@ -111,7 +125,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   Demos
  </span>
@@ -167,11 +181,38 @@
   </ul>
  </li>
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../slv/chapter04.html">
-   Nonlinear Equations
+  <a class="reference internal" href="../lin/chapter03.html">
+   Linear Equations
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
   <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../lin/01%20Solving%20linear%20equations%20by%20different%20methods.html">
+     Solving linear equations by different methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../lin/02%20Ill-conditioning%20of%20Vandermonde%20matrix.html">
+     Ill-conditioning of Vandermonde matrix
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../lin/03%20Sparse%20linear%20equations.html">
+     Sparse linear equations
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../slv/chapter04.html">
+   Nonlinear Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -256,8 +297,8 @@
   <a class="reference internal" href="../opt/chapter05.html">
    Finite-Dimensional Optimization
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
-  <label for="toctree-checkbox-4">
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -288,8 +329,8 @@
   <a class="reference internal" href="../qua/chapter06.html">
    Quadrature
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
-  <label for="toctree-checkbox-5">
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -353,8 +394,8 @@
   <a class="reference internal" href="../dif/chapter06.html">
    Numerical Differentiation
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
-  <label for="toctree-checkbox-6">
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -366,7 +407,7 @@
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="../dif/05%20Finite-Difference%20Jacobians%20and%20Hessians.html">
-     Initial tasks
+     Finite-Difference Jacobians and Hessians
     </a>
    </li>
   </ul>
@@ -375,8 +416,8 @@
   <a class="reference internal" href="../app/chapter07.html">
    Function Approximation
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
-  <label for="toctree-checkbox-7">
+  <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
+  <label for="toctree-checkbox-8">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -448,8 +489,8 @@
   <a class="reference internal" href="../ddp/chapter08.html">
    Discrete Time Discrete State Dynamic Programming
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
-  <label for="toctree-checkbox-8">
+  <input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
+  <label for="toctree-checkbox-9">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -475,8 +516,8 @@
   <a class="reference internal" href="chapter09.html">
    Discrete Time Continuous State Dynamic Programming
   </a>
-  <input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
-  <label for="toctree-checkbox-9">
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
+  <label for="toctree-checkbox-10">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -562,8 +603,8 @@
   <a class="reference internal" href="../ode/chapter12.html">
    Ordinary Differential Equations
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
-  <label for="toctree-checkbox-10">
+  <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
+  <label for="toctree-checkbox-11">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -594,8 +635,8 @@
   <a class="reference internal" href="../doc/chapter13.html">
    Continuous Time Deterministic Optimal Control
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
-  <label for="toctree-checkbox-11">
+  <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
+  <label for="toctree-checkbox-12">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -631,8 +672,8 @@
   <a class="reference internal" href="../soc/chapter14.html">
    Continuous Time Stochastic Optimal Control
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
-  <label for="toctree-checkbox-12">
+  <input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/>
+  <label for="toctree-checkbox-13">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -690,7 +731,7 @@
                 data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
-            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
     </div>
 </div>
 
@@ -746,7 +787,7 @@
         </div>
 
         <!-- Table of contents -->
-        <div class="d-none d-md-block col-md-2 bd-toc show">
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
             
             <div class="tocsection onthispage pt-5 pb-3">
                 <i class="fas fa-list"></i> Contents
@@ -817,10 +858,84 @@
 </div>
     <div id="main-content" class="row">
         <div class="col-12 col-md-9 pl-md-3 pr-md-0">
-        
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Industry Entry-Exit Model</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#about">
+   About
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-reward-function">
+     The reward function
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-transition-function">
+     The transition function
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#solution">
+   SOLUTION
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#plot-action-contingent-value-functions">
+     Plot Action-Contingent Value Functions
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#plot-residual">
+     Plot Residual
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#simulation">
+   SIMULATION
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#print-ergodic-moments">
+     Print Ergodic Moments
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#plot-simulated-and-expected-continuous-state-path">
+     Plot Simulated and Expected Continuous State Path
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#plot-expected-discrete-state-path">
+     Plot Expected Discrete State Path
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            
               <div>
                 
-  <div class="section" id="industry-entry-exit-model">
+  <section class="tex2jax_ignore mathjax_ignore" id="industry-entry-exit-model">
 <h1>Industry Entry-Exit Model<a class="headerlink" href="#industry-entry-exit-model" title="Permalink to this headline">¶</a></h1>
 <p><strong>Randall Romero Aguilar, PhD</strong></p>
 <p>This demo is based on the original Matlab demo accompanying the  <a href="https://mitpress.mit.edu/books/applied-computational-economics-and-finance">Computational Economics and Finance</a> 2001 textbook by Mario Miranda and Paul Fackler.</p>
@@ -830,38 +945,38 @@
 </pre></div>
 </div>
 <p><i>Last updated: 2021-Oct-01</i></p>
-<hr><div class="section" id="about">
+<hr><section id="about">
 <h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
 <p>A firm operates in an uncertain profit environment. At the beginning of each period, the firm observes its potential short-run operating profit over the coming period <span class="math notranslate nohighlight">\(\pi\)</span>, which may be negative, and decides whether to operate, making a short-run profit <span class="math notranslate nohighlight">\(\pi\)</span>, or not operate, making a short-run profit <span class="math notranslate nohighlight">\(0\)</span>. Although the firm faces no fixed costs, it incurs a shutdown cost <span class="math notranslate nohighlight">\(K_0\)</span> when it closes and a start-up cost <span class="math notranslate nohighlight">\(K_1\)</span> when it reopens. The short-run profit <span class="math notranslate nohighlight">\(\pi\)</span> is an exogenous continuous-valued Markov process</p>
-<div class="amsmath math notranslate nohighlight" id="equation-dbf480a1-9549-4581-aa22-94f0759060f0">
-<span class="eqno">(19)<a class="headerlink" href="#equation-dbf480a1-9549-4581-aa22-94f0759060f0" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ef9ed652-0e16-4853-9e56-95700d8fb45f">
+<span class="eqno">(19)<a class="headerlink" href="#equation-ef9ed652-0e16-4853-9e56-95700d8fb45f" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     \pi_{t+1} = h(\pi_t, \epsilon_{t+1})
 \end{equation}\]</div>
 <p><strong>What is the optimal entry-exit policy?</strong> In particular, how low must the short-run profit be for an operating firm to close, and how high must the short-run profit be for nonoperating firm to reopen?</p>
 <p>This is an infinite horizon, stochastic model with time <span class="math notranslate nohighlight">\(t\)</span> measured in years. The state variables</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c0792f04-38ad-49b2-8311-f5bcac0b4de1">
-<span class="eqno">(20)<a class="headerlink" href="#equation-c0792f04-38ad-49b2-8311-f5bcac0b4de1" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-7e3b7016-6314-4bc8-9cfb-b7f6e9e6c0be">
+<span class="eqno">(20)<a class="headerlink" href="#equation-7e3b7016-6314-4bc8-9cfb-b7f6e9e6c0be" title="Permalink to this equation">¶</a></span>\[\begin{align}
     \pi &amp;\in (−\infty,\infty)\\
     d &amp;\in \{0, 1\}
 \end{align}\]</div>
 <p>are the current short-run profit, a continuous variable, and the operational status of the firm, a binary variable that equals 1 if the firm is operating and 0 if the firm is not operating. The choice variable</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4415bf9c-0cfe-48ad-a03a-3f36da3662d0">
-<span class="eqno">(21)<a class="headerlink" href="#equation-4415bf9c-0cfe-48ad-a03a-3f36da3662d0" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f2d2cf0e-60a3-48d9-8c95-9ead3b143c0f">
+<span class="eqno">(21)<a class="headerlink" href="#equation-f2d2cf0e-60a3-48d9-8c95-9ead3b143c0f" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     j \in \{0, 1\}
 \end{equation}\]</div>
 <p>is the operating decision for the coming year, a binary variable that equals 1 if the firm operates and 0 if does not operate. The state transition function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2c18fa5a-83d2-4991-baed-117ce1627b18">
-<span class="eqno">(22)<a class="headerlink" href="#equation-2c18fa5a-83d2-4991-baed-117ce1627b18" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3f290a03-ba75-435d-850d-a037b1ba2866">
+<span class="eqno">(22)<a class="headerlink" href="#equation-3f290a03-ba75-435d-850d-a037b1ba2866" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     g(\pi, d, j, \epsilon) = h(\pi, \epsilon), j)
 \end{equation}\]</div>
 <p>The reward function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-eb061c61-c1e8-45a1-b2ca-690f9d3c3652">
-<span class="eqno">(23)<a class="headerlink" href="#equation-eb061c61-c1e8-45a1-b2ca-690f9d3c3652" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b1045d1e-5b92-4e3d-824a-aedf0b292786">
+<span class="eqno">(23)<a class="headerlink" href="#equation-b1045d1e-5b92-4e3d-824a-aedf0b292786" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     f(\pi, d, j) = \pi j − K_1(1 − d)j − K_0 d(1 − j)
 \end{equation}\]</div>
 <p>The value of the firm, given that the current short-run profit is <span class="math notranslate nohighlight">\(\pi\)</span> and the firm’s operational status is <span class="math notranslate nohighlight">\(d\)</span>, satisfies the Bellman equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c16e1b7a-02c0-4891-a809-2ac28d457636">
-<span class="eqno">(24)<a class="headerlink" href="#equation-c16e1b7a-02c0-4891-a809-2ac28d457636" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-02e121f3-fe2c-4dee-8632-8a4b004ee8d3">
+<span class="eqno">(24)<a class="headerlink" href="#equation-02e121f3-fe2c-4dee-8632-8a4b004ee8d3" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     V(\pi,d) = \max_{j=0,1}\left\{\pi j − K_1(1−d)j − K_0d(1−j) + \delta E_\epsilon V\left(h(\pi,\epsilon),j\right)\right\}
 \end{equation}\]</div>
 <div class="cell docutils container">
@@ -874,11 +989,11 @@
 </div>
 </div>
 </div>
-<div class="section" id="the-reward-function">
+<section id="the-reward-function">
 <h3>The reward function<a class="headerlink" href="#the-reward-function" title="Permalink to this headline">¶</a></h3>
 <p>The reward function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3660b5db-d3f6-4f8c-bcf6-d8a2986394fe">
-<span class="eqno">(25)<a class="headerlink" href="#equation-3660b5db-d3f6-4f8c-bcf6-d8a2986394fe" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c6da0f4c-61bb-4139-b62e-329acaab48b6">
+<span class="eqno">(25)<a class="headerlink" href="#equation-c6da0f4c-61bb-4139-b62e-329acaab48b6" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     f(\pi, d, j) = \pi j − K_1(1 − d)j − K_0 d(1 − j)
 \end{equation}\]</div>
 <p>where the exit cost is <span class="math notranslate nohighlight">\(K_0=0\)</span> and the entry cost is <span class="math notranslate nohighlight">\(K_1=10\)</span>.</p>
@@ -893,12 +1008,12 @@
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="the-transition-function">
+</section>
+<section id="the-transition-function">
 <h3>The transition function<a class="headerlink" href="#the-transition-function" title="Permalink to this headline">¶</a></h3>
 <p>Assuming that the short-run profit <span class="math notranslate nohighlight">\(\pi\)</span> is an exogenous Markov process</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1ab57196-e013-458b-b452-c17438cc2291">
-<span class="eqno">(26)<a class="headerlink" href="#equation-1ab57196-e013-458b-b452-c17438cc2291" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a35b5607-0976-4262-a6c1-c02972643136">
+<span class="eqno">(26)<a class="headerlink" href="#equation-a35b5607-0976-4262-a6c1-c02972643136" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     \pi_{t+1} = g(\pi_t,\epsilon_{t+1}) = \bar{\pi} + \gamma(\pi_t − \bar{\pi}) + \epsilon_{t+1}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\bar{\pi}=1.0\)</span> and <span class="math notranslate nohighlight">\(\gamma=0.7\)</span>.</p>
@@ -924,8 +1039,8 @@
 </div>
 </div>
 <p>The collocation method calls for the analyst to select <span class="math notranslate nohighlight">\(n\)</span> basis functions <span class="math notranslate nohighlight">\(\varphi_j\)</span> and <span class="math notranslate nohighlight">\(n\)</span> collocation nodes <span class="math notranslate nohighlight">\((\pi_i,d_i)\)</span>, and form the value function approximant <span class="math notranslate nohighlight">\(V(\pi,d) \approx \sum_{j=1}^{n} c_j\varphi_j(\pi,d)\)</span> whose coefficients <span class="math notranslate nohighlight">\(c_j\)</span> solve the collocation equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4a059fa3-a4a2-4c80-a7d5-6738a1713aab">
-<span class="eqno">(27)<a class="headerlink" href="#equation-4a059fa3-a4a2-4c80-a7d5-6738a1713aab" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c84ea07e-8680-46fe-a77c-9911221be6d1">
+<span class="eqno">(27)<a class="headerlink" href="#equation-c84ea07e-8680-46fe-a77c-9911221be6d1" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     \sum_{j=1}^{n} c_j\varphi_j(\pi_i,d_i) = \max_{x\in\{0,1\}}\left\{\pi_i x − K_1(1−d_i)x − K_0 d_i(1−x) + \delta\sum_{k=1}^{m}\sum_{j=1}^{n}w_k c_j \varphi_j(\hat{\pi}_{ik},x)\right\}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\hat\pi_{ik}=g(\pi_i,\epsilon_k)\)</span> and where <span class="math notranslate nohighlight">\(\epsilon_k\)</span> and <span class="math notranslate nohighlight">\(w_k\)</span> represent quadrature nodes and weights for
@@ -962,8 +1077,8 @@ WARNING! Class Basis is still work in progress
 </div>
 </div>
 <p>The Bellman equation is represeted by a <code class="docutils literal notranslate"><span class="pre">DPmodel</span></code> object, where we assume a discount factor of <span class="math notranslate nohighlight">\(\delta=0.9\)</span>. Notice that the discrete state transition is deterministic, with transition matrix</p>
-<div class="amsmath math notranslate nohighlight" id="equation-83f1660c-d85f-4be0-a6b2-307997918aa1">
-<span class="eqno">(28)<a class="headerlink" href="#equation-83f1660c-d85f-4be0-a6b2-307997918aa1" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-124e204c-9d81-4d02-bb52-48887f26e22f">
+<span class="eqno">(28)<a class="headerlink" href="#equation-124e204c-9d81-4d02-bb52-48887f26e22f" title="Permalink to this equation">¶</a></span>\[\begin{equation}
     h=\begin{bmatrix}0&amp;0\\1&amp;1\end{bmatrix}
 \end{equation}\]</div>
 <div class="cell docutils container">
@@ -978,9 +1093,9 @@ WARNING! Class Basis is still work in progress
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="solution">
+</section>
+</section>
+<section id="solution">
 <h2>SOLUTION<a class="headerlink" href="#solution" title="Permalink to this headline">¶</a></h2>
 <p>To solve the model, we simply call the <code class="docutils literal notranslate"><span class="pre">solve</span></code> method on the <code class="docutils literal notranslate"><span class="pre">model</span></code> object.</p>
 <div class="cell docutils container">
@@ -994,12 +1109,16 @@ WARNING! Class Basis is still work in progress
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Solving infinite-horizon model collocation equation by Newton&#39;s method
 iter change       time    
 ------------------------------
-   0       6.0e+01    0.0519
-   1       3.2e+01    0.1087
-   2       2.9e+00    0.1606
-   3       4.3e-01    0.2154
-   4       4.9e-14    0.2663
-Elapsed Time =    0.27 Seconds
+   0       6.0e+01    0.0508
+   1       3.2e+01    0.0947
+   2       2.9e+00    0.1446
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   3       4.3e-01    0.1964
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   4       4.9e-14    0.2553
+Elapsed Time =    0.26 Seconds
 </pre></div>
 </div>
 <div class="output text_html"><div>
@@ -1097,7 +1216,7 @@ Elapsed Time =    0.27 Seconds
 </table>
 </div></div></div>
 </div>
-<div class="section" id="plot-action-contingent-value-functions">
+<section id="plot-action-contingent-value-functions">
 <h3>Plot Action-Contingent Value Functions<a class="headerlink" href="#plot-action-contingent-value-functions" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1126,14 +1245,16 @@ Elapsed Time =    0.27 Seconds
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Profit Entry =  2.10
-Profit Exit  = -2.30
 </pre></div>
 </div>
-<img alt="../../_images/03 Industry Entry-Exit Model_18_1.png" src="../../_images/03 Industry Entry-Exit Model_18_1.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Profit Exit  = -2.30
+</pre></div>
+</div>
+<img alt="../../_images/03 Industry Entry-Exit Model_18_2.png" src="../../_images/03 Industry Entry-Exit Model_18_2.png" />
 </div>
 </div>
-</div>
-<div class="section" id="plot-residual">
+</section>
+<section id="plot-residual">
 <h3>Plot Residual<a class="headerlink" href="#plot-residual" title="Permalink to this headline">¶</a></h3>
 <p>We normalize the residuals as percentage of the value function. Notice the spikes at the “Profit entry” and “Profit exit” points.</p>
 <div class="cell docutils container">
@@ -1146,15 +1267,15 @@ Profit Exit  = -2.30
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x1481de85f40&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x214004e8dc0&gt;
 </pre></div>
 </div>
 <img alt="../../_images/03 Industry Entry-Exit Model_20_1.png" src="../../_images/03 Industry Entry-Exit Model_20_1.png" />
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="simulation">
+</section>
+</section>
+<section id="simulation">
 <h2>SIMULATION<a class="headerlink" href="#simulation" title="Permalink to this headline">¶</a></h2>
 <p>We simulate the model 50000 times for a time horizon <span class="math notranslate nohighlight">\(T=50\)</span>, starting with an operating firm (<span class="math notranslate nohighlight">\(d=1\)</span>) at the long-term profit mean <span class="math notranslate nohighlight">\(\bar{\pi}\)</span>. To be able to reproduce these results, we set the random seed at an arbitrary value of 945.</p>
 <div class="cell docutils container">
@@ -1168,7 +1289,7 @@ Profit Exit  = -2.30
 </div>
 </div>
 </div>
-<div class="section" id="print-ergodic-moments">
+<section id="print-ergodic-moments">
 <h3>Print Ergodic Moments<a class="headerlink" href="#print-ergodic-moments" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1244,8 +1365,8 @@ Ergodic Standard Deviations
 </table>
 </div></div></div>
 </div>
-</div>
-<div class="section" id="plot-simulated-and-expected-continuous-state-path">
+</section>
+<section id="plot-simulated-and-expected-continuous-state-path">
 <h3>Plot Simulated and Expected Continuous State Path<a class="headerlink" href="#plot-simulated-and-expected-continuous-state-path" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1259,14 +1380,14 @@ Ergodic Standard Deviations
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x1481ddaaf70&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x21400411fd0&gt;
 </pre></div>
 </div>
 <img alt="../../_images/03 Industry Entry-Exit Model_28_1.png" src="../../_images/03 Industry Entry-Exit Model_28_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="plot-expected-discrete-state-path">
+</section>
+<section id="plot-expected-discrete-state-path">
 <h3>Plot Expected Discrete State Path<a class="headerlink" href="#plot-expected-discrete-state-path" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1277,7 +1398,7 @@ Ergodic Standard Deviations
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x1481de28f70&gt;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x21401a88580&gt;]
 </pre></div>
 </div>
 <img alt="../../_images/03 Industry Entry-Exit Model_30_1.png" src="../../_images/03 Industry Entry-Exit Model_30_1.png" />
@@ -1290,9 +1411,9 @@ Ergodic Standard Deviations
 </div>
 </div>
 </div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -1307,7 +1428,7 @@ Ergodic Standard Deviations
         },
         kernelOptions: {
             kernelName: "python3",
-            path: "./notebooks/dp"
+            path: "./notebooks\dp"
         },
         predefinedOutput: true
     }
@@ -1316,61 +1437,42 @@ Ergodic Standard Deviations
 
               </div>
               
-        
             
-
-
-
-<div class='prev-next-bottom'>
-    
-    <div id="prev">
-        <a class="left-prev" href="02%20Asset%20Replacement%20Model.html" title="previous page">
-            <i class="prevnext-label fas fa-angle-left"></i>
-            <div class="prevnext-info">
-                <p class="prevnext-label">previous</p>
-                <p class="prevnext-title">Asset Replacement Model</p>
-            </div>
-        </a>
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="02%20Asset%20Replacement%20Model.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Asset Replacement Model</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="04%20Job%20Search%20Model.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Job Search Model</p>
     </div>
-     <div id="next">
-        <a class="right-next" href="04%20Job%20Search%20Model.html" title="next page">
-            <div class="prevnext-info">
-                <p class="prevnext-label">next</p>
-                <p class="prevnext-title">Job Search Model</p>
-            </div>
-            <i class="prevnext-label fas fa-angle-right"></i>
-        </a>
-     </div>
-
+    <i class="fas fa-angle-right"></i>
+    </a>
 </div>
-        
+            
         </div>
     </div>
     <footer class="footer">
-    <div class="container">
-      <p>
-        
-          By Randall Romero Aguilar<br/>
-        
-            &copy; Copyright 2021.<br/>
-      </p>
-    </div>
-  </footer>
+  <p>
+    
+      By Randall Romero Aguilar<br/>
+    
+        &copy; Copyright 2021.<br/>
+  </p>
+</footer>
 </main>
 
 
       </div>
     </div>
   
-  <script src="../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
-
-  
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DT0DZ59WL5"></script>
-<script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){ dataLayer.push(arguments); }
-                    gtag('config', 'G-DT0DZ59WL5');
-                </script>
+  <script src="../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
 
   </body>
 </html>
