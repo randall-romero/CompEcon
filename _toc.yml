@@ -15,6 +15,11 @@ parts:
       - file: notebooks/math/01 Taylor Approximations
       - file: notebooks/math/02 Computing Function Inner Products, Norms, and Metrics
       - file: notebooks/math/03 Major Distribution CDFs and PDFs
+    - file: notebooks/lin/chapter03
+      sections:
+      - file: notebooks/lin/01 Solving linear equations by different methods
+      - file: notebooks/lin/02 Ill-conditioning of Vandermonde matrix
+      - file: notebooks/lin/03 Sparse linear equations
     - file: notebooks/slv/chapter04
       sections:
       - file: notebooks/slv/01 Compute root of f(x)=exp(-x)-1

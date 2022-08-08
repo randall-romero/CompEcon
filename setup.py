@@ -1,7 +1,7 @@
 """ The CompEcon package setup.
 Based on setuptools
 
-Randall Romero-Aguilar, 2015-2018
+Randall Romero-Aguilar, 2015-2022
 """
 
 
@@ -12,7 +12,7 @@ with open('README.md', encoding='utf-8') as f:
 
 setup(
     name='compecon',
-    version='2021.09.01',
+    version='2022.05.13',
     description='A Computational Economics Toolbox',
     long_description=long_description,
     long_description_content_type='text/markdown',
