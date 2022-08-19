@@ -1,15 +1,16 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>Deterministic Optimal Economic Growth Model &#8212; A Python Implementation of CompEcon</title>
     
-  <link href="../../_static/css/theme.css" rel="stylesheet">
-  <link href="../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -19,20 +20,16 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
-    
-      
-
-    
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
     
-  <link rel="preload" as="script" href="../../_static/js/index.be7d3bbb2ef33a8344ce.js">
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
@@ -40,12 +37,14 @@
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="../../_static/togglebutton.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="../../_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script src="../../_static/design-tabs.js"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
 const thebe_selector_input = "pre"
@@ -54,7 +53,6 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="canonical" href="https://randall-romero.github.io/compecon/notebooks/dp/06 Deterministic Optimal Economic Growth Model.html" />
     <link rel="shortcut icon" href="../../_static/r2-logo-icon.png"/>
     <link rel="author" title="About these documents" href="../../about.html" />
@@ -63,7 +61,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="Stochastic Optimal Economic Growth Model" href="07%20Stochastic%20Optimal%20Economic%20Growth%20Model.html" />
     <link rel="prev" title="American Put Option Pricing Model" href="05%20America%20Put%20Option%20Pricing%20Model.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="None">
+    <meta name="docsearch:language" content="en">
     
 
     <!-- Google Analytics -->
@@ -79,7 +77,21 @@ const thebe_selector_output = ".output, .cell_output"
                     </script>
 
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
     
     <div class="container-fluid" id="banner"></div>
 
@@ -88,9 +100,10 @@ const thebe_selector_output = ".output, .cell_output"
     <div class="container-xl">
       <div class="row">
           
-<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
-    
-        <div class="navbar-brand-box">
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
     <a class="navbar-brand text-wrap" href="../../index.html">
       
         <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
@@ -108,14 +121,15 @@ const thebe_selector_output = ".output, .cell_output"
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item active">
-        <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../../about.html">
-   A Python Implementation of CompEcon
-  </a>
- </li>
-</ul>
-<p aria-level="2" class="caption" role="heading">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../about.html">
+                    A Python Implementation of CompEcon
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   About this book
  </span>
@@ -690,112 +704,227 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 
     </div>
-</nav> <!-- To handle the deprecated key -->
-
-<div class="navbar_extra_footer">
-  <a href="http://randall-romero.com">randall-romero.com</a>
-</div>
-
-</div>
-
-
-          
-
-
-          
-<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
-    
-    <div class="topbar container-xl fixed-top">
-    <div class="topbar-contents row">
-        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
-        <div class="col pl-md-4 topbar-main">
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
             
-            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
-                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
-                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
-                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
-                <i class="fas fa-bars"></i>
-                <i class="fas fa-arrow-left"></i>
-                <i class="fas fa-arrow-up"></i>
-            </button>
-            
-            
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
-            class="fas fa-download"></i></button>
-
-    <div class="dropdown-buttons">
-        <!-- ipynb file if we had a myst markdown file -->
-        
-        <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../../_sources/notebooks/dp/06 Deterministic Optimal Economic Growth Model.ipynb"><button type="button"
-                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
-                data-placement="left">.ipynb</button></a>
-        <!-- Download PDF via print -->
-        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
-                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
-    </div>
-</div>
-
-            <!-- Source interaction buttons -->
-
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
-        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
-    <div class="dropdown-buttons sourcebuttons">
-        <a class="repository-button"
-            href="https://github.com/randall-romero/compecon/"><button type="button" class="btn btn-secondary topbarbtn"
-                data-toggle="tooltip" data-placement="left" title="Source repository"><i
-                    class="fab fa-github"></i>repository</button></a>
-        <a class="issues-button"
-            href="https://github.com/randall-romero/compecon//issues/new?title=Issue%20on%20page%20%2Fnotebooks/dp/06 Deterministic Optimal Economic Growth Model.html&body=Your%20issue%20content%20here."><button
-                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
-                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
-        
-    </div>
-</div>
-
-            <!-- Full screen (wrap in <a> to have style consistency -->
-
-<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
-        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
-        title="Fullscreen mode"><i
-            class="fas fa-expand"></i></button></a>
-
-            <!-- Launch buttons -->
-
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
-        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
-    <div class="dropdown-buttons">
-        
-        <a class="binder-button" href="https://mybinder.org/v2/gh/randall-romero/compecon/master?urlpath=lab/tree/notebooks/dp/06 Deterministic Optimal Economic Growth Model.ipynb"><button type="button"
-                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
-                data-placement="left"><img class="binder-button-logo"
-                    src="../../_static/images/logo_binder.svg"
-                    alt="Interact on binder">Binder</button></a>
-        
-        
-        
-        <a class="colab-button" href="https://colab.research.google.com/github/randall-romero/compecon/blob/master/notebooks/dp/06 Deterministic Optimal Economic Growth Model.ipynb"><button type="button" class="btn btn-secondary topbarbtn"
-                title="Launch Colab" data-toggle="tooltip" data-placement="left"><img class="colab-button-logo"
-                    src="../../_static/images/logo_colab.png"
-                    alt="Interact on Colab">Colab</button></a>
-        
-        
-    </div>
-</div>
-
-        </div>
-
-        <!-- Table of contents -->
-        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
-            
-            <div class="tocsection onthispage pt-5 pb-3">
-                <i class="fas fa-list"></i> Contents
+            <div class="navbar_extra_footer">
+            <a href="http://randall-romero.com">randall-romero.com</a>
             </div>
-            <nav id="bd-toc-nav" aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/randall-romero/compecon/master?urlpath=lab/tree/notebooks/dp/06 Deterministic Optimal Economic Growth Model.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://colab.research.google.com/github/randall-romero/compecon/blob/master/notebooks/dp/06 Deterministic Optimal Economic Growth Model.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Colab"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../../_static/images/logo_colab.png">
+  </span>
+<span class="headerbtn__text-container">Colab</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/randall-romero/compecon/"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/randall-romero/compecon//issues/new?title=Issue%20on%20page%20%2Fnotebooks/dp/06 Deterministic Optimal Economic Growth Model.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../../_sources/notebooks/dp/06 Deterministic Optimal Economic Growth Model.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#about">
    About
@@ -901,12 +1030,11 @@ const thebe_selector_output = ".output, .cell_output"
  </li>
 </ul>
 
-            </nav>
-        </div>
-    </div>
+    </nav>
 </div>
-    <div id="main-content" class="row">
-        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
                 <h1>Deterministic Optimal Economic Growth Model</h1>
@@ -1028,11 +1156,12 @@ const thebe_selector_output = ".output, .cell_output"
                     </div>
                 </div>
             </div>
-            
+            <main id="main-content" role="main">
+                
               <div>
                 
   <section class="tex2jax_ignore mathjax_ignore" id="deterministic-optimal-economic-growth-model">
-<h1>Deterministic Optimal Economic Growth Model<a class="headerlink" href="#deterministic-optimal-economic-growth-model" title="Permalink to this headline">¶</a></h1>
+<h1>Deterministic Optimal Economic Growth Model<a class="headerlink" href="#deterministic-optimal-economic-growth-model" title="Permalink to this headline">#</a></h1>
 <p><strong>Randall Romero Aguilar, PhD</strong></p>
 <p>This demo is based on the original Matlab demo accompanying the  <a href="https://mitpress.mit.edu/books/applied-computational-economics-and-finance">Computational Economics and Finance</a> 2001 textbook by Mario Miranda and Paul Fackler.</p>
 <p>Original (Matlab) CompEcon file: <strong>demdp06.m</strong></p>
@@ -1042,7 +1171,7 @@ const thebe_selector_output = ".output, .cell_output"
 </div>
 <p><i>Last updated: 2021-Oct-01</i></p>
 <hr><section id="about">
-<h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
+<h2>About<a class="headerlink" href="#about" title="Permalink to this headline">#</a></h2>
 <p>Welfare maximizing social planner must decide how much society should consume and invest.  Model is of special interest because it has a known closed-form solution.</p>
 <ul>
 <li><p>States</p>
@@ -1084,7 +1213,7 @@ const thebe_selector_output = ".output, .cell_output"
 </div>
 </div>
 <section id="model-parameters">
-<h3>Model parameters<a class="headerlink" href="#model-parameters" title="Permalink to this headline">¶</a></h3>
+<h3>Model parameters<a class="headerlink" href="#model-parameters" title="Permalink to this headline">#</a></h3>
 <p>Assuming that the marginal productivity of capital is <span class="math notranslate nohighlight">\(\beta=0.5\)</span> and the discount factor is <span class="math notranslate nohighlight">\(\delta=0.9\)</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1096,7 +1225,7 @@ const thebe_selector_output = ".output, .cell_output"
 </section>
 </section>
 <section id="analytic-results">
-<h2>Analytic results<a class="headerlink" href="#analytic-results" title="Permalink to this headline">¶</a></h2>
+<h2>Analytic results<a class="headerlink" href="#analytic-results" title="Permalink to this headline">#</a></h2>
 <p>The steady-state values for this model are</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1123,8 +1252,8 @@ const thebe_selector_output = ".output, .cell_output"
 </div>
 </div>
 <p>The true value function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-dba9284e-a181-4723-8c90-f3fea486419b">
-<span class="eqno">(38)<a class="headerlink" href="#equation-dba9284e-a181-4723-8c90-f3fea486419b" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-84aa0200-efb7-434c-92a4-9a7f1fd8a29a">
+<span class="eqno">(38)<a class="headerlink" href="#equation-84aa0200-efb7-434c-92a4-9a7f1fd8a29a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 V(s) = v^* + \frac{1}{1-\delta\beta}\left(\log(s) -\log(s^*)\right)
 \end{equation}\]</div>
 <div class="cell docutils container">
@@ -1136,8 +1265,8 @@ V(s) = v^* + \frac{1}{1-\delta\beta}\left(\log(s) -\log(s^*)\right)
 </div>
 </div>
 <p>The true policy function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8c9ff1ee-29c0-4749-b4fa-a10e4f20652f">
-<span class="eqno">(39)<a class="headerlink" href="#equation-8c9ff1ee-29c0-4749-b4fa-a10e4f20652f" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8a810135-d16f-42b0-b28d-01f072de0d6f">
+<span class="eqno">(39)<a class="headerlink" href="#equation-8a810135-d16f-42b0-b28d-01f072de0d6f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 k(s) = \delta\beta s
 \end{equation}\]</div>
 <div class="cell docutils container">
@@ -1150,9 +1279,9 @@ k(s) = \delta\beta s
 </div>
 </section>
 <section id="numeric-results">
-<h2>Numeric results<a class="headerlink" href="#numeric-results" title="Permalink to this headline">¶</a></h2>
+<h2>Numeric results<a class="headerlink" href="#numeric-results" title="Permalink to this headline">#</a></h2>
 <section id="state-space">
-<h3>State space<a class="headerlink" href="#state-space" title="Permalink to this headline">¶</a></h3>
+<h3>State space<a class="headerlink" href="#state-space" title="Permalink to this headline">#</a></h3>
 <p>The state variable is s=”Wealth”, which we restrict to <span class="math notranslate nohighlight">\(0\in[0.2, 1.0]\)</span>.</p>
 <p>Here, we represent it with a Chebyshev basis, with <span class="math notranslate nohighlight">\(n=15\)</span> nodes.</p>
 <div class="cell docutils container">
@@ -1165,7 +1294,7 @@ k(s) = \delta\beta s
 </div>
 </section>
 <section id="action-space">
-<h3>Action space<a class="headerlink" href="#action-space" title="Permalink to this headline">¶</a></h3>
+<h3>Action space<a class="headerlink" href="#action-space" title="Permalink to this headline">#</a></h3>
 <p>The choice variable k=”Investment” must be nonnegative.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1177,7 +1306,7 @@ k(s) = \delta\beta s
 </div>
 </section>
 <section id="reward-function">
-<h3>Reward function<a class="headerlink" href="#reward-function" title="Permalink to this headline">¶</a></h3>
+<h3>Reward function<a class="headerlink" href="#reward-function" title="Permalink to this headline">#</a></h3>
 <p>The reward function is the utility of consumption=<span class="math notranslate nohighlight">\(s-k\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1193,7 +1322,7 @@ k(s) = \delta\beta s
 </div>
 </section>
 <section id="state-transition-function">
-<h3>State transition function<a class="headerlink" href="#state-transition-function" title="Permalink to this headline">¶</a></h3>
+<h3>State transition function<a class="headerlink" href="#state-transition-function" title="Permalink to this headline">#</a></h3>
 <p>Next period, wealth will be equal to production from available initial capital <span class="math notranslate nohighlight">\(k\)</span>, that is <span class="math notranslate nohighlight">\(s' = k^\beta\)</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1208,7 +1337,7 @@ k(s) = \delta\beta s
 </div>
 </section>
 <section id="model-structure">
-<h3>Model structure<a class="headerlink" href="#model-structure" title="Permalink to this headline">¶</a></h3>
+<h3>Model structure<a class="headerlink" href="#model-structure" title="Permalink to this headline">#</a></h3>
 <p>The value of wealth <span class="math notranslate nohighlight">\(s\)</span> satisfies the Bellman equation</p>
 <div class="amsmath math notranslate nohighlight">
 \[\begin{equation*}
@@ -1226,7 +1355,7 @@ V(s) = \max_k\left\{\log(s-k) + \delta V(k^\beta)  \right\}
 </div>
 </section>
 <section id="solving-the-model">
-<h3>Solving the model<a class="headerlink" href="#solving-the-model" title="Permalink to this headline">¶</a></h3>
+<h3>Solving the model<a class="headerlink" href="#solving-the-model" title="Permalink to this headline">#</a></h3>
 <p>Solving the growth model by collocation, using <em>Newton</em> algorithm and a maximum of 20 iterations</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1435,7 +1564,7 @@ Elapsed Time =    0.01 Seconds
 </div>
 </section>
 <section id="solving-the-model-by-linear-quadratic-approximation">
-<h3>Solving the model by Linear-Quadratic Approximation<a class="headerlink" href="#solving-the-model-by-linear-quadratic-approximation" title="Permalink to this headline">¶</a></h3>
+<h3>Solving the model by Linear-Quadratic Approximation<a class="headerlink" href="#solving-the-model-by-linear-quadratic-approximation" title="Permalink to this headline">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">DPmodel.lqapprox</span></code> solves the linear-quadratic approximation, in this case arround the steady-state. It returns a LQmodel which works similar to the DPmodel object.</p>
 <p>We also compute the shadow price and the approximation error to compare these results to the collocation results.</p>
 <div class="cell docutils container">
@@ -1564,9 +1693,9 @@ Elapsed Time =    0.01 Seconds
 </section>
 </section>
 <section id="plotting-the-results">
-<h2>Plotting the results<a class="headerlink" href="#plotting-the-results" title="Permalink to this headline">¶</a></h2>
+<h2>Plotting the results<a class="headerlink" href="#plotting-the-results" title="Permalink to this headline">#</a></h2>
 <section id="optimal-policy">
-<h3>Optimal Policy<a class="headerlink" href="#optimal-policy" title="Permalink to this headline">¶</a></h3>
+<h3>Optimal Policy<a class="headerlink" href="#optimal-policy" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig1</span> <span class="o">=</span> <span class="n">demo</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="s1">&#39;Optimal Investment Policy&#39;</span><span class="p">,</span> <span class="s1">&#39;Wealth&#39;</span><span class="p">,</span> <span class="s1">&#39;Investment&#39;</span><span class="p">)</span>
@@ -1586,7 +1715,7 @@ Elapsed Time =    0.01 Seconds
 </div>
 </section>
 <section id="value-function">
-<h3>Value Function<a class="headerlink" href="#value-function" title="Permalink to this headline">¶</a></h3>
+<h3>Value Function<a class="headerlink" href="#value-function" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig2</span> <span class="o">=</span> <span class="n">demo</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="s1">&#39;Value Function&#39;</span><span class="p">,</span> <span class="s1">&#39;Wealth&#39;</span><span class="p">,</span> <span class="s1">&#39;Value&#39;</span><span class="p">)</span>
@@ -1607,7 +1736,7 @@ Elapsed Time =    0.01 Seconds
 </div>
 </section>
 <section id="shadow-price-function">
-<h3>Shadow Price Function<a class="headerlink" href="#shadow-price-function" title="Permalink to this headline">¶</a></h3>
+<h3>Shadow Price Function<a class="headerlink" href="#shadow-price-function" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig3</span> <span class="o">=</span> <span class="n">demo</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="s1">&#39;Shadow Price Function&#39;</span><span class="p">,</span> <span class="s1">&#39;Wealth&#39;</span><span class="p">,</span> <span class="s1">&#39;Shadow Price&#39;</span><span class="p">)</span>
@@ -1627,7 +1756,7 @@ Elapsed Time =    0.01 Seconds
 </div>
 </section>
 <section id="chebychev-collocation-residual-and-approximation-error-vs-linear-quadratic-approximation-error">
-<h3>Chebychev Collocation Residual and Approximation Error vs. Linear-Quadratic Approximation Error<a class="headerlink" href="#chebychev-collocation-residual-and-approximation-error-vs-linear-quadratic-approximation-error" title="Permalink to this headline">¶</a></h3>
+<h3>Chebychev Collocation Residual and Approximation Error vs. Linear-Quadratic Approximation Error<a class="headerlink" href="#chebychev-collocation-residual-and-approximation-error-vs-linear-quadratic-approximation-error" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig4</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
@@ -1651,7 +1780,7 @@ Elapsed Time =    0.01 Seconds
 </div>
 </section>
 <section id="wealth-dynamics">
-<h3>Wealth dynamics<a class="headerlink" href="#wealth-dynamics" title="Permalink to this headline">¶</a></h3>
+<h3>Wealth dynamics<a class="headerlink" href="#wealth-dynamics" title="Permalink to this headline">#</a></h3>
 <p>Notice how the steady-state is stable in the Chebyshev collocation solution, but unstable in the linear-quadratic approximation. In particular, simulated paths of wealth in the L-Q approximation will converge to zero, unless the initial states is within a small neighborhood of the steady-state.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1675,7 +1804,7 @@ Elapsed Time =    0.01 Seconds
 </section>
 </section>
 <section id="simulating-the-model">
-<h2>Simulating the model<a class="headerlink" href="#simulating-the-model" title="Permalink to this headline">¶</a></h2>
+<h2>Simulating the model<a class="headerlink" href="#simulating-the-model" title="Permalink to this headline">#</a></h2>
 <p>We simulate 20 periods of the model starting from <span class="math notranslate nohighlight">\(s=s_{\min}\)</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1686,7 +1815,7 @@ Elapsed Time =    0.01 Seconds
 </div>
 </div>
 <section id="simulated-state-and-policy-paths">
-<h3>Simulated State and Policy Paths<a class="headerlink" href="#simulated-state-and-policy-paths" title="Permalink to this headline">¶</a></h3>
+<h3>Simulated State and Policy Paths<a class="headerlink" href="#simulated-state-and-policy-paths" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">opts</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="s1">&#39;r*&#39;</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">),</span> <span class="n">fs</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
@@ -1735,9 +1864,11 @@ Elapsed Time =    0.01 Seconds
 
               </div>
               
-            
-                <!-- Previous / next buttons -->
-<div class='prev-next-area'> 
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
     <a class='left-prev' id="prev-link" href="05%20America%20Put%20Option%20Pricing%20Model.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
@@ -1753,24 +1884,28 @@ Elapsed Time =    0.01 Seconds
     <i class="fas fa-angle-right"></i>
     </a>
 </div>
-            
+            </footer>
         </div>
     </div>
-    <footer class="footer">
-  <p>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Randall Romero Aguilar<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
     
-      By Randall Romero Aguilar<br/>
-    
-        &copy; Copyright 2021.<br/>
-  </p>
-</footer>
-</main>
+</div>
 
 
       </div>
     </div>
   
-  <script src="../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
 
   </body>
 </html>

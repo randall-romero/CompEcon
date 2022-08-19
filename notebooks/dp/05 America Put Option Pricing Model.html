@@ -1,15 +1,16 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>American Put Option Pricing Model &#8212; A Python Implementation of CompEcon</title>
     
-  <link href="../../_static/css/theme.css" rel="stylesheet">
-  <link href="../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -19,20 +20,16 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
-    
-      
-
-    
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
     
-  <link rel="preload" as="script" href="../../_static/js/index.be7d3bbb2ef33a8344ce.js">
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
@@ -40,12 +37,14 @@
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="../../_static/togglebutton.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="../../_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script src="../../_static/design-tabs.js"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
 const thebe_selector_input = "pre"
@@ -54,7 +53,6 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="canonical" href="https://randall-romero.github.io/compecon/notebooks/dp/05 America Put Option Pricing Model.html" />
     <link rel="shortcut icon" href="../../_static/r2-logo-icon.png"/>
     <link rel="author" title="About these documents" href="../../about.html" />
@@ -63,7 +61,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="Deterministic Optimal Economic Growth Model" href="06%20Deterministic%20Optimal%20Economic%20Growth%20Model.html" />
     <link rel="prev" title="Job Search Model" href="04%20Job%20Search%20Model.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="None">
+    <meta name="docsearch:language" content="en">
     
 
     <!-- Google Analytics -->
@@ -79,7 +77,21 @@ const thebe_selector_output = ".output, .cell_output"
                     </script>
 
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
     
     <div class="container-fluid" id="banner"></div>
 
@@ -88,9 +100,10 @@ const thebe_selector_output = ".output, .cell_output"
     <div class="container-xl">
       <div class="row">
           
-<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
-    
-        <div class="navbar-brand-box">
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
     <a class="navbar-brand text-wrap" href="../../index.html">
       
         <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
@@ -108,14 +121,15 @@ const thebe_selector_output = ".output, .cell_output"
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item active">
-        <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../../about.html">
-   A Python Implementation of CompEcon
-  </a>
- </li>
-</ul>
-<p aria-level="2" class="caption" role="heading">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../about.html">
+                    A Python Implementation of CompEcon
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   About this book
  </span>
@@ -690,112 +704,227 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 
     </div>
-</nav> <!-- To handle the deprecated key -->
-
-<div class="navbar_extra_footer">
-  <a href="http://randall-romero.com">randall-romero.com</a>
-</div>
-
-</div>
-
-
-          
-
-
-          
-<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
-    
-    <div class="topbar container-xl fixed-top">
-    <div class="topbar-contents row">
-        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
-        <div class="col pl-md-4 topbar-main">
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
             
-            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
-                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
-                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
-                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
-                <i class="fas fa-bars"></i>
-                <i class="fas fa-arrow-left"></i>
-                <i class="fas fa-arrow-up"></i>
-            </button>
-            
-            
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
-            class="fas fa-download"></i></button>
-
-    <div class="dropdown-buttons">
-        <!-- ipynb file if we had a myst markdown file -->
-        
-        <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../../_sources/notebooks/dp/05 America Put Option Pricing Model.ipynb"><button type="button"
-                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
-                data-placement="left">.ipynb</button></a>
-        <!-- Download PDF via print -->
-        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
-                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
-    </div>
-</div>
-
-            <!-- Source interaction buttons -->
-
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
-        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
-    <div class="dropdown-buttons sourcebuttons">
-        <a class="repository-button"
-            href="https://github.com/randall-romero/compecon/"><button type="button" class="btn btn-secondary topbarbtn"
-                data-toggle="tooltip" data-placement="left" title="Source repository"><i
-                    class="fab fa-github"></i>repository</button></a>
-        <a class="issues-button"
-            href="https://github.com/randall-romero/compecon//issues/new?title=Issue%20on%20page%20%2Fnotebooks/dp/05 America Put Option Pricing Model.html&body=Your%20issue%20content%20here."><button
-                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
-                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
-        
-    </div>
-</div>
-
-            <!-- Full screen (wrap in <a> to have style consistency -->
-
-<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
-        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
-        title="Fullscreen mode"><i
-            class="fas fa-expand"></i></button></a>
-
-            <!-- Launch buttons -->
-
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
-        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
-    <div class="dropdown-buttons">
-        
-        <a class="binder-button" href="https://mybinder.org/v2/gh/randall-romero/compecon/master?urlpath=lab/tree/notebooks/dp/05 America Put Option Pricing Model.ipynb"><button type="button"
-                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
-                data-placement="left"><img class="binder-button-logo"
-                    src="../../_static/images/logo_binder.svg"
-                    alt="Interact on binder">Binder</button></a>
-        
-        
-        
-        <a class="colab-button" href="https://colab.research.google.com/github/randall-romero/compecon/blob/master/notebooks/dp/05 America Put Option Pricing Model.ipynb"><button type="button" class="btn btn-secondary topbarbtn"
-                title="Launch Colab" data-toggle="tooltip" data-placement="left"><img class="colab-button-logo"
-                    src="../../_static/images/logo_colab.png"
-                    alt="Interact on Colab">Colab</button></a>
-        
-        
-    </div>
-</div>
-
-        </div>
-
-        <!-- Table of contents -->
-        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
-            
-            <div class="tocsection onthispage pt-5 pb-3">
-                <i class="fas fa-list"></i> Contents
+            <div class="navbar_extra_footer">
+            <a href="http://randall-romero.com">randall-romero.com</a>
             </div>
-            <nav id="bd-toc-nav" aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/randall-romero/compecon/master?urlpath=lab/tree/notebooks/dp/05 America Put Option Pricing Model.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://colab.research.google.com/github/randall-romero/compecon/blob/master/notebooks/dp/05 America Put Option Pricing Model.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Colab"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../../_static/images/logo_colab.png">
+  </span>
+<span class="headerbtn__text-container">Colab</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/randall-romero/compecon/"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/randall-romero/compecon//issues/new?title=Issue%20on%20page%20%2Fnotebooks/dp/05 America Put Option Pricing Model.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../../_sources/notebooks/dp/05 America Put Option Pricing Model.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
  <li class="toc-h1 nav-item toc-entry">
   <a class="reference internal nav-link" href="#">
    American Put Option Pricing Model
@@ -839,12 +968,11 @@ const thebe_selector_output = ".output, .cell_output"
  </li>
 </ul>
 
-            </nav>
-        </div>
-    </div>
+    </nav>
 </div>
-    <div id="main-content" class="row">
-        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
                 <h1>American Put Option Pricing Model</h1>
@@ -904,11 +1032,12 @@ const thebe_selector_output = ".output, .cell_output"
                     </div>
                 </div>
             </div>
-            
+            <main id="main-content" role="main">
+                
               <div>
                 
   <section class="tex2jax_ignore mathjax_ignore" id="american-put-option-pricing-model">
-<h1>American Put Option Pricing Model<a class="headerlink" href="#american-put-option-pricing-model" title="Permalink to this headline">¶</a></h1>
+<h1>American Put Option Pricing Model<a class="headerlink" href="#american-put-option-pricing-model" title="Permalink to this headline">#</a></h1>
 <p><strong>Randall Romero Aguilar, PhD</strong></p>
 <p>This demo is based on the original Matlab demo accompanying the  <a href="https://mitpress.mit.edu/books/applied-computational-economics-and-finance">Computational Economics and Finance</a> 2001 textbook by Mario Miranda and Paul Fackler.</p>
 <p>Original (Matlab) CompEcon file: <strong>demdp05.m</strong></p>
@@ -918,45 +1047,45 @@ const thebe_selector_output = ".output, .cell_output"
 </div>
 <p><i>Last updated: 2021-Oct-01</i></p>
 <hr><section id="about">
-<h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
+<h2>About<a class="headerlink" href="#about" title="Permalink to this headline">#</a></h2>
 <p>An American put option gives the holder the right, but not the obligation, to sell a specified quantity of a commodity at a specified strike price <span class="math notranslate nohighlight">\(K\)</span> on or before a specified expiration period <span class="math notranslate nohighlight">\(T\)</span>. In the discrete time, continuous state Black-Scholes option pricing model, the price of the commodity follows an exogenous continuous-valued Markov process</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9275e412-dbf9-4d1b-a056-e49fb0daf82b">
-<span class="eqno">(31)<a class="headerlink" href="#equation-9275e412-dbf9-4d1b-a056-e49fb0daf82b" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-360a1ee6-2b02-4d97-9c49-cb92802856f1">
+<span class="eqno">(31)<a class="headerlink" href="#equation-360a1ee6-2b02-4d97-9c49-cb92802856f1" title="Permalink to this equation">#</a></span>\[\begin{equation}
     P_{t+1} = h(P_t, \epsilon_{t+1})
 \end{equation}\]</div>
 <p><strong>What is the value of an American put option in period <span class="math notranslate nohighlight">\(t\)</span> if the commodity price is <span class="math notranslate nohighlight">\(P\)</span>?</strong> At what critical price is it optimal to exercise the put option, and how does this critical price vary over time?</p>
 <p>This is a finite horizon, stochastic model with time <span class="math notranslate nohighlight">\(t\)</span> measured in periods. The state variables</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2d67e6d9-ea45-48d4-beb6-f305adce5851">
-<span class="eqno">(32)<a class="headerlink" href="#equation-2d67e6d9-ea45-48d4-beb6-f305adce5851" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-a227f423-bdc4-481e-b945-676d1dd49916">
+<span class="eqno">(32)<a class="headerlink" href="#equation-a227f423-bdc4-481e-b945-676d1dd49916" title="Permalink to this equation">#</a></span>\[\begin{align}
     P &amp;\in (0,\infty) \\
     d &amp;\in \{0, 1\}
 \end{align}\]</div>
 <p>are the current commodity price, a continuous variable, and the exercise status of the option, a discrete variable that equals 1 if the option has been exercised previously and equals 0 otherwise. The action variable</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6906c440-b26d-4d63-8f55-89e768022689">
-<span class="eqno">(33)<a class="headerlink" href="#equation-6906c440-b26d-4d63-8f55-89e768022689" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-818f7600-e097-4e05-aa48-dddd1eef1bf4">
+<span class="eqno">(33)<a class="headerlink" href="#equation-818f7600-e097-4e05-aa48-dddd1eef1bf4" title="Permalink to this equation">#</a></span>\[\begin{equation}
     j \in \{0, 1\}
 \end{equation}\]</div>
 <p>is the exercise decision, a discrete variable that equals 1 if the option is exercised and equals 0 otherwise. The state transition function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-167c3409-bc25-43c3-885f-cd41d466714f">
-<span class="eqno">(34)<a class="headerlink" href="#equation-167c3409-bc25-43c3-885f-cd41d466714f" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3052d704-f063-4bcc-855d-59f0144daf81">
+<span class="eqno">(34)<a class="headerlink" href="#equation-3052d704-f063-4bcc-855d-59f0144daf81" title="Permalink to this equation">#</a></span>\[\begin{equation}
     g(P,d,j,\epsilon) = \left(h(P,\epsilon), j\right)
 \end{equation}\]</div>
 <p>The reward function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-af48fd70-9097-43f6-80d0-7a17610c07fa">
-<span class="eqno">(35)<a class="headerlink" href="#equation-af48fd70-9097-43f6-80d0-7a17610c07fa" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f7c3f6b1-bbb5-4515-ab97-93b24037ccd5">
+<span class="eqno">(35)<a class="headerlink" href="#equation-f7c3f6b1-bbb5-4515-ab97-93b24037ccd5" title="Permalink to this equation">#</a></span>\[\begin{equation}
     f(P,d,j) = \begin{cases}K − P, &amp;d = 0, j = 1 \\
     0, &amp;\text{otherwise} \end{cases}
 \end{equation}\]</div>
 <p>The value of an unexercised option in period <span class="math notranslate nohighlight">\(t\)</span>, given that the commodity price is <span class="math notranslate nohighlight">\(P\)</span>, satisfies the Bellman equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d5160a05-1fb3-4cc4-8fd7-b515c6a44b35">
-<span class="eqno">(36)<a class="headerlink" href="#equation-d5160a05-1fb3-4cc4-8fd7-b515c6a44b35" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9c10a86a-ec4a-442c-bdd5-b84bd1b50c16">
+<span class="eqno">(36)<a class="headerlink" href="#equation-9c10a86a-ec4a-442c-bdd5-b84bd1b50c16" title="Permalink to this equation">#</a></span>\[\begin{equation}
     V_t(P,0) = \max\left\{K − P, \quad\delta E_\epsilon V_{t+1}\left(h(P,\epsilon), 0\right)\right\}
 \end{equation}\]</div>
 <p>subject to the terminal condition <span class="math notranslate nohighlight">\(V_{T+1}(P,1) = 0\)</span>. The value of a previously exercised option is zero, regardless of the price of the commodity; that is, <span class="math notranslate nohighlight">\(V_t(P,1) = 0\)</span> for all <span class="math notranslate nohighlight">\(P\)</span> and <span class="math notranslate nohighlight">\(t\)</span>.</p>
 </section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="preliminary-tasks">
-<h1>Preliminary tasks<a class="headerlink" href="#preliminary-tasks" title="Permalink to this headline">¶</a></h1>
+<h1>Preliminary tasks<a class="headerlink" href="#preliminary-tasks" title="Permalink to this headline">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -967,10 +1096,10 @@ const thebe_selector_output = ".output, .cell_output"
 </div>
 </div>
 <section id="formulation">
-<h2>FORMULATION<a class="headerlink" href="#formulation" title="Permalink to this headline">¶</a></h2>
+<h2>FORMULATION<a class="headerlink" href="#formulation" title="Permalink to this headline">#</a></h2>
 <p>In what follows, we are going to solve the problem in term of the log-price, defining <span class="math notranslate nohighlight">\(p\equiv\log(P)\)</span>. We assume that log-price of the commodity follows a random walk:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-dcbe3a7e-9767-479d-bca1-407dfba8d2d4">
-<span class="eqno">(37)<a class="headerlink" href="#equation-dcbe3a7e-9767-479d-bca1-407dfba8d2d4" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-53f00467-4fb7-4b42-a408-8ea97bc1a2f0">
+<span class="eqno">(37)<a class="headerlink" href="#equation-53f00467-4fb7-4b42-a408-8ea97bc1a2f0" title="Permalink to this equation">#</a></span>\[\begin{equation}
     p_{t+1} = p_t + \epsilon_{t+1}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\epsilon\)</span> is a normal <span class="math notranslate nohighlight">\((\mu, \sigma^2)\)</span> shock. We discretize this distribution by using <code class="docutils literal notranslate"><span class="pre">qnwnorm</span></code>, assuming that <span class="math notranslate nohighlight">\(\mu=0.0001,\quad\sigma=0.008\)</span> and setting up <span class="math notranslate nohighlight">\(m=15\)</span> nodes.</p>
@@ -1028,7 +1157,7 @@ WARNING! Class Basis is still work in progress
 <p>In the last expression, by passing the option <code class="docutils literal notranslate"><span class="pre">l</span></code> with a one-element list we are telling the <code class="docutils literal notranslate"><span class="pre">BasisSpline</span></code> class that we a single function named “value”. On creation, the function will be set by default to <span class="math notranslate nohighlight">\(V(p)=0\)</span> for all values of <span class="math notranslate nohighlight">\(p\)</span>, which conveniently corresponds to the terminal condition of this problem.</p>
 </section>
 <section id="finding-the-critical-exercise-prices">
-<h2>Finding the critical exercise prices<a class="headerlink" href="#finding-the-critical-exercise-prices" title="Permalink to this headline">¶</a></h2>
+<h2>Finding the critical exercise prices<a class="headerlink" href="#finding-the-critical-exercise-prices" title="Permalink to this headline">#</a></h2>
 <p>We are going to find the prices recursively, starting form a option in the expiration date. Notice that the solution to this problem is trivial: since next-period value is zero, the exercise price is <span class="math notranslate nohighlight">\(K\)</span>. Either way, we can find it numerically by calling the <code class="docutils literal notranslate"><span class="pre">zero</span></code> method on the <code class="docutils literal notranslate"><span class="pre">f</span></code> object.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1053,7 +1182,7 @@ WARNING! Class Basis is still work in progress
 </div>
 </div>
 <section id="print-critical-exercise-price-300-periods-to-expiration">
-<h3>Print Critical Exercise Price 300 Periods to Expiration<a class="headerlink" href="#print-critical-exercise-price-300-periods-to-expiration" title="Permalink to this headline">¶</a></h3>
+<h3>Print Critical Exercise Price 300 Periods to Expiration<a class="headerlink" href="#print-critical-exercise-price-300-periods-to-expiration" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Critical Price  = </span><span class="si">%5.2f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">pcrit</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
@@ -1068,7 +1197,7 @@ WARNING! Class Basis is still work in progress
 </div>
 </section>
 <section id="plot-critical-exercise-prices">
-<h3>Plot Critical Exercise Prices<a class="headerlink" href="#plot-critical-exercise-prices" title="Permalink to this headline">¶</a></h3>
+<h3>Plot Critical Exercise Prices<a class="headerlink" href="#plot-critical-exercise-prices" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig1</span> <span class="o">=</span> <span class="n">demo</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="s1">&#39;American Put Option Optimal Exercise Boundary&#39;</span><span class="p">,</span>
@@ -1118,9 +1247,11 @@ WARNING! Class Basis is still work in progress
 
               </div>
               
-            
-                <!-- Previous / next buttons -->
-<div class='prev-next-area'> 
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
     <a class='left-prev' id="prev-link" href="04%20Job%20Search%20Model.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
@@ -1136,24 +1267,28 @@ WARNING! Class Basis is still work in progress
     <i class="fas fa-angle-right"></i>
     </a>
 </div>
-            
+            </footer>
         </div>
     </div>
-    <footer class="footer">
-  <p>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Randall Romero Aguilar<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
     
-      By Randall Romero Aguilar<br/>
-    
-        &copy; Copyright 2021.<br/>
-  </p>
-</footer>
-</main>
+</div>
 
 
       </div>
     </div>
   
-  <script src="../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
 
   </body>
 </html>
