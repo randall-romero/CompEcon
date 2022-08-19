@@ -934,15 +934,19 @@ title="Print to PDF"
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>!pip install compecon --upgrade
 </pre></div>
 </div>
-<p><i>Last updated: 2022-Ago-07</i></p>
+<p><i>Last updated: 2022-Ago-19</i></p>
 <hr><div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">numpy.linalg</span> <span class="kn">import</span> <span class="n">solve</span>
 <span class="kn">from</span> <span class="nn">scipy.sparse.linalg</span> <span class="kn">import</span> <span class="n">spsolve</span>
 <span class="kn">from</span> <span class="nn">timeit</span> <span class="kn">import</span> <span class="n">default_timer</span> <span class="k">as</span> <span class="n">timer</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">csc_matrix</span>
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn-dark&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn-talk&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -969,9 +973,10 @@ title="Print to PDF"
             <span class="n">AA</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
 <span class="n">nvalues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">30</span><span class="p">)</span>
-<span class="n">ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">nvalues</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">times</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">nvalues</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Using full matrix&#39;</span><span class="p">,</span><span class="s1">&#39;Using sparse matrix&#39;</span><span class="p">])</span>
+<span class="n">times</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;n&#39;</span>
 
-<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nvalues</span><span class="p">):</span>
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nvalues</span><span class="p">:</span>
     <span class="n">A</span> <span class="o">=</span> <span class="n">AA</span><span class="p">[:</span><span class="n">n</span><span class="p">,</span> <span class="p">:</span><span class="n">n</span><span class="p">]</span>
     <span class="n">b</span> <span class="o">=</span> <span class="n">bb</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span>
     <span class="n">tt</span> <span class="o">=</span> <span class="n">tic</span><span class="p">()</span>
@@ -986,7 +991,7 @@ title="Print to PDF"
         <span class="n">x</span> <span class="o">=</span> <span class="n">spsolve</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 
     <span class="n">toc2</span> <span class="o">=</span> <span class="n">toc</span><span class="p">(</span><span class="n">tt</span><span class="p">)</span>
-    <span class="n">ratio</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">toc2</span> <span class="o">/</span> <span class="n">toc1</span>
+    <span class="n">times</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">toc1</span><span class="p">,</span> <span class="n">toc2</span>
 </pre></div>
 </div>
 </div>
@@ -994,19 +999,229 @@ title="Print to PDF"
 <p>Plot effort ratio</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nvalues</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;n&#39;</span><span class="p">,</span>
-       <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Ratio&#39;</span><span class="p">,</span> 
-       <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Ratio of Sparse Solve Time to Full Solve Time&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">times</span><span class="p">[</span><span class="s1">&#39;Ratio&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="s1">&#39;Using sparse matrix&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">times</span><span class="p">[</span><span class="s1">&#39;Using full matrix&#39;</span><span class="p">]</span>
 
-<span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[[</span><span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">times</span><span class="p">[</span><span class="s1">&#39;Ratio&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Ratio&#39;</span><span class="p">,</span> 
+           <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Ratio of Sparse Solve Time to Full Solve Time&#39;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>           
+
+<span class="n">times</span><span class="p">[[</span><span class="s1">&#39;Using full matrix&#39;</span><span class="p">,</span> <span class="s1">&#39;Using sparse matrix&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;seconds&#39;</span><span class="p">,</span> 
+           <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Solve Time in seconds&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/03 Sparse linear equations_7_0.png" src="../../_images/03 Sparse linear equations_7_0.png" />
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Text(0, 0.5, &#39;seconds&#39;), Text(0.5, 1.0, &#39;Solve Time in seconds&#39;)]
+</pre></div>
 </div>
+<img alt="../../_images/03 Sparse linear equations_7_1.png" src="../../_images/03 Sparse linear equations_7_1.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">times</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Using full matrix</th>
+      <th>Using sparse matrix</th>
+      <th>Ratio</th>
+    </tr>
+    <tr>
+      <th>n</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>20</th>
+      <td>0.015677</td>
+      <td>0.012451</td>
+      <td>0.794241</td>
+    </tr>
+    <tr>
+      <th>50</th>
+      <td>0.008911</td>
+      <td>0.014726</td>
+      <td>1.652557</td>
+    </tr>
+    <tr>
+      <th>80</th>
+      <td>0.015079</td>
+      <td>0.015211</td>
+      <td>1.00878</td>
+    </tr>
+    <tr>
+      <th>110</th>
+      <td>0.02672</td>
+      <td>0.015222</td>
+      <td>0.569671</td>
+    </tr>
+    <tr>
+      <th>140</th>
+      <td>0.036531</td>
+      <td>0.018197</td>
+      <td>0.498118</td>
+    </tr>
+    <tr>
+      <th>170</th>
+      <td>0.05988</td>
+      <td>0.028821</td>
+      <td>0.481304</td>
+    </tr>
+    <tr>
+      <th>200</th>
+      <td>0.107153</td>
+      <td>0.03708</td>
+      <td>0.34605</td>
+    </tr>
+    <tr>
+      <th>230</th>
+      <td>0.141798</td>
+      <td>0.054089</td>
+      <td>0.381452</td>
+    </tr>
+    <tr>
+      <th>260</th>
+      <td>0.161393</td>
+      <td>0.064216</td>
+      <td>0.397887</td>
+    </tr>
+    <tr>
+      <th>290</th>
+      <td>0.212905</td>
+      <td>0.059762</td>
+      <td>0.2807</td>
+    </tr>
+    <tr>
+      <th>320</th>
+      <td>0.280219</td>
+      <td>0.064393</td>
+      <td>0.229795</td>
+    </tr>
+    <tr>
+      <th>350</th>
+      <td>0.327173</td>
+      <td>0.044081</td>
+      <td>0.134732</td>
+    </tr>
+    <tr>
+      <th>380</th>
+      <td>0.438411</td>
+      <td>0.071409</td>
+      <td>0.162882</td>
+    </tr>
+    <tr>
+      <th>410</th>
+      <td>0.759178</td>
+      <td>0.077416</td>
+      <td>0.101974</td>
+    </tr>
+    <tr>
+      <th>440</th>
+      <td>1.085809</td>
+      <td>0.112562</td>
+      <td>0.103666</td>
+    </tr>
+    <tr>
+      <th>470</th>
+      <td>1.588059</td>
+      <td>0.099183</td>
+      <td>0.062455</td>
+    </tr>
+    <tr>
+      <th>500</th>
+      <td>1.224117</td>
+      <td>0.0663</td>
+      <td>0.054161</td>
+    </tr>
+    <tr>
+      <th>530</th>
+      <td>1.322073</td>
+      <td>0.094321</td>
+      <td>0.071343</td>
+    </tr>
+    <tr>
+      <th>560</th>
+      <td>1.836372</td>
+      <td>0.142978</td>
+      <td>0.077859</td>
+    </tr>
+    <tr>
+      <th>590</th>
+      <td>1.965873</td>
+      <td>0.117131</td>
+      <td>0.059582</td>
+    </tr>
+    <tr>
+      <th>620</th>
+      <td>2.097353</td>
+      <td>0.1133</td>
+      <td>0.05402</td>
+    </tr>
+    <tr>
+      <th>650</th>
+      <td>2.547172</td>
+      <td>0.120363</td>
+      <td>0.047253</td>
+    </tr>
+    <tr>
+      <th>680</th>
+      <td>2.502875</td>
+      <td>0.079582</td>
+      <td>0.031796</td>
+    </tr>
+    <tr>
+      <th>710</th>
+      <td>2.881523</td>
+      <td>0.100067</td>
+      <td>0.034727</td>
+    </tr>
+    <tr>
+      <th>740</th>
+      <td>3.130402</td>
+      <td>0.148704</td>
+      <td>0.047503</td>
+    </tr>
+    <tr>
+      <th>770</th>
+      <td>3.491733</td>
+      <td>0.149018</td>
+      <td>0.042677</td>
+    </tr>
+    <tr>
+      <th>800</th>
+      <td>3.744745</td>
+      <td>0.121962</td>
+      <td>0.032569</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
 </section>
 
