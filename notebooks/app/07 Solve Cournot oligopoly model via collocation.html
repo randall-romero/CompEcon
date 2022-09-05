@@ -307,6 +307,11 @@ const thebe_selector_output = ".output, .cell_output"
      Spacial Equilibrium Model
     </a>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../slv/15%20Newton%20and%20Broyden%20paths.html">
+     Set Initial Value and Max Iterations
+    </a>
+   </li>
   </ul>
  </li>
  <li class="toctree-l1 has-children">
@@ -1091,16 +1096,16 @@ title="Print to PDF"
 <hr><section id="about">
 <h2>About<a class="headerlink" href="#about" title="Permalink to this headline">#</a></h2>
 <p>To illustrate implementation of the collocation method for implicit function problems, consider the example of Cournot oligopoly. In the standard microeconomic model of the firm, the firm maximizes profit by equating marginal revenue to marginal cost (MC). An oligopolistic firm, recognizing that its actions affect price, takes the marginal revenue to be <span class="math notranslate nohighlight">\(p + q\frac{dp}{dq}\)</span>, where <span class="math notranslate nohighlight">\(p\)</span> is price, <span class="math notranslate nohighlight">\(q\)</span> is quantity produced, and <span class="math notranslate nohighlight">\(\frac{dp}{dq}\)</span> is the marginal impact of output on market price. The Cournot assumption is that the firm acts as if any change in its output will be unmatched by its competitors. This implies that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4bda3d1b-f1a9-4882-8505-32e44bb7ea00">
-<span class="eqno">(6)<a class="headerlink" href="#equation-4bda3d1b-f1a9-4882-8505-32e44bb7ea00" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-737c3f32-c9dd-48b6-9fb0-47f819e5fb72">
+<span class="eqno">(5)<a class="headerlink" href="#equation-737c3f32-c9dd-48b6-9fb0-47f819e5fb72" title="Permalink to this equation">#</a></span>\[\begin{equation}
     \frac{dp}{dq} = \frac{1}{D'(p)}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(D(p)\)</span> is the market demand curve.</p>
 <p>Suppose we wish to derive the effective supply function for the firm, which specifies
 the quantity <span class="math notranslate nohighlight">\(q = S(p)\)</span> it will supply at any price. The firm’s effective supply function is
 characterized by the functional equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e772facc-264c-42c9-8ac3-d4bc0307ce32">
-<span class="eqno">(7)<a class="headerlink" href="#equation-e772facc-264c-42c9-8ac3-d4bc0307ce32" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a1d6056e-a5b5-4088-8639-d3cdea2cedee">
+<span class="eqno">(6)<a class="headerlink" href="#equation-a1d6056e-a5b5-4088-8639-d3cdea2cedee" title="Permalink to this equation">#</a></span>\[\begin{equation}
     p + \frac{S(p)}{D'(p)} - MC(S(p)) = 0
 \end{equation}\]</div>
 <p>for all positive prices <span class="math notranslate nohighlight">\(p\)</span>. In simple cases, this function can be found explicitly.  However,
@@ -1162,13 +1167,13 @@ in more complicated cases, no explicit solution exists.</p>
 <section id="residual-function">
 <h3>Residual function<a class="headerlink" href="#residual-function" title="Permalink to this headline">#</a></h3>
 <p>Suppose, for example, that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7996526e-5b8f-46c3-91e7-acdba489b968">
-<span class="eqno">(8)<a class="headerlink" href="#equation-7996526e-5b8f-46c3-91e7-acdba489b968" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b1e02b69-6d50-49fd-a621-ea657b939fd9">
+<span class="eqno">(7)<a class="headerlink" href="#equation-b1e02b69-6d50-49fd-a621-ea657b939fd9" title="Permalink to this equation">#</a></span>\[\begin{equation}
     D(p) = p^{-\eta} \quad\text{and}\quad MC(q) = \alpha\sqrt{q} + q^2
 \end{equation}\]</div>
 <p>Then the functional equation to be solved for S(p),</p>
-<div class="amsmath math notranslate nohighlight" id="equation-df6a51e8-7847-4247-80a8-2c92d6027070">
-<span class="eqno">(9)<a class="headerlink" href="#equation-df6a51e8-7847-4247-80a8-2c92d6027070" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-11d37358-7333-4664-9e68-7284a57bf88f">
+<span class="eqno">(8)<a class="headerlink" href="#equation-11d37358-7333-4664-9e68-7284a57bf88f" title="Permalink to this equation">#</a></span>\[\begin{equation}
  \left[p - \frac{S(p)p^{\eta+1}}{\eta}\right] -\left[\alpha\sqrt{S(p)} + S(p)^2\right] = 0
 \end{equation}\]</div>
 <p>has no known closed-form solution.</p>

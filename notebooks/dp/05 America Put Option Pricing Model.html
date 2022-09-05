@@ -307,6 +307,11 @@ const thebe_selector_output = ".output, .cell_output"
      Spacial Equilibrium Model
     </a>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../slv/15%20Newton%20and%20Broyden%20paths.html">
+     Set Initial Value and Max Iterations
+    </a>
+   </li>
   </ul>
  </li>
  <li class="toctree-l1 has-children">
@@ -1049,36 +1054,36 @@ title="Print to PDF"
 <hr><section id="about">
 <h2>About<a class="headerlink" href="#about" title="Permalink to this headline">#</a></h2>
 <p>An American put option gives the holder the right, but not the obligation, to sell a specified quantity of a commodity at a specified strike price <span class="math notranslate nohighlight">\(K\)</span> on or before a specified expiration period <span class="math notranslate nohighlight">\(T\)</span>. In the discrete time, continuous state Black-Scholes option pricing model, the price of the commodity follows an exogenous continuous-valued Markov process</p>
-<div class="amsmath math notranslate nohighlight" id="equation-360a1ee6-2b02-4d97-9c49-cb92802856f1">
-<span class="eqno">(31)<a class="headerlink" href="#equation-360a1ee6-2b02-4d97-9c49-cb92802856f1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-08cd4142-af08-48a6-ac52-3cea17214275">
+<span class="eqno">(30)<a class="headerlink" href="#equation-08cd4142-af08-48a6-ac52-3cea17214275" title="Permalink to this equation">#</a></span>\[\begin{equation}
     P_{t+1} = h(P_t, \epsilon_{t+1})
 \end{equation}\]</div>
 <p><strong>What is the value of an American put option in period <span class="math notranslate nohighlight">\(t\)</span> if the commodity price is <span class="math notranslate nohighlight">\(P\)</span>?</strong> At what critical price is it optimal to exercise the put option, and how does this critical price vary over time?</p>
 <p>This is a finite horizon, stochastic model with time <span class="math notranslate nohighlight">\(t\)</span> measured in periods. The state variables</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a227f423-bdc4-481e-b945-676d1dd49916">
-<span class="eqno">(32)<a class="headerlink" href="#equation-a227f423-bdc4-481e-b945-676d1dd49916" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-4040e281-feb9-4562-89ef-2c86829e9b58">
+<span class="eqno">(31)<a class="headerlink" href="#equation-4040e281-feb9-4562-89ef-2c86829e9b58" title="Permalink to this equation">#</a></span>\[\begin{align}
     P &amp;\in (0,\infty) \\
     d &amp;\in \{0, 1\}
 \end{align}\]</div>
 <p>are the current commodity price, a continuous variable, and the exercise status of the option, a discrete variable that equals 1 if the option has been exercised previously and equals 0 otherwise. The action variable</p>
-<div class="amsmath math notranslate nohighlight" id="equation-818f7600-e097-4e05-aa48-dddd1eef1bf4">
-<span class="eqno">(33)<a class="headerlink" href="#equation-818f7600-e097-4e05-aa48-dddd1eef1bf4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ef01d36c-1efa-4cec-950d-649c5303a8c6">
+<span class="eqno">(32)<a class="headerlink" href="#equation-ef01d36c-1efa-4cec-950d-649c5303a8c6" title="Permalink to this equation">#</a></span>\[\begin{equation}
     j \in \{0, 1\}
 \end{equation}\]</div>
 <p>is the exercise decision, a discrete variable that equals 1 if the option is exercised and equals 0 otherwise. The state transition function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3052d704-f063-4bcc-855d-59f0144daf81">
-<span class="eqno">(34)<a class="headerlink" href="#equation-3052d704-f063-4bcc-855d-59f0144daf81" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-84d7b7dc-9153-49c8-a33f-6a4a8387a44c">
+<span class="eqno">(33)<a class="headerlink" href="#equation-84d7b7dc-9153-49c8-a33f-6a4a8387a44c" title="Permalink to this equation">#</a></span>\[\begin{equation}
     g(P,d,j,\epsilon) = \left(h(P,\epsilon), j\right)
 \end{equation}\]</div>
 <p>The reward function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f7c3f6b1-bbb5-4515-ab97-93b24037ccd5">
-<span class="eqno">(35)<a class="headerlink" href="#equation-f7c3f6b1-bbb5-4515-ab97-93b24037ccd5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-096f147d-ebac-47ee-856c-ca1f0fa9e805">
+<span class="eqno">(34)<a class="headerlink" href="#equation-096f147d-ebac-47ee-856c-ca1f0fa9e805" title="Permalink to this equation">#</a></span>\[\begin{equation}
     f(P,d,j) = \begin{cases}K − P, &amp;d = 0, j = 1 \\
     0, &amp;\text{otherwise} \end{cases}
 \end{equation}\]</div>
 <p>The value of an unexercised option in period <span class="math notranslate nohighlight">\(t\)</span>, given that the commodity price is <span class="math notranslate nohighlight">\(P\)</span>, satisfies the Bellman equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9c10a86a-ec4a-442c-bdd5-b84bd1b50c16">
-<span class="eqno">(36)<a class="headerlink" href="#equation-9c10a86a-ec4a-442c-bdd5-b84bd1b50c16" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a999c1b9-a4ea-417c-80c3-f97c32a9d052">
+<span class="eqno">(35)<a class="headerlink" href="#equation-a999c1b9-a4ea-417c-80c3-f97c32a9d052" title="Permalink to this equation">#</a></span>\[\begin{equation}
     V_t(P,0) = \max\left\{K − P, \quad\delta E_\epsilon V_{t+1}\left(h(P,\epsilon), 0\right)\right\}
 \end{equation}\]</div>
 <p>subject to the terminal condition <span class="math notranslate nohighlight">\(V_{T+1}(P,1) = 0\)</span>. The value of a previously exercised option is zero, regardless of the price of the commodity; that is, <span class="math notranslate nohighlight">\(V_t(P,1) = 0\)</span> for all <span class="math notranslate nohighlight">\(P\)</span> and <span class="math notranslate nohighlight">\(t\)</span>.</p>
@@ -1098,8 +1103,8 @@ title="Print to PDF"
 <section id="formulation">
 <h2>FORMULATION<a class="headerlink" href="#formulation" title="Permalink to this headline">#</a></h2>
 <p>In what follows, we are going to solve the problem in term of the log-price, defining <span class="math notranslate nohighlight">\(p\equiv\log(P)\)</span>. We assume that log-price of the commodity follows a random walk:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-53f00467-4fb7-4b42-a408-8ea97bc1a2f0">
-<span class="eqno">(37)<a class="headerlink" href="#equation-53f00467-4fb7-4b42-a408-8ea97bc1a2f0" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-27341c33-67b9-485a-a17c-13c981270d22">
+<span class="eqno">(36)<a class="headerlink" href="#equation-27341c33-67b9-485a-a17c-13c981270d22" title="Permalink to this equation">#</a></span>\[\begin{equation}
     p_{t+1} = p_t + \epsilon_{t+1}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\epsilon\)</span> is a normal <span class="math notranslate nohighlight">\((\mu, \sigma^2)\)</span> shock. We discretize this distribution by using <code class="docutils literal notranslate"><span class="pre">qnwnorm</span></code>, assuming that <span class="math notranslate nohighlight">\(\mu=0.0001,\quad\sigma=0.008\)</span> and setting up <span class="math notranslate nohighlight">\(m=15\)</span> nodes.</p>

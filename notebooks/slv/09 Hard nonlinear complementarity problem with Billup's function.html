@@ -307,6 +307,11 @@ const thebe_selector_output = ".output, .cell_output"
      Spacial Equilibrium Model
     </a>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="15%20Newton%20and%20Broyden%20paths.html">
+     Set Initial Value and Max Iterations
+    </a>
+   </li>
   </ul>
  </li>
  <li class="toctree-l1 has-children">
@@ -1037,7 +1042,7 @@ title="Print to PDF"
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>!pip install compecon --upgrade
 </pre></div>
 </div>
-<p><i>Last updated: 2021-Oct-01</i></p>
+<p><i>Last updated: 2022-Sept-05</i></p>
 <hr>
 <section id="about">
 <h2>About<a class="headerlink" href="#about" title="Permalink to this headline">#</a></h2>
@@ -1049,6 +1054,7 @@ where \)</span>x \geq 0<span class="math notranslate nohighlight">\(. Notice tha
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">numpy.linalg</span> <span class="kn">import</span> <span class="n">norm</span>
 <span class="kn">from</span> <span class="nn">compecon</span> <span class="kn">import</span> <span class="n">MCP</span><span class="p">,</span> <span class="n">tic</span><span class="p">,</span> <span class="n">toc</span><span class="p">,</span> <span class="n">nodeunif</span>
@@ -1100,8 +1106,9 @@ Initial guess is <span class="math notranslate nohighlight">\(x=0\)</span></p></
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">t1</span> <span class="o">=</span> <span class="n">tic</span><span class="p">()</span>
-<span class="n">x1</span> <span class="o">=</span> <span class="n">Billups</span><span class="o">.</span><span class="n">zero</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="s1">&#39;minmax&#39;</span><span class="p">)</span>
+<span class="n">x1</span> <span class="o">=</span> <span class="n">Billups</span><span class="o">.</span><span class="n">newton</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="s1">&#39;minmax&#39;</span><span class="p">)</span>
 <span class="n">t1</span> <span class="o">=</span> <span class="mi">100</span><span class="o">*</span><span class="n">toc</span><span class="p">(</span><span class="n">t1</span><span class="p">)</span>
+<span class="n">n1</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">Billups</span><span class="o">.</span><span class="n">minmax</span><span class="p">(</span><span class="n">x1</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -1112,8 +1119,9 @@ Initial guess is <span class="math notranslate nohighlight">\(x=0\)</span></p></
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">t2</span> <span class="o">=</span> <span class="n">tic</span><span class="p">()</span>
-<span class="n">x2</span> <span class="o">=</span> <span class="n">Billups</span><span class="o">.</span><span class="n">zero</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="s1">&#39;ssmooth&#39;</span><span class="p">)</span>
+<span class="n">x2</span> <span class="o">=</span> <span class="n">Billups</span><span class="o">.</span><span class="n">newton</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="s1">&#39;ssmooth&#39;</span><span class="p">)</span>
 <span class="n">t2</span> <span class="o">=</span> <span class="mi">100</span><span class="o">*</span><span class="n">toc</span><span class="p">(</span><span class="n">t2</span><span class="p">)</span>
+<span class="n">n2</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">Billups</span><span class="o">.</span><span class="n">minmax</span><span class="p">(</span><span class="n">x2</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -1124,24 +1132,50 @@ Initial guess is <span class="math notranslate nohighlight">\(x=0\)</span></p></
 <p>Hundreds of seconds required to solve hard nonlinear complementarity problem using Newton minmax and semismooth formulations</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">frm</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:17}</span><span class="s1"> </span><span class="si">{:6.3f}</span><span class="s1"> </span><span class="si">{:8.1e}</span><span class="s1"> </span><span class="si">{:&gt;10.6f}</span><span class="s1">&#39;</span>
-<span class="n">prt</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">d</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span><span class="n">x</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="n">frm</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span><span class="n">norm</span><span class="p">(</span><span class="n">Billups</span><span class="o">.</span><span class="n">minmax</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="o">*</span><span class="n">x</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span>
+    <span class="p">[(</span><span class="s1">&#39;Newton minmax&#39;</span><span class="p">,</span><span class="n">t1</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">x1</span><span class="p">),</span> 
+     <span class="p">(</span><span class="s1">&#39;Newton semismooth&#39;</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">n2</span><span class="p">,</span> <span class="n">x2</span><span class="p">)],</span>
+    <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Algorithm&#39;</span><span class="p">,</span> <span class="s1">&#39;Time&#39;</span><span class="p">,</span> <span class="s1">&#39;Norm&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">]</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;Algorithm&#39;</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:17}</span><span class="s1"> </span><span class="si">{:^6}</span><span class="s1"> </span><span class="si">{:^8}</span><span class="s1"> </span><span class="si">{:^10}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;Algorithm&#39;</span><span class="p">,</span><span class="s1">&#39;Time&#39;</span><span class="p">,</span><span class="s1">&#39;Norm&#39;</span><span class="p">,</span><span class="s1">&#39;x&#39;</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="mi">44</span><span class="p">)</span>
-<span class="n">prt</span><span class="p">(</span><span class="s1">&#39;Newton minmax&#39;</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">x1</span><span class="p">)</span>
-<span class="n">prt</span><span class="p">(</span><span class="s1">&#39;Newton semismooth&#39;</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">x2</span><span class="p">)</span>
+<span class="n">results</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Algorithm          Time    Norm       x     
---------------------------------------------
-Newton minmax      4.391  1.0e-02   0.000000
-Newton semismooth  7.281  1.0e-02   0.000000
-</pre></div>
-</div>
-</div>
+<div class="output text_html"><style type="text/css">
+</style>
+<table id="T_f6a80">
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_f6a80_level0_col0" class="col_heading level0 col0" >Time</th>
+      <th id="T_f6a80_level0_col1" class="col_heading level0 col1" >Norm</th>
+      <th id="T_f6a80_level0_col2" class="col_heading level0 col2" >x</th>
+    </tr>
+    <tr>
+      <th class="index_name level0" >Algorithm</th>
+      <th class="blank col0" >&nbsp;</th>
+      <th class="blank col1" >&nbsp;</th>
+      <th class="blank col2" >&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_f6a80_level0_row0" class="row_heading level0 row0" >Newton minmax</th>
+      <td id="T_f6a80_row0_col0" class="data row0 col0" >15.495</td>
+      <td id="T_f6a80_row0_col1" class="data row0 col1" >0.010000</td>
+      <td id="T_f6a80_row0_col2" class="data row0 col2" >0.000</td>
+    </tr>
+    <tr>
+      <th id="T_f6a80_level0_row1" class="row_heading level0 row1" >Newton semismooth</th>
+      <td id="T_f6a80_row1_col0" class="data row1 col0" >9.697</td>
+      <td id="T_f6a80_row1_col1" class="data row1 col1" >0.010000</td>
+      <td id="T_f6a80_row1_col2" class="data row1 col2" >0.000</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
 </div>
 </section>
 <section id="plot-results">

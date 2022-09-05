@@ -307,6 +307,11 @@ const thebe_selector_output = ".output, .cell_output"
      Spacial Equilibrium Model
     </a>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="15%20Newton%20and%20Broyden%20paths.html">
+     Set Initial Value and Max Iterations
+    </a>
+   </li>
   </ul>
  </li>
  <li class="toctree-l1 has-children">
@@ -1047,24 +1052,23 @@ title="Print to PDF"
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>!pip install compecon --upgrade
 </pre></div>
 </div>
-<p><i>Last updated: 2021-Oct-01</i></p>
+<p><i>Last updated: 2022-Sept-04</i></p>
 <hr>
 <section id="about">
 <h2>About<a class="headerlink" href="#about" title="Permalink to this headline">#</a></h2>
 <p>Solve nonlinear complementarity problem on <span class="math notranslate nohighlight">\(R^2\)</span> using semismooth and minmax methods.</p>
 <p>Function to be solved is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-67a9769b-fd5e-42e9-bd45-e27b9a931d81">
-<span class="eqno">(3)<a class="headerlink" href="#equation-67a9769b-fd5e-42e9-bd45-e27b9a931d81" title="Permalink to this equation">#</a></span>\[\begin{equation}
-f(x,y) = \begin{bmatrix} 
-200x(y - x^2) + 1 - x \\ 100(x^2 - y)
-\end{bmatrix}
-\end{equation}\]</div>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+f(x,y) = \begin{bmatrix} 200x(y - x^2) + 1 - x\\100(x^2 - y)\end{bmatrix}
+\end{equation*}\]</div>
 <section id="set-up-the-problem">
 <h3>Set up the problem<a class="headerlink" href="#set-up-the-problem" title="Permalink to this headline">#</a></h3>
 <p>The class <strong>MCP</strong> is used to represent mixed-complementarity problems. To create one instance, we define the objective function and the boundaries <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span> such that for <span class="math notranslate nohighlight">\(a \leq x \leq b\)</span>. Apart from the required parameters, we can specify options to be used when solving the problem.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">compecon</span> <span class="kn">import</span> <span class="n">MCP</span><span class="p">,</span> <span class="n">tic</span><span class="p">,</span> <span class="n">toc</span>
 </pre></div>
 </div>
@@ -1074,10 +1078,10 @@ f(x,y) = \begin{bmatrix}
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">z</span>
-    <span class="n">fval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">200</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="p">,</span>
-                     <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">y</span><span class="p">)])</span>
-    <span class="n">fjac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">200</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">400</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">200</span> <span class="o">*</span> <span class="n">x</span><span class="p">],</span>
-                         <span class="p">[</span><span class="mi">200</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="mi">100</span><span class="p">]])</span>
+    <span class="n">fval</span> <span class="o">=</span> <span class="p">[</span><span class="mi">200</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="p">,</span>
+            <span class="mi">100</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">y</span><span class="p">)]</span>
+    <span class="n">fjac</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">200</span><span class="o">*</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">400</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">200</span><span class="o">*</span><span class="n">x</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">200</span><span class="o">*</span><span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="mi">100</span><span class="p">]]</span>
 
     <span class="k">return</span> <span class="n">fval</span><span class="p">,</span> <span class="n">fjac</span>
 </pre></div>
@@ -1114,7 +1118,8 @@ f(x,y) = \begin{bmatrix}
 <h3>Check the Jacobian<a class="headerlink" href="#check-the-jacobian" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">F</span><span class="o">.</span><span class="n">check_jacobian</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">F</span><span class="o">.</span><span class="n">user_provides_jacobian</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">F</span><span class="o">.</span><span class="n">check_jacobian</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -1122,7 +1127,7 @@ f(x,y) = \begin{bmatrix}
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>All numerical derivatives differ from
 the user-provided ones by less than 8 decimal digits.
 
-The maximum error is 7.32e-09, for row 0 and column 0.
+The maximum error is 7.30e-09, for row 0 and column 0.
 </pre></div>
 </div>
 </div>
@@ -1133,7 +1138,7 @@ The maximum error is 7.32e-09, for row 0 and column 0.
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">t0</span> <span class="o">=</span> <span class="n">tic</span><span class="p">()</span>
-<span class="n">x1</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">zero</span><span class="p">(</span><span class="n">transform</span><span class="o">=</span><span class="s1">&#39;minmax&#39;</span><span class="p">)</span>
+<span class="n">x1</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">newton</span><span class="p">(</span><span class="n">transform</span><span class="o">=</span><span class="s1">&#39;minmax&#39;</span><span class="p">)</span>
 <span class="n">t1</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">toc</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
 <span class="n">n1</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">fnorm</span>
 </pre></div>
@@ -1146,7 +1151,7 @@ The maximum error is 7.32e-09, for row 0 and column 0.
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">t0</span> <span class="o">=</span> <span class="n">tic</span><span class="p">()</span>
-<span class="n">x2</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">zero</span><span class="p">(</span><span class="n">transform</span><span class="o">=</span><span class="s1">&#39;ssmooth&#39;</span><span class="p">)</span>
+<span class="n">x2</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">newton</span><span class="p">(</span><span class="n">transform</span><span class="o">=</span><span class="s1">&#39;ssmooth&#39;</span><span class="p">)</span>
 <span class="n">t2</span> <span class="o">=</span> <span class="mi">100</span><span class="o">*</span><span class="n">toc</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
 <span class="n">n2</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">fnorm</span>
 </pre></div>
@@ -1158,19 +1163,21 @@ The maximum error is 7.32e-09, for row 0 and column 0.
 <h3>Print results<a class="headerlink" href="#print-results" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hdr</span> <span class="o">=</span> <span class="s1">&#39;Hundreds of seconds required to solve nonlinear complementarity </span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>\
-      <span class="s1">&#39;problem on R^2 using minmax and semismooth formulations, with </span><span class="se">\n</span><span class="s1">&#39;</span>  <span class="o">+</span>\
-      <span class="s1">&#39;randomly generated bounds </span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>\
-      <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">a = [</span><span class="si">{:4.2f}</span><span class="s1">, </span><span class="si">{:4.2f}</span><span class="s1">] </span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> \
-      <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">b = [</span><span class="si">{:4.2f}</span><span class="s1">, </span><span class="si">{:4.2f}</span><span class="s1">]&#39;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span>
+    <span class="s1">&#39;Hundreds of seconds required to solve nonlinear complementarity </span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>
+    <span class="s1">&#39;problem on R^2 using minmax and semismooth formulations, with </span><span class="se">\n</span><span class="s1">&#39;</span>  <span class="o">+</span>
+    <span class="s1">&#39;randomly generated bounds </span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>
+    <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">a = [</span><span class="si">{</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">4.2f</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s1">4.2f</span><span class="si">}</span><span class="s1">] </span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> 
+    <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">b = [</span><span class="si">{</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">4.2f</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s1">4.2f</span><span class="si">}</span><span class="s1">]&#39;</span>
+    <span class="p">)</span>
 
-<span class="n">frm</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:20}</span><span class="s1"> </span><span class="si">{:6.3f}</span><span class="s1">  </span><span class="si">{:8.0e}</span><span class="s1">     </span><span class="si">{:5.2f}</span><span class="s1">  </span><span class="si">{:5.2f}</span><span class="s1">&#39;</span>
-<span class="n">prt</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">method</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="n">frm</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="o">*</span><span class="n">x</span><span class="p">))</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span>
+    <span class="p">[(</span><span class="s1">&#39;Newton minmax&#39;</span><span class="p">,</span><span class="n">t1</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="o">*</span><span class="n">x1</span><span class="p">),</span> 
+     <span class="p">(</span><span class="s1">&#39;Newton semismooth&#39;</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">n2</span><span class="p">,</span> <span class="o">*</span><span class="n">x2</span><span class="p">)],</span>
+    <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Algorithm&#39;</span><span class="p">,</span> <span class="s1">&#39;Time&#39;</span><span class="p">,</span> <span class="s1">&#39;Norm&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;x2&#39;</span><span class="p">]</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;Algorithm&#39;</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">hdr</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Algorithm           Time      Norm        x1     x2</span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="mi">56</span><span class="p">));</span>
-<span class="n">prt</span><span class="p">(</span><span class="s1">&#39;Newton minmax&#39;</span><span class="p">,</span>     <span class="n">t1</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">x1</span><span class="p">)</span>
-<span class="n">prt</span><span class="p">(</span><span class="s1">&#39;Newton semismooth&#39;</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">n2</span><span class="p">,</span> <span class="n">x2</span><span class="p">)</span>
+<span class="n">results</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;x2&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -1178,16 +1185,47 @@ The maximum error is 7.32e-09, for row 0 and column 0.
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Hundreds of seconds required to solve nonlinear complementarity 
 problem on R^2 using minmax and semismooth formulations, with 
 randomly generated bounds 
-	a = [-0.35, -1.15] 
-	b = [1.75, 1.80]
-
-Algorithm           Time      Norm        x1     x2
---------------------------------------------------------
-Newton minmax         1.300     9e-13      1.00   1.00
-Newton semismooth     9.175     1e-11      1.00   1.00
+	a = [2.08, -0.08] 
+	b = [4.60, 4.42]
 </pre></div>
 </div>
-</div>
+<div class="output text_html"><style type="text/css">
+</style>
+<table id="T_fccd6">
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_fccd6_level0_col0" class="col_heading level0 col0" >Time</th>
+      <th id="T_fccd6_level0_col1" class="col_heading level0 col1" >Norm</th>
+      <th id="T_fccd6_level0_col2" class="col_heading level0 col2" >x1</th>
+      <th id="T_fccd6_level0_col3" class="col_heading level0 col3" >x2</th>
+    </tr>
+    <tr>
+      <th class="index_name level0" >Algorithm</th>
+      <th class="blank col0" >&nbsp;</th>
+      <th class="blank col1" >&nbsp;</th>
+      <th class="blank col2" >&nbsp;</th>
+      <th class="blank col3" >&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_fccd6_level0_row0" class="row_heading level0 row0" >Newton minmax</th>
+      <td id="T_fccd6_row0_col0" class="data row0 col0" >1.100</td>
+      <td id="T_fccd6_row0_col1" class="data row0 col1" >0.000000</td>
+      <td id="T_fccd6_row0_col2" class="data row0 col2" >2.083</td>
+      <td id="T_fccd6_row0_col3" class="data row0 col3" >4.337</td>
+    </tr>
+    <tr>
+      <th id="T_fccd6_level0_row1" class="row_heading level0 row1" >Newton semismooth</th>
+      <td id="T_fccd6_row1_col0" class="data row1 col0" >0.500</td>
+      <td id="T_fccd6_row1_col1" class="data row1 col1" >0.000000</td>
+      <td id="T_fccd6_row1_col2" class="data row1 col2" >2.083</td>
+      <td id="T_fccd6_row1_col3" class="data row1 col3" >4.337</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
 </div>
 </section>
 </section>

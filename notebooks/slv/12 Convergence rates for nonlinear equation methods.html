@@ -307,6 +307,11 @@ const thebe_selector_output = ".output, .cell_output"
      Spacial Equilibrium Model
     </a>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="15%20Newton%20and%20Broyden%20paths.html">
+     Set Initial Value and Max Iterations
+    </a>
+   </li>
   </ul>
  </li>
  <li class="toctree-l1 has-children">
@@ -1041,7 +1046,7 @@ title="Print to PDF"
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>!pip install compecon --upgrade
 </pre></div>
 </div>
-<p><i>Last updated: 2021-Oct-01</i></p>
+<p><i>Last updated: 2022-Sept-05</i></p>
 <hr>
 <section id="about">
 <h2>About<a class="headerlink" href="#about" title="Permalink to this headline">#</a></h2>
@@ -1078,7 +1083,7 @@ $<span class="math notranslate nohighlight">\(f(x) = \exp(x) - 1\)</span>$</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">newton</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>
-<span class="n">err_newton</span> <span class="o">=</span> <span class="n">err</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">x_sequence</span><span class="p">)</span>
+<span class="n">err_newton</span> <span class="o">=</span> <span class="n">err</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">x_sequence</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1089,7 +1094,7 @@ $<span class="math notranslate nohighlight">\(f(x) = \exp(x) - 1\)</span>$</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">broyden</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>
-<span class="n">err_broyden</span> <span class="o">=</span> <span class="n">err</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">x_sequence</span><span class="p">)</span>
+<span class="n">err_broyden</span> <span class="o">=</span> <span class="n">err</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">x_sequence</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1101,7 +1106,7 @@ $<span class="math notranslate nohighlight">\(f(x) = \exp(x) - 1\)</span>$</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">funcit</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>
-<span class="n">err_funcit</span> <span class="o">=</span> <span class="n">err</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">x_sequence</span><span class="p">)</span>
+<span class="n">err_funcit</span> <span class="o">=</span> <span class="n">err</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">x_sequence</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

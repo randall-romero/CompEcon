@@ -307,6 +307,11 @@ const thebe_selector_output = ".output, .cell_output"
      Spacial Equilibrium Model
     </a>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="15%20Newton%20and%20Broyden%20paths.html">
+     Set Initial Value and Max Iterations
+    </a>
+   </li>
   </ul>
  </li>
  <li class="toctree-l1 has-children">
@@ -1027,13 +1032,13 @@ title="Print to PDF"
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>!pip install compecon --upgrade
 </pre></div>
 </div>
-<p><i>Last updated: 2021-Oct-01</i></p>
+<p><i>Last updated: 2022-Sept-04</i></p>
 <hr>
 <section id="about">
 <h2>About<a class="headerlink" href="#about" title="Permalink to this headline">#</a></h2>
 <p>Compute root of</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9c994f59-2560-4f95-b18a-09c9cc26496f">
-<span class="eqno">(1)<a class="headerlink" href="#equation-9c994f59-2560-4f95-b18a-09c9cc26496f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-02059565-54ee-411b-9c05-c8010837da96">
+<span class="eqno">(1)<a class="headerlink" href="#equation-02059565-54ee-411b-9c05-c8010837da96" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f(x_1,x_2)= \begin{bmatrix}200x_1(x_2-x_1^2) + 1-x_1 \\ 100(x_1^2-x_2)\end{bmatrix}
 \end{equation}\]</div>
 <p>using Newton and Broyden methods. Initial values generated randomly.  True root is <span class="math notranslate nohighlight">\(x_1=1, \quad x_2=1\)</span>.</p>
@@ -1055,7 +1060,7 @@ f(x_1,x_2)= \begin{bmatrix}200x_1(x_2-x_1^2) + 1-x_1 \\ 100(x_1^2-x_2)\end{bmatr
     <span class="n">fval</span> <span class="o">=</span> <span class="p">[</span><span class="mi">200</span> <span class="o">*</span> <span class="n">x1</span> <span class="o">*</span> <span class="p">(</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">x1</span><span class="p">,</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">x1</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">x2</span><span class="p">)]</span>
     <span class="n">fjac</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">200</span> <span class="o">*</span> <span class="p">(</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">400</span> <span class="o">*</span> <span class="n">x1</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">200</span> <span class="o">*</span> <span class="n">x1</span><span class="p">],</span>
             <span class="p">[</span><span class="mi">200</span> <span class="o">*</span> <span class="n">x1</span><span class="p">,</span> <span class="o">-</span><span class="mi">100</span><span class="p">]]</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fval</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fjac</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fval</span><span class="p">,</span> <span class="n">fjac</span>
 
 <span class="n">problem</span> <span class="o">=</span> <span class="n">NLP</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 </pre></div>
@@ -1120,7 +1125,7 @@ f(x_1,x_2)= \begin{bmatrix}200x_1(x_2-x_1^2) + 1-x_1 \\ 100(x_1^2-x_2)\end{bmatr
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Hundreds of seconds required to compute root of Rosencrantz function
 f(x1,x2)= [200*x1*(x2-x1^2)+1-x1;100*(x1^2-x2)] via Newton and Broyden
-methods, starting at x1 = -2.23 x2 = 0.22
+methods, starting at x1 = -1.66 x2 = -0.22
 </pre></div>
 </div>
 <div class="output text_html"><div>
@@ -1150,17 +1155,17 @@ methods, starting at x1 = -2.23 x2 = 0.22
   <tbody>
     <tr>
       <th>Newton</th>
-      <td>2.393651</td>
-      <td>3.247047</td>
-      <td>-1.954572</td>
-      <td>3.819604</td>
+      <td>4.298520</td>
+      <td>2.581214</td>
+      <td>-1.427721</td>
+      <td>2.037849</td>
     </tr>
     <tr>
       <th>Broyden</th>
-      <td>2.792525</td>
-      <td>4.312936</td>
-      <td>-1.791739</td>
-      <td>3.206084</td>
+      <td>7.571697</td>
+      <td>3.257524</td>
+      <td>-1.132487</td>
+      <td>1.277559</td>
     </tr>
   </tbody>
 </table>

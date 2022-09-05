@@ -1,0 +1,1341 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Set Initial Value and Max Iterations &#8212; A Python Implementation of CompEcon</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="canonical" href="https://randall-romero.github.io/compecon/notebooks/slv/15 Newton and Broyden paths.html" />
+    <link rel="shortcut icon" href="../../_static/r2-logo-icon.png"/>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Finite-Dimensional Optimization" href="../opt/chapter05.html" />
+    <link rel="prev" title="Spacial Equilibrium Model" href="14%20Spacial%20Equilibrium%20Model.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en">
+    
+
+    <!-- Google Analytics -->
+    
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
+<script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', '289398777', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../_static/r2-logo.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">A Python Implementation of CompEcon</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../about.html">
+                    A Python Implementation of CompEcon
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  About this book
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../interacting.html">
+   Interacting with this website
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Demos
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../intro/chapter01.html">
+   Introduction
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../intro/01%20Inverse%20Demand%20Problem.html">
+     Inverse Demand Problem
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../intro/02%20Rational%20Expectations%20Agricultural%20Market%20Model.html">
+     Rational Expectations Agricultural Market Model
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../math/chapter02.html">
+   Mathematics Review
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../math/01%20Taylor%20Approximations.html">
+     Taylor Approximations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../math/02%20Computing%20Function%20Inner%20Products%2C%20Norms%2C%20and%20Metrics.html">
+     Computing Function Inner Products, Norms &amp; Metrics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../math/03%20Major%20Distribution%20CDFs%20and%20PDFs.html">
+     Major Distribution CDFs and PDFs
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../lin/chapter03.html">
+   Linear Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../lin/01%20Solving%20linear%20equations%20by%20different%20methods.html">
+     Solving linear equations by different methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../lin/02%20Ill-conditioning%20of%20Vandermonde%20matrix.html">
+     Ill-conditioning of Vandermonde matrix
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../lin/03%20Sparse%20linear%20equations.html">
+     Sparse linear equations
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="chapter04.html">
+   Nonlinear Equations
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="01%20Compute%20root%20of%20f%28x%29%3Dexp%28-x%29-1.html">
+     Compute root of
+     <span class="math notranslate nohighlight">
+      \(f(x)=\exp(-x)-1\)
+     </span>
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="02%20Compute%20root%20of%20Rosencrantz%20function.html">
+     Compute root of Rosencrantz function
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="03%20Compute%20fixedpoint%20of%20f%28x%29%20%3D%20sqrt%28x%29.html">
+     Compute fixedpoint of
+     <span class="math notranslate nohighlight">
+      \(f(x) = x^{0.5}\)
+     </span>
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="04%20Compute%20fixedpoint%20of%20f%28x1%2Cx2%29%3D%20%5Bx1%202%2Bx2%203%3B%20x1%20x2%20-%200.5%5D.html">
+     Compute fixedpoint of
+     <span class="math notranslate nohighlight">
+      \(f(x, y)= [x^2 + y^3; xy - 0.5]\)
+     </span>
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="05%20Cournot%20equilibrium%20model.html">
+     Cournot Equilibrium Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="06%20Illustrates%20function%20iteration%2C%20Newton%2C%20and%20secant%20methods.html">
+     Illustrates function iteration, Newton, and secant methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="07%20Linear%20complementarity%20problem%20methods.html">
+     Linear complementarity problem methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="08%20Nonlinear%20complementarity%20problem%20methods.html">
+     Nonlinear complementarity problem methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="09%20Hard%20nonlinear%20complementarity%20problem%20with%20Billup%27s%20function.html">
+     Hard nonlinear complementarity problem with Billup’s function
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="10%20Illustrates%20linear%20complementarity%20problem.html">
+     Illustrates linear complementarity problem
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="12%20Convergence%20rates%20for%20nonlinear%20equation%20methods.html">
+     Convergence rates for different NLP methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="13%20Simple%20nonlinear%20complementarity%20problem.html">
+     Simple nonlinear complementarity problem
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="14%20Spacial%20Equilibrium%20Model.html">
+     Spacial Equilibrium Model
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     Set Initial Value and Max Iterations
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../opt/chapter05.html">
+   Finite-Dimensional Optimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../opt/04%20Maximization%20of%20banana%20function%20by%20various%20methods.html">
+     Maximization of banana function by various methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../opt/05%20Optimization%20with%20qnewton.html">
+     Optimization with qnewton
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../opt/06%20KKT%20conditions%20for%20constrained%20optimization%20problems.html">
+     KKT conditions for constrained optimization problems
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../opt/08%20Constrained%20optimization%20using%20scipy.html">
+     Constrained optimization using scipy
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../qua/chapter06.html">
+   Quadrature
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../qua/01bis%20Computing%20integral%20with%20quasi-Monte%20Carlo%20methods.html">
+     Computing integral with quasi-Monte Carlo methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../qua/01%20Equidistributed%20sequences%20on%20unit%20square%20in%20R2.html">
+     Equidistributed sequences on unit square in
+     <span class="math notranslate nohighlight">
+      \(R^2\)
+     </span>
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../qua/03%20Area%20under%201-D%20and%202-D%20curves%2C%20various%20methods.html">
+     Area under 1-D and 2-D curves, various methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../qua/04%20Area%20under%20normal%20pdf%20using%20Simpson%27s%20rule.html">
+     Area under normal pdf using Simpson’s rule
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../qua/06%20Area%20under%20a%20curve.html">
+     Area under a curve
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../qua/07%20Illustrates%20integration%20using%20Trapezoidal%20rule.html">
+     Illustrates integration using Trapezoidal rule
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../qua/08%20Illustrates%20integration%20using%20Simpson%27s%20rule.html">
+     Illustrates integration using Simpson’s rule
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../qua/10%20Monte%20Carlo%20Simulation%20of%20Time%20Series.html">
+     Monte Carlo Simulation of Time Series
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../qua/20%20Computing%20integral%20with%20quasi-Monte%20Carlo%20methods.html">
+     Computing integral with quasi-Monte Carlo methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../qua/50%20Change%20in%20consumer%20surplus.html">
+     Change in Consumer Surplus
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../dif/chapter06.html">
+   Numerical Differentiation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../dif/02%20Demonstrates%20accuracy%20of%20one-%20and%20two-sided%20finite-difference%20derivatives.html">
+     Demonstrates accuracy of one- and two-sided finite-difference derivatives
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../dif/05%20Finite-Difference%20Jacobians%20and%20Hessians.html">
+     Finite-Difference Jacobians and Hessians
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../app/chapter07.html">
+   Function Approximation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
+  <label for="toctree-checkbox-8">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../app/00%20Approximation%20using%20CompEcon%20toolbox.html">
+     Approximating using the CompEcon toolbox
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../app/01%20Approximating%20function%20on%20R.html">
+     Approximating functions on
+     <span class="math notranslate nohighlight">
+      \(R\)
+     </span>
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../app/02%20Approximating%20functions%20on%20R2.html">
+     Approximating functions on
+     <span class="math notranslate nohighlight">
+      \(R^2\)
+     </span>
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../app/03%20Basis%20functions%20and%20standard%20nodes%20for%20major%20approximation%20schemes.html">
+     Basis functions and standard nodes for major approximation schemes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../app/04%20Approximating%20Runge%27s%20function.html">
+     Approximating Runge’s function
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../app/05%20Chebychev%20polynomial%20and%20spline%20approximantion%20of%20various%20functions.html">
+     Chebychev polynomial and spline approximantion of various functions
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../app/06%20Chebychev%20and%20cubic%20spline%20derivative%20approximation%20errors.html">
+     Chebychev and cubic spline derivative approximation errors
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../app/07%20Solve%20Cournot%20oligopoly%20model%20via%20collocation.html">
+     Solve Cournot oligopoly model via collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../app/08%20Compute%20function%20inverse%20via%20collocation.html">
+     Compute function inverse via collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../app/09%20Linear%20spline%20approximation.html">
+     Linear Spline Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../app/10%20Monopolist%27s%20Effective%20Supply%20Function.html">
+     Monopolist’s Effective Supply Function
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../ddp/chapter08.html">
+   Discrete Time Discrete State Dynamic Programming
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
+  <label for="toctree-checkbox-9">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../ddp/01%20Mine%20management%20model.html">
+     Mine management model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../ddp/02%20Asset%20replacement%20model.html">
+     Asset replacement model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../ddp/03%20Asset%20replacement%20model%20with%20maintenance.html">
+     Asset replacement model with maintenance
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../dp/chapter09.html">
+   Discrete Time Continuous State Dynamic Programming
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
+  <label for="toctree-checkbox-10">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../dp/01a%20Timber%20Harvesting%20--%202%20nodes.html">
+     Timber Harvesting – using 2 nodes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../dp/01b%20Timber%20Harvesting%20--%20cubic%20spline.html">
+     Timber Harvesting – using cubic splines
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../dp/01%20Timber%20Harvesting%20Model%20-%20Cubic%20Spline%20Approximation.html">
+     Timber Harvesting Model - Cubic Spline Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../dp/02%20Asset%20Replacement%20Model.html">
+     Asset Replacement Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../dp/03%20Industry%20Entry-Exit%20Model.html">
+     Industry Entry-Exit Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../dp/04%20Job%20Search%20Model.html">
+     Job Search Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../dp/05%20America%20Put%20Option%20Pricing%20Model.html">
+     American Put Option Pricing Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../dp/06%20Deterministic%20Optimal%20Economic%20Growth%20Model.html">
+     Deterministic Optimal Economic Growth Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../dp/07%20Stochastic%20Optimal%20Economic%20Growth%20Model.html">
+     Stochastic Optimal Economic Growth Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../dp/08%20Public%20Renewable%20Resource%20Model.html">
+     Public Renewable Resource Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../dp/09%20Private%20Non-Renewable%20Resource%20Model.html">
+     Private Non-Renewable Resource Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../dp/10%20Water%20Resource%20Management%20Model.html">
+     Water Resource Management Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../dp/11%20Monetary%20Policy%20Model.html">
+     Monetary Policy Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../dp/12%20Production%20Management%20Model.html">
+     Production Management Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../dp/18%20Linear-Quadratic%20Model.html">
+     Linear-Quadratic Model
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../ode/chapter12.html">
+   Ordinary Differential Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
+  <label for="toctree-checkbox-11">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../ode/01%20Stability%20of%20Linear%20Homogeneous%20ODEs.html">
+     Stability of Linear Homogeneous ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../ode/02%20Generic%20IVP%20Nonlinear%20ODE%20Example.html">
+     Generic IVP Nonlinear ODE Example
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../ode/03%20%20Initial%20Value%20Non-Homogeneous%20Linear%20ODE%20Example.html">
+     Initial Value Non-Homogeneous Linear ODE Example
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../ode/04%20Non-IVP%20Non-Homogeneous%20Linear%20ODE%20Example.html">
+     Non-IVP Non-Homogeneous Linear ODE Example
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../doc/chapter13.html">
+   Continuous Time Deterministic Optimal Control
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
+  <label for="toctree-checkbox-12">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../doc/01%20Deterministic%20Optimal%20Consumption-Investment%20Model.html">
+     Deterministic Optimal Consumption-Investment Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../doc/02%20Deterministic%20Optimal%20Economic%20Growth%20Model.html">
+     Deterministic Optimal Economic Growth Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../doc/03%20Deterministic%20Nonrenewable%20Resource%20Model.html">
+     Deterministic Nonrenewable Resource Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../doc/04%20Deterministic%20Renewable%20Resource%20Model.html">
+     Deterministic Renewable Resource Model
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../doc/05%20Deterministic%20Production%20Adjustment%20Model.html">
+     Deterministic Production Adjustment Model
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../soc/chapter14.html">
+   Continuous Time Stochastic Optimal Control
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/>
+  <label for="toctree-checkbox-13">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../soc/00%20Ito%20Processes.html">
+     Ito Processes
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            <a href="http://randall-romero.com">randall-romero.com</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/randall-romero/compecon/master?urlpath=lab/tree/notebooks/slv/15 Newton and Broyden paths.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://colab.research.google.com/github/randall-romero/compecon/blob/master/notebooks/slv/15 Newton and Broyden paths.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Colab"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../../_static/images/logo_colab.png">
+  </span>
+<span class="headerbtn__text-container">Colab</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/randall-romero/compecon/"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/randall-romero/compecon//issues/new?title=Issue%20on%20page%20%2Fnotebooks/slv/15 Newton and Broyden paths.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../../_sources/notebooks/slv/15 Newton and Broyden paths.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   Set Initial Value and Max Iterations
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#define-objective-function-and-set-up-the-nlp">
+   Define objective function and set up the NLP
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#newton-solution">
+     Newton solution
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#broyden-solution">
+     Broyden solution
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#plot-solution">
+   Plot solution
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-solution-is-very-sensitive-to-initial-guess">
+   The solution is very sensitive to initial guess
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Set Initial Value and Max Iterations</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   Set Initial Value and Max Iterations
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#define-objective-function-and-set-up-the-nlp">
+   Define objective function and set up the NLP
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#newton-solution">
+     Newton solution
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#broyden-solution">
+     Broyden solution
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#plot-solution">
+   Plot solution
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-solution-is-very-sensitive-to-initial-guess">
+   The solution is very sensitive to initial guess
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <p>Plots path taken by Newton and Broyden iterates, starting from initial
+value (1.0.,0.5), in solving bivariate rootfining problem</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{align*}
+ye^x - 2y &amp;= 0 \\
+xy - y^3=0
+\end{align*}\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">compecon</span> <span class="kn">import</span> <span class="n">NLP</span><span class="p">,</span> <span class="n">gridmake</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="set-initial-value-and-max-iterations">
+<h1>Set Initial Value and Max Iterations<a class="headerlink" href="#set-initial-value-and-max-iterations" title="Permalink to this headline">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xinit</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>
+<span class="n">niter</span> <span class="o">=</span> <span class="mi">10</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="define-objective-function-and-set-up-the-nlp">
+<h1>Define objective function and set up the NLP<a class="headerlink" href="#define-objective-function-and-set-up-the-nlp" title="Permalink to this headline">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">z</span>
+    <span class="n">fval</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="o">-</span><span class="n">y</span><span class="o">**</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">fjac</span> <span class="o">=</span> <span class="p">[[</span><span class="n">y</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">-</span> <span class="mi">3</span><span class="o">*</span><span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">]]</span>
+    <span class="k">return</span> <span class="n">fval</span><span class="p">,</span> <span class="n">fjac</span>
+
+<span class="n">problem</span> <span class="o">=</span> <span class="n">NLP</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>    
+</pre></div>
+</div>
+</div>
+</div>
+<section id="newton-solution">
+<h2>Newton solution<a class="headerlink" href="#newton-solution" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">paths</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+<span class="n">problem</span><span class="o">.</span><span class="n">newton</span><span class="p">(</span><span class="n">xinit</span><span class="p">,</span> <span class="n">all_x</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">paths</span><span class="p">[</span><span class="s1">&#39;newton&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">x_sequence</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="broyden-solution">
+<h2>Broyden solution<a class="headerlink" href="#broyden-solution" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span><span class="o">.</span><span class="n">broyden</span><span class="p">(</span><span class="n">xinit</span><span class="p">,</span> <span class="n">all_x</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">paths</span><span class="p">[</span><span class="s1">&#39;broyden&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">x_sequence</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="plot-solution">
+<h1>Plot solution<a class="headerlink" href="#plot-solution" title="Permalink to this headline">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">steps_options</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;marker&#39;</span><span class="p">:</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">.81</span><span class="p">),</span>
+                 <span class="s1">&#39;linewidth&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                 <span class="s1">&#39;markersize&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+                 <span class="s1">&#39;markerfacecolor&#39;</span><span class="p">:</span> <span class="s1">&#39;white&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;markeredgecolor&#39;</span><span class="p">:</span> <span class="s1">&#39;red&#39;</span><span class="p">}</span>
+
+<span class="n">contour_options</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;levels&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span>
+                   <span class="s1">&#39;colors&#39;</span><span class="p">:</span> <span class="s1">&#39;0.25&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;linewidths&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">}</span>
+
+<span class="n">annotate_options</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+
+
+
+<span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;newton&#39;</span><span class="p">,</span> <span class="s1">&#39;broyden&#39;</span><span class="p">]</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;maxit&#39;</span><span class="p">,</span> <span class="s1">&#39;maxsteps&#39;</span><span class="p">,</span> <span class="s1">&#39;all_x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">True</span>
+
+<span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">1.1</span>
+<span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">1.2</span>
+
+<span class="n">n</span><span class="o">=</span><span class="mi">100</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="n">Z0</span><span class="p">,</span> <span class="n">Z1</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">X</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">Y</span><span class="o">.</span><span class="n">ravel</span><span class="p">()]</span><span class="o">.</span><span class="n">T</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">Z0</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
+<span class="n">Z1</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
+
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">method</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axs</span><span class="p">,</span> <span class="n">methods</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">method</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;&#39;s method&quot;</span><span class="p">,</span>
+           <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;$x$&#39;</span><span class="p">,</span>
+           <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;$y$&#39;</span><span class="p">,</span>
+           <span class="n">xlim</span><span class="o">=</span><span class="p">[</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">],</span>
+           <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">]</span>
+           <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z0</span><span class="p">,</span> <span class="o">**</span><span class="n">contour_options</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z1</span><span class="p">,</span> <span class="o">**</span><span class="n">contour_options</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;x_0&#39;</span><span class="p">,</span> <span class="s1">&#39;x_1&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">paths</span><span class="p">[</span><span class="n">method</span><span class="p">],</span> <span class="o">**</span><span class="n">steps_options</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="s1">&#39;$ye^x - 2y = 0$&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.70</span><span class="p">,</span> <span class="mf">0.48</span><span class="p">),</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="o">**</span><span class="n">annotate_options</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="s1">&#39;$xy - y^3 = 0$&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.42</span><span class="p">,</span> <span class="mf">0.62</span><span class="p">),</span>  <span class="n">rotation</span><span class="o">=</span><span class="mi">44</span><span class="p">,</span> <span class="o">**</span><span class="n">annotate_options</span><span class="p">)</span>
+
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">yticks</span><span class="o">=</span><span class="p">[</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.6</span><span class="p">,</span><span class="mf">0.8</span><span class="p">,</span><span class="mf">1.0</span><span class="p">]);</span>
+
+    
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/15 Newton and Broyden paths_11_0.png" src="../../_images/15 Newton and Broyden paths_11_0.png" />
+</div>
+</div>
+</section>
+<section id="the-solution-is-very-sensitive-to-initial-guess">
+<h1>The solution is very sensitive to initial guess<a class="headerlink" href="#the-solution-is-very-sensitive-to-initial-guess" title="Permalink to this headline">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xinitvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">X</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">Y</span><span class="o">.</span><span class="n">ravel</span><span class="p">()]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span><span class="o">=</span><span class="mi">200</span>
+
+<span class="n">xsol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ysol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">xsol</span><span class="p">)</span>
+
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">xsol</span><span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">xsol</span><span class="o">+</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="n">xinitvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">X</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">Y</span><span class="o">.</span><span class="n">ravel</span><span class="p">()]</span>
+
+<span class="n">solutions</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">NLP</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">newton</span><span class="p">(</span><span class="n">xinit</span><span class="p">,</span> <span class="n">all_x</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">xinit</span> <span class="ow">in</span> <span class="n">xinitvals</span><span class="p">],</span>
+    <span class="n">index</span><span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_arrays</span><span class="p">(</span><span class="n">xinitvals</span><span class="o">.</span><span class="n">T</span><span class="p">),</span>
+    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">solutions</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;y0&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">solutions</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">solutions</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="mi">0</span><span class="p">),</span> <span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">solutions</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">solutions</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">ysol</span><span class="p">),</span> <span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ysol</span>
+<span class="n">solutions</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">solutions</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="o">-</span><span class="n">ysol</span><span class="p">),</span> <span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">ysol</span>
+<span class="n">solutions</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">solutions</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">xsol</span><span class="p">),</span> <span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xsol</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">cont0</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span> <span class="n">solutions</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">),</span> <span class="n">levels</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">xsol</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span><span class="n">xsol</span><span class="o">+</span><span class="mi">6</span><span class="p">,</span><span class="mi">101</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;RdYlBu&#39;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;$x_0$&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;$y_0$&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;$x$ value&quot;</span><span class="p">)</span>
+<span class="n">cax0</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cont0</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.1f</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">cax0</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([</span><span class="n">xsol</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span><span class="n">xsol</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="n">xsol</span><span class="p">,</span><span class="n">xsol</span><span class="o">+</span><span class="mi">3</span><span class="p">,</span><span class="n">xsol</span><span class="o">+</span><span class="mi">6</span><span class="p">])</span>
+<span class="n">cax0</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">a</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">cax0</span><span class="o">.</span><span class="n">get_ticks</span><span class="p">()],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
+
+
+<span class="n">cont1</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span> <span class="n">solutions</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">),</span> <span class="n">levels</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="mi">101</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;RdYlBu&#39;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;$x_0$&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;$y_0$&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;$y$ value&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="s1">&#39;$\sqrt{\ln</span><span class="si">{2}</span><span class="s1">}$&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.0</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="s1">&#39;$-\sqrt{\ln</span><span class="si">{2}</span><span class="s1">}$&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="o">-</span><span class="mf">1.0</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">cax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cont1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.1f</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">cax1</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.0</span><span class="p">])</span>
+<span class="n">cax1</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">a</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">cax1</span><span class="o">.</span><span class="n">get_ticks</span><span class="p">()],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
+
+<span class="c1">#fig.suptitle(&quot;Solution found by Newton&#39;s method, depending on initial value ($x_0, y_0$)&quot;)</span>
+<span class="c1">#fig.colorbar(axs)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/15 Newton and Broyden paths_16_0.png" src="../../_images/15 Newton and Broyden paths_16_0.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">xsol</span><span class="o">-</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">xsol</span><span class="o">+</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="n">xinitvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">X</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">Y</span><span class="o">.</span><span class="n">ravel</span><span class="p">()]</span>
+
+<span class="n">solutions</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">NLP</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">newton</span><span class="p">(</span><span class="n">xinit</span><span class="p">,</span> <span class="n">all_x</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">xinit</span> <span class="ow">in</span> <span class="n">xinitvals</span><span class="p">],</span>
+    <span class="n">index</span><span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_arrays</span><span class="p">(</span><span class="n">xinitvals</span><span class="o">.</span><span class="n">T</span><span class="p">),</span>
+    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">solutions</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;y0&#39;</span><span class="p">]</span>
+
+<span class="n">solutions</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">solutions</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="mi">0</span><span class="p">),</span> <span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">solutions</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">solutions</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">ysol</span><span class="p">),</span> <span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ysol</span>
+<span class="n">solutions</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">solutions</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="o">-</span><span class="n">ysol</span><span class="p">),</span> <span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">ysol</span>
+<span class="n">solutions</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">solutions</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">xsol</span><span class="p">),</span> <span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xsol</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+<span class="n">cont1</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span> <span class="n">solutions</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">),</span> <span class="n">levels</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="mi">101</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;RdYlBu&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;$x_0$&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;$y_0$&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;$y$ value&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="s1">&#39;$\sqrt{\ln</span><span class="si">{2}</span><span class="s1">}$&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.0</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="s1">&#39;$-\sqrt{\ln</span><span class="si">{2}</span><span class="s1">}$&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="o">-</span><span class="mf">1.0</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">cax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cont1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.1f</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">cax1</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.0</span><span class="p">])</span>
+<span class="n">cax1</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">a</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">cax1</span><span class="o">.</span><span class="n">get_ticks</span><span class="p">()],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
+
+<span class="c1">#fig.suptitle(&quot;Solution found by Newton&#39;s method, depending on initial value ($x_0, y_0$)&quot;)</span>
+<span class="c1">#fig.colorbar(axs)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/15 Newton and Broyden paths_18_0.png" src="../../_images/15 Newton and Broyden paths_18_0.png" />
+</div>
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./notebooks\slv"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="14%20Spacial%20Equilibrium%20Model.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Spacial Equilibrium Model</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="../opt/chapter05.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Finite-Dimensional Optimization</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Randall Romero Aguilar<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
