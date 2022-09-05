@@ -1,5 +1,5 @@
-import copy
 import numpy as np
+import pandas as pd
 from numpy.linalg import solve
 from scipy.sparse import issparse, identity
 from scipy.sparse.linalg import spsolve
@@ -64,11 +64,12 @@ class NLPoptions(Options_Container):
         transform:  either ['ssmooth'] or 'minmax', required for MC problems
         show:       print to screen if [True], quiet if False
         all_x:      whether to output the full solution sequence too [False]
+        squeeze:    if problem has ony one dimension, return solution as scalar [True]
     """
     description = 'Options for solving a NLP'
 
     def __init__(self, method='newton', maxit=100, maxsteps=10, tol=SQEPS,
-                 show=False, initb=None, initi=False, transform='ssmooth', all_x=False,print=None):
+                 show=False, initb=None, initi=False, transform='ssmooth', all_x=False, squeeze=True):
         self.method = method
         self.maxit = maxit
         self.maxsteps = maxsteps
@@ -78,9 +79,7 @@ class NLPoptions(Options_Container):
         self.transform = transform
         self.show = show
         self.all_x = all_x
-        if print is not None:
-            warnings.warn("'print=' keyword is deprecated, use 'show=' instead")
-            self.show=print
+        self.squeeze = squeeze
 
     def print_header(self):
         if self.show:
@@ -104,14 +103,15 @@ class NLP(Options_Container):
             x0:         initial value for x (solution guess)
     """
     def __init__(self, f, x0=None, **kwargs):
-        self.x0 = x0
+        self.x0 = np.asarray(x0)
         self.x = None # last solution found
         self._x_list = list() # last sequence of solutions
         self.opts = NLPoptions(**kwargs)
         self.it = -1  # iterations needed in last solution (without backsteps)
 
         if callable(f):
-                self.f = f  #lambda x: f(x, *args)
+                self._f = f  #lambda x: f(x, *args)
+                self.user_provides_jacobian = False
         else:
             raise ValueError('First argument to NLP must be a function')
 
@@ -126,25 +126,40 @@ class NLP(Options_Container):
 
     @property
     def x_sequence(self):
-        return np.array(self._x_list).T
+        df = pd.DataFrame(self._x_list)
+        df.index.name = 'iteration'
+        df.columns = [f'x_{n}' for n in df.columns]
+        return df
 
     @property
     def fx(self):
-        there_is_jacobian = self._is_there_jacobian()
-        fxj = self.f(self.x)
-        return fxj[0] if there_is_jacobian else fxj
+        return self.f(self.x)[0]
 
     @property
     def fnorm(self):
         return np.max(np.abs(self.fx))
 
-    def _is_there_jacobian(self):
-        A = self.f(self.x0)
-        return (type(A) is tuple) and (len(A) == 2)
+    def return_solution(self, x, it):
+        y = x.copy()
+        if self.opts.squeeze and x.size == 1:
+            y = y[0]
+
+        self.x, self.it = y, it
+        return self.x
+
+    def check_whether_there_is_a_jacobian(self, x0):
+        self.user_provides_jacobian = (type(resultado := self._f(self.x0)) is tuple) and (len(resultado) == 2)
+
+    def f(self, x):
+        fx = self._f(x)
+        if self.user_provides_jacobian:
+            return np.asarray(fx[0]).flatten(), np.asarray(fx[1])
+        else:
+            return np.asarray(fx).flatten(), None
 
     def _get_initial_value(self, x):
         if x is not None:
-            self.x0 = x
+            self.x0 = np.asarray(x)
 
         if self.x0 is None or self.x0[0] is None:
             raise ValueError('Initial value is required to zero a NLP, none provided!')
@@ -163,31 +178,32 @@ class NLP(Options_Container):
         return x
 
     def newton(self, x0=None, **kwargs):
+        # Check if Jacobian is available, switch to Broyden's method if not.
+        x = self._get_initial_value(x0)
+        self.check_whether_there_is_a_jacobian(x0)
+
+        if not self.user_provides_jacobian:
+            print("Newton's method requires Jacobian function, but none is provided.\n",
+                  "Using Broyden's method instead")
+            return self.broyden(x0, **kwargs)
+
         # Update solution options using kwargs
         self.opts[kwargs.keys()] = kwargs.values()
         self.opts.method = 'newton'
 
         # Unpack options and initial value
         maxit, maxsteps, tol, all_x = self.opts['maxit', 'maxsteps', 'tol', 'all_x']
-        x = self._get_initial_value(x0)
 
-        # Check if Jacobian is available, switch to Broyden's method if not.
-        if not self._is_there_jacobian():
-            print("Newton's method requires Jacobian function, but none is provided.\n",
-                  "Using Broyden's method instead")
-            return self.broyden(**kwargs)
 
         # Iterate to find solution
         self.opts.print_header()
         for it in range(maxit):
             fx, J = self.f(x)
-            fx = fx.flatten()
             if not issparse(J):  #with sparse matrices doesn't work nice
                 J = np.atleast_2d(J)
             fnorm = np.max(np.abs(fx))
             if fnorm < tol:
-                self.x, self.it = x, it
-                return x.copy()
+                return self.return_solution(x, it)
 
             solve_func = spsolve if issparse(J) else solve
 
@@ -204,7 +220,6 @@ class NLP(Options_Container):
 
             for backstep in range(maxsteps):
                 fxnew = self.f(self._keep_within_limits(x + dx))[0]  # only function evaluation, not Jacobian
-                fxnew = fxnew.flatten()
                 fnormnew = np.max(np.abs(fxnew))
                 if fnormnew < fnorm:
                     break
@@ -224,22 +239,22 @@ class NLP(Options_Container):
                 self.opts.print_current_iteration(it, 0, fnorm)
 
         self.opts.print_last_iteration(it, x)
-        self.x, self.it = x, it
-        return x.copy()
+        return self.return_solution(x, it)
 
     def broyden(self, x0=None, **kwargs):
+        # Check if Jacobian is available
+        x = self._get_initial_value(x0)
+        self.check_whether_there_is_a_jacobian(x)
+
         # Update solution options using kwargs
+
         self.opts[kwargs.keys()] = kwargs.values()
         self.opts.method = 'broyden'
 
         # Unpack options and initial values
         maxit, maxsteps, tol, all_x = self.opts['maxit', 'maxsteps', 'tol', 'all_x']
         maxsteps = max(1, maxsteps)
-        x = self._get_initial_value(x0)
-        user_provides_jacobian = self._is_there_jacobian()
-
-        fx = self.f(x)[0] if user_provides_jacobian else self.f(x)
-        fx = fx.flatten()
+        fx, _ = self.f(x)
 
         Jinv = self.reset_inverse_jacobian(x)
 
@@ -249,14 +264,12 @@ class NLP(Options_Container):
         self.opts.print_header()
         for it in range(maxit):
             if fnorm < tol:
-                self.x, self.it = x, it
-                return x.copy()
+                return self.return_solution(x, it)
             dx = - Jinv.dot(fx)
             fnormold = np.inf
 
             for backstep in range(maxsteps):
-                fxnew = self.f(x + dx)[0] if user_provides_jacobian else self.f(x + dx)
-                fxnew = fxnew.flatten()
+                fxnew, _ = self.f(x + dx)
                 fnormnew = np.max(np.abs(fxnew))
                 if fnormnew < fnorm:
                     break
@@ -284,18 +297,19 @@ class NLP(Options_Container):
             self.opts.print_current_iteration(it, backstep, fnormnew)
 
         self.opts.print_last_iteration(it, x)
-        self.x, self.it = x, it
-        return x.copy()
+        return self.return_solution(x, it)
 
     def funcit(self, x0=None, **kwargs):
+        self.check_whether_there_is_a_jacobian()
         f_original = self.f
-        user_provided_jacobian = self._is_there_jacobian()
-        self.f = lambda z: z - f_original(z)[0] if user_provided_jacobian else z - f_original(z)
+        self.f = lambda z: z - f_original(z)[0]
         x = self.fixpoint(x0, **kwargs)
         self.f = f_original
-        return x
+        return self.return_solution(x, self.it)
 
     def fixpoint(self, x0=None, **kwargs):
+        x = self._get_initial_value(x0)
+        self.check_whether_there_is_a_jacobian(x)
         # Update solution options using kwargs
         self.opts[kwargs.keys()] = kwargs.values()
         maxit, tol, old_method, all_x = self.opts['maxit', 'tol', 'method', 'all_x']
@@ -303,24 +317,24 @@ class NLP(Options_Container):
         self.opts.print_header()
         self.opts.method = old_method
 
-        x = self._get_initial_value(x0)
-        user_provides_jacobian = self._is_there_jacobian()
+
 
         for it in range(maxit):
             xold = x
-            x = self.f(x)[0] if user_provides_jacobian else self.f(x)
+            x, _ = self.f(x)
             if all_x:
                 self._x_list.append(x.copy())
             step = np.linalg.norm(x - xold)
             self.opts.print_current_iteration(it, 0, step)
             if step < tol:
-                self.x, self.it = x, it
-                return x.copy()
+                return self.return_solution(x, it)
 
         self.opts.print_last_iteration(it, x)
         warnings.warn('Failure to converge in fixpoint')
 
     def bisect(self, a, b, **kwargs):
+        x = self._get_initial_value(a)
+        self.check_whether_there_is_a_jacobian(x)
         # Update solution options using kwargs
         self.opts[kwargs.keys()] = kwargs.values()
         tol = self.opts.tol
@@ -328,9 +342,8 @@ class NLP(Options_Container):
         if a > b:
             a, b = b, a
 
-        faj = self.f(a)
-        user_provides_jacobian = (type(faj) is tuple)
-        f = lambda xx: self.f(xx)[0] if user_provides_jacobian else self.f(xx)
+        #faj, _ = self.f(a)
+        f = lambda xx: self.f(xx)[0]
 
         fa, fb = f(a), f(b)
 
@@ -347,21 +360,23 @@ class NLP(Options_Container):
         dx *= sb
 
         # Iteration loop
+        it=0
         while abs(dx) > tol:
             fx = f(x)
             self.opts.print_current_iteration(x, 0, abs(fx))
             dx *= 0.5
             x -= np.sign(fx) * dx
+            it +=1
 
         self.x = x
-        return x
+        return self.return_solution(x, it)
 
     def reset_inverse_jacobian(self, x):
         if self.opts.initb is None:
             if self.opts.initi:
                 fjacinv = - np.identity(x.size)
             else:
-                fjac = self.f(x)[1] if self._is_there_jacobian() else jacobian(self.f, x)
+                fjac = self.f(x)[1]
                 # fjacinv = np.linalg.pinv(jacobian(self.f[0], x))
                 fjacinv = np.linalg.pinv(np.atleast_2d(fjac))
         else:
@@ -390,7 +405,7 @@ class NLP(Options_Container):
         if x is None:
             x = self.x0
 
-        if not self._is_there_jacobian():
+        if not self.user_provides_jacobian:
             print('Jacobian was not provided by user!')
             return None
 
@@ -428,15 +443,13 @@ class NLP(Options_Container):
         return None
 
     def zero(self, x0=None, **kwargs):
-        if x0 is not None:
-            self.x0 = x0
+        x = self._get_initial_value(x0)
+        self.check_whether_there_is_a_jacobian(x)
         self.opts[kwargs.keys()] = kwargs.values()
-        if self._is_there_jacobian() and self.opts.method == 'newton':
-            return self.newton(x0, **kwargs)
+        if self.user_provides_jacobian and self.opts.method == 'newton':
+            return self.newton(x, **kwargs)
         else:
-            return self.broyden(x0, **kwargs)
-
-
+            return self.broyden(x, **kwargs)
 
 
 
