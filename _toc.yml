@@ -35,6 +35,7 @@ parts:
       - file: notebooks/slv/12 Convergence rates for nonlinear equation methods
       - file: notebooks/slv/13 Simple nonlinear complementarity problem
       - file: notebooks/slv/14 Spacial Equilibrium Model
+      - file: notebooks/slv/15 Newton and Broyden paths
     - file: notebooks/opt/chapter05
       sections:
       - file: notebooks/opt/04 Maximization of banana function by various methods
