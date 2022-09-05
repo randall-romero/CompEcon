@@ -12,7 +12,7 @@ with open('README.md', encoding='utf-8') as f:
 
 setup(
     name='compecon',
-    version='2022.05.13',
+    version='2022.09.04',
     description='A Computational Economics Toolbox',
     long_description=long_description,
     long_description_content_type='text/markdown',
