@@ -148,7 +148,8 @@ class NLP(Options_Container):
         return self.x
 
     def check_whether_there_is_a_jacobian(self, x0):
-        self.user_provides_jacobian = (type(resultado := self._f(self.x0)) is tuple) and (len(resultado) == 2)
+        resultado = self._f(self.x0)
+        self.user_provides_jacobian = (type(resultado) is tuple) and (len(resultado) == 2)
 
     def f(self, x):
         fx = self._f(x)
@@ -300,12 +301,13 @@ class NLP(Options_Container):
         return self.return_solution(x, it)
 
     def funcit(self, x0=None, **kwargs):
-        self.check_whether_there_is_a_jacobian()
+        x = self._get_initial_value(x0)
+        self.check_whether_there_is_a_jacobian(x)
         f_original = self.f
-        self.f = lambda z: z - f_original(z)[0]
+        self.f = lambda z: (z - f_original(z)[0], None)
         x = self.fixpoint(x0, **kwargs)
         self.f = f_original
-        return self.return_solution(x, self.it)
+        return x
 
     def fixpoint(self, x0=None, **kwargs):
         x = self._get_initial_value(x0)
@@ -468,7 +470,7 @@ class MCP(NLP):
         self.a, self.b = a, b
         self.hasLowerBound = np.isfinite(a)
         self.hasUpperBound = np.isfinite(b)
-        self._original = self.f
+        self._original = self._f
 
     def _ssmooth(self, x):
         x = np.atleast_1d(x)
