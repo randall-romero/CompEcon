@@ -120,7 +120,7 @@ def jacobian(func, x, *args, **kwargs):
     #     F = lambda x: func(x, *args, **kwargs)[0]
     # else:
     #     F = lambda x: func(x, *args, **kwargs)
-    F = lambda z: func(z, *args, **kwargs)
+    F = lambda z: np.asarray(func(z, *args, **kwargs))
 
     x = np.asarray(x).flatten()
     dx = x.size
@@ -152,7 +152,7 @@ def jacobian(func, x, *args, **kwargs):
 
 def hess1(func, x, *args, **kwargs):
 
-    F = lambda z: func(z, *args, **kwargs)
+    F = lambda z: np.asarray(func(z, *args, **kwargs))
     x = np.asarray(x).flatten().astype(float)
 
     k = x.size
@@ -191,7 +191,7 @@ def hess1(func, x, *args, **kwargs):
 
 def hessian(func, x, *args, **kwargs):
 
-    F = lambda z: func(z, *args, **kwargs)
+    F = lambda z: np.asarray(func(z, *args, **kwargs))
     x = np.asarray(x).flatten().astype(float)
     if x.ndim < 2:
         x = np.atleast_2d(x).T
