@@ -154,7 +154,7 @@ class BasisLinear(Basis):
         # Determine the maximum index of the breakpoints that are less than or equal to x,
         # (if x=b, use the index of the next to last breakpoint).
 
-        if self.opts.nodetype is 'canonical':
+        if self.opts.nodetype == 'canonical':
             ind = np.fix((x - a) * ((n - 1) / (b - a))).astype(int)
             np.maximum(ind, 0, ind)
             np.minimum(ind, n - 2, ind)

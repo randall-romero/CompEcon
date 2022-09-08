@@ -481,7 +481,7 @@ class MCP(NLP):
         if type(fx) is tuple:
             fx, J = fx
 
-        if self.opts.method is 'newton':  # return the Jacobian
+        if self.opts.method == 'newton':  # return the Jacobian
             I = -np.identity(x.size)
             if not issparse(J):
                 J = np.atleast_2d(J)
@@ -547,7 +547,7 @@ class MCP(NLP):
 
     def transform_problem(self):
         # Choose proper transformation
-        if self.opts.transform is 'ssmooth':
+        if self.opts.transform == 'ssmooth':
             self.f = self._ssmooth
         else:
             self.f = self._minmax

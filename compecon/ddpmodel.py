@@ -154,11 +154,11 @@ class DDPmodel(object):
                 self.value[-1] = vt
 
         algorithm = self.opts.algorithm
-        if algorithm is 'newton':
+        if algorithm == 'newton':
             self.__solve_by_Newton_method()
-        elif algorithm is 'funcit':
+        elif algorithm == 'funcit':
             self.__solve_by_function_iteration()
-        elif algorithm is 'backwards':
+        elif algorithm == 'backwards':
             self.__solve_backwards()
         else:
             raise ValueError('Unknown algorithm')
