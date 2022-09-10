@@ -378,9 +378,9 @@ class NLP(Options_Container):
             if self.opts.initi:
                 fjacinv = - np.identity(x.size)
             else:
-                fjac = self.f(x)[1]
-                # fjacinv = np.linalg.pinv(jacobian(self.f[0], x))
-                fjacinv = np.linalg.pinv(np.atleast_2d(fjac))
+                #fjac = self.f(x)[1]
+                fjacinv = np.linalg.inv(jacobian(lambda z:self.f(z)[0], x))
+                #fjacinv = np.linalg.pinv(np.atleast_2d(fjac))
         else:
             fjacinv = self.opts.initb
 
