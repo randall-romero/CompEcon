@@ -8,9 +8,8 @@
 
     <title>Stochastic Optimal Economic Growth Model &#8212; A Python Implementation of CompEcon</title>
     
-  <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <link href="../../_static/css/theme.css" rel="stylesheet">
+  <link href="../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -20,16 +19,20 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
+    
+      
+
+    
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     
-  <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  <link rel="preload" as="script" href="../../_static/js/index.be7d3bbb2ef33a8344ce.js">
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
@@ -37,14 +40,12 @@
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
-    <script src="../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="../../_static/togglebutton.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="../../_static/design-tabs.js"></script>
+    <script src="../../_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
 const thebe_selector_input = "pre"
@@ -53,6 +54,7 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="canonical" href="https://randall-romero.github.io/compecon/notebooks/dp/07 Stochastic Optimal Economic Growth Model.html" />
     <link rel="shortcut icon" href="../../_static/r2-logo-icon.png"/>
     <link rel="author" title="About these documents" href="../../about.html" />
@@ -77,21 +79,7 @@ const thebe_selector_output = ".output, .cell_output"
                     </script>
 
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
-<!-- Checkboxes to toggle the left sidebar -->
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
-<label class="overlay overlay-navbar" for="__navigation">
-    <div class="visually-hidden">Toggle navigation sidebar</div>
-</label>
-<!-- Checkboxes to toggle the in-page toc -->
-<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
-<label class="overlay overlay-pagetoc" for="__page-toc">
-    <div class="visually-hidden">Toggle in-page Table of Contents</div>
-</label>
-<!-- Headers at the top -->
-<div class="announcement header-item noprint"></div>
-<div class="header header-item noprint"></div>
-
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -100,10 +88,9 @@ const thebe_selector_output = ".output, .cell_output"
     <div class="container-xl">
       <div class="row">
           
-<!-- Sidebar -->
-<div class="bd-sidebar noprint" id="site-navigation">
-    <div class="bd-sidebar__content">
-        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
     <a class="navbar-brand text-wrap" href="../../index.html">
       
         <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
@@ -121,15 +108,14 @@ const thebe_selector_output = ".output, .cell_output"
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item active">
-        
-        <ul class="nav bd-sidenav bd-sidenav__home-link">
-            <li class="toctree-l1">
-                <a class="reference internal" href="../../about.html">
-                    A Python Implementation of CompEcon
-                </a>
-            </li>
-        </ul>
-        <p aria-level="2" class="caption" role="heading">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../about.html">
+   A Python Implementation of CompEcon
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   About this book
  </span>
@@ -609,11 +595,6 @@ const thebe_selector_output = ".output, .cell_output"
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="12%20Production%20Management%20Model.html">
-     Production Management Model
-    </a>
-   </li>
-   <li class="toctree-l2">
     <a class="reference internal" href="18%20Linear-Quadratic%20Model.html">
      Linear-Quadratic Model
     </a>
@@ -709,17 +690,12 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 
     </div>
-</nav></div>
-        <div class="bd-sidebar__bottom">
-             <!-- To handle the deprecated key -->
-            
-            <div class="navbar_extra_footer">
-            <a href="http://randall-romero.com">randall-romero.com</a>
-            </div>
-            
-        </div>
-    </div>
-    <div id="rtd-footer-container"></div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  <a href="http://randall-romero.com">randall-romero.com</a>
+</div>
+
 </div>
 
 
@@ -727,209 +703,99 @@ const thebe_selector_output = ".output, .cell_output"
 
 
           
-<!-- A tiny helper pixel to detect if we've scrolled -->
-<div class="sbt-scroll-pixel-helper"></div>
-<!-- Main content -->
-<div class="col py-0 content-container">
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
     
-    <div class="header-article row sticky-top noprint">
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
         
-
-
-
-<div class="col py-1 d-flex header-article-main">
-    <div class="header-article__left">
-        
-        <label for="__navigation"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="right"
-title="Toggle navigation"
->
-  
-
-<span class="headerbtn__icon-container">
-  <i class="fas fa-bars"></i>
-  </span>
-
-</label>
-
-        
-    </div>
-    <div class="header-article__right">
-<div class="menu-dropdown menu-dropdown-launch-buttons">
-  <button class="headerbtn menu-dropdown__trigger"
-      aria-label="Launch interactive content">
-      <i class="fas fa-rocket"></i>
-  </button>
-  <div class="menu-dropdown__content">
-    <ul>
-      <li>
-        <a href="https://mybinder.org/v2/gh/randall-romero/compecon/master?urlpath=lab/tree/notebooks/dp/07 Stochastic Optimal Economic Growth Model.ipynb"
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="left"
-title="Launch on Binder"
->
-  
-
-<span class="headerbtn__icon-container">
-  
-    <img src="../../_static/images/logo_binder.svg">
-  </span>
-<span class="headerbtn__text-container">Binder</span>
-</a>
-
-      </li>
-      
-      <li>
-        <a href="https://colab.research.google.com/github/randall-romero/compecon/blob/master/notebooks/dp/07 Stochastic Optimal Economic Growth Model.ipynb"
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="left"
-title="Launch on Colab"
->
-  
-
-<span class="headerbtn__icon-container">
-  
-    <img src="../../_static/images/logo_colab.png">
-  </span>
-<span class="headerbtn__text-container">Colab</span>
-</a>
-
-      </li>
-      
-    </ul>
-  </div>
-</div>
-
-<button onclick="toggleFullScreen()"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="bottom"
-title="Fullscreen mode"
->
-  
-
-<span class="headerbtn__icon-container">
-  <i class="fas fa-expand"></i>
-  </span>
-
-</button>
-
-<div class="menu-dropdown menu-dropdown-repository-buttons">
-  <button class="headerbtn menu-dropdown__trigger"
-      aria-label="Source repositories">
-      <i class="fab fa-github"></i>
-  </button>
-  <div class="menu-dropdown__content">
-    <ul>
-      <li>
-        <a href="https://github.com/randall-romero/compecon/"
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="left"
-title="Source repository"
->
-  
-
-<span class="headerbtn__icon-container">
-  <i class="fab fa-github"></i>
-  </span>
-<span class="headerbtn__text-container">repository</span>
-</a>
-
-      </li>
-      
-      <li>
-        <a href="https://github.com/randall-romero/compecon//issues/new?title=Issue%20on%20page%20%2Fnotebooks/dp/07 Stochastic Optimal Economic Growth Model.html&body=Your%20issue%20content%20here."
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="left"
-title="Open an issue"
->
-  
-
-<span class="headerbtn__icon-container">
-  <i class="fas fa-lightbulb"></i>
-  </span>
-<span class="headerbtn__text-container">open issue</span>
-</a>
-
-      </li>
-      
-    </ul>
-  </div>
-</div>
-
-<div class="menu-dropdown menu-dropdown-download-buttons">
-  <button class="headerbtn menu-dropdown__trigger"
-      aria-label="Download this page">
-      <i class="fas fa-download"></i>
-  </button>
-  <div class="menu-dropdown__content">
-    <ul>
-      <li>
-        <a href="../../_sources/notebooks/dp/07 Stochastic Optimal Economic Growth Model.ipynb"
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="left"
-title="Download source file"
->
-  
-
-<span class="headerbtn__icon-container">
-  <i class="fas fa-file"></i>
-  </span>
-<span class="headerbtn__text-container">.ipynb</span>
-</a>
-
-      </li>
-      
-      <li>
-        
-<button onclick="printPdf(this)"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="left"
-title="Print to PDF"
->
-  
-
-<span class="headerbtn__icon-container">
-  <i class="fas fa-file-pdf"></i>
-  </span>
-<span class="headerbtn__text-container">.pdf</span>
-</button>
-
-      </li>
-      
-    </ul>
-  </div>
-</div>
-<label for="__page-toc"
-  class="headerbtn headerbtn-page-toc"
-  
->
-  
-
-<span class="headerbtn__icon-container">
-  <i class="fas fa-list"></i>
-  </span>
-
-</label>
-
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../../_sources/notebooks/dp/07 Stochastic Optimal Economic Growth Model.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
     </div>
 </div>
 
-<!-- Table of contents -->
-<div class="col-md-3 bd-toc show noprint">
-    <div class="tocsection onthispage pt-5 pb-3">
-        <i class="fas fa-list"></i> Contents
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/randall-romero/compecon/"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/randall-romero/compecon//issues/new?title=Issue%20on%20page%20%2Fnotebooks/dp/07 Stochastic Optimal Economic Growth Model.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
     </div>
-    <nav id="bd-toc-nav" aria-label="Page">
-        <ul class="visible nav section-nav flex-column">
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/randall-romero/compecon/master?urlpath=lab/tree/notebooks/dp/07 Stochastic Optimal Economic Growth Model.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="../../_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        <a class="colab-button" href="https://colab.research.google.com/github/randall-romero/compecon/blob/master/notebooks/dp/07 Stochastic Optimal Economic Growth Model.ipynb"><button type="button" class="btn btn-secondary topbarbtn"
+                title="Launch Colab" data-toggle="tooltip" data-placement="left"><img class="colab-button-logo"
+                    src="../../_static/images/logo_colab.png"
+                    alt="Interact on Colab">Colab</button></a>
+        
+        
+    </div>
+</div>
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav" aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#about">
    About
@@ -1043,11 +909,12 @@ title="Print to PDF"
  </li>
 </ul>
 
-    </nav>
-</div>
+            </nav>
+        </div>
     </div>
-    <div class="article row">
-        <div class="col pl-md-3 pl-lg-5 content-container">
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
                 <h1>Stochastic Optimal Economic Growth Model</h1>
@@ -1177,12 +1044,11 @@ title="Print to PDF"
                     </div>
                 </div>
             </div>
-            <main id="main-content" role="main">
-                
+            
               <div>
                 
   <section class="tex2jax_ignore mathjax_ignore" id="stochastic-optimal-economic-growth-model">
-<h1>Stochastic Optimal Economic Growth Model<a class="headerlink" href="#stochastic-optimal-economic-growth-model" title="Permalink to this headline">#</a></h1>
+<h1>Stochastic Optimal Economic Growth Model<a class="headerlink" href="#stochastic-optimal-economic-growth-model" title="Permalink to this headline">¶</a></h1>
 <p><strong>Randall Romero Aguilar, PhD</strong></p>
 <p>This demo is based on the original Matlab demo accompanying the  <a href="https://mitpress.mit.edu/books/applied-computational-economics-and-finance">Computational Economics and Finance</a> 2001 textbook by Mario Miranda and Paul Fackler.</p>
 <p>Original (Matlab) CompEcon file: <strong>demdp07.m</strong></p>
@@ -1190,34 +1056,28 @@ title="Print to PDF"
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>!pip install compecon --upgrade
 </pre></div>
 </div>
-<p><i>Last updated: 2021-Oct-01</i></p>
+<p><i>Last updated: 2022-Oct-23</i></p>
 <hr><section id="about">
-<h2>About<a class="headerlink" href="#about" title="Permalink to this headline">#</a></h2>
+<h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
 <p>Welfare maximizing social planner must decide how much society should consume and invest. Unlike the deterministic model, this model allows arbitrary constant relative risk aversion, capital depreciation, and stochastic production shocks.  It lacks a known closed-form solution.</p>
-<ul>
+<ul class="simple">
 <li><p>States</p>
 <ul>
-<li><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>s       stock of wealth
-</pre></div>
-</div>
-</li>
+<li><p>s       stock of wealth</p></li>
 </ul>
 </li>
 <li><p>Actions</p>
 <ul>
-<li><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>k       capital investment
-</pre></div>
-</div>
-</li>
+<li><p>k       capital investment</p></li>
 </ul>
 </li>
 <li><p>Parameters</p>
-<ul class="simple">
-<li><p>alpha     relative risk aversion</p></li>
-<li><p>beta      capital production elasticity</p></li>
-<li><p>gammma    capital survival rate</p></li>
-<li><p>sigma     production shock volatility</p></li>
-<li><p>delta     discount factor</p></li>
+<ul>
+<li><p>ɑ     relative risk aversion</p></li>
+<li><p>β      capital production elasticity</p></li>
+<li><p>ɣ    capital survival rate</p></li>
+<li><p>σ     production shock volatility</p></li>
+<li><p>δ     discount factor</p></li>
 </ul>
 </li>
 </ul>
@@ -1225,7 +1085,7 @@ title="Print to PDF"
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">compecon</span> <span class="kn">import</span> <span class="n">BasisChebyshev</span><span class="p">,</span> <span class="n">DPmodel</span><span class="p">,</span> <span class="n">DPoptions</span><span class="p">,</span> <span class="n">qnwlogn</span><span class="p">,</span> <span class="n">demo</span>
+<span class="kn">from</span> <span class="nn">compecon</span> <span class="kn">import</span> <span class="n">BasisChebyshev</span><span class="p">,</span> <span class="n">DPmodel</span><span class="p">,</span> <span class="n">DPoptions</span><span class="p">,</span> <span class="n">qnwlogn</span>
 <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 </pre></div>
@@ -1233,7 +1093,7 @@ title="Print to PDF"
 </div>
 </div>
 <section id="model-parameters">
-<h3>Model parameters<a class="headerlink" href="#model-parameters" title="Permalink to this headline">#</a></h3>
+<h3>Model parameters<a class="headerlink" href="#model-parameters" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">α</span><span class="p">,</span> <span class="n">β</span><span class="p">,</span> <span class="n">γ</span><span class="p">,</span> <span class="n">σ</span><span class="p">,</span> <span class="n">δ</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span>
@@ -1244,7 +1104,7 @@ title="Print to PDF"
 </section>
 </section>
 <section id="analytic-results">
-<h2>Analytic results<a class="headerlink" href="#analytic-results" title="Permalink to this headline">#</a></h2>
+<h2>Analytic results<a class="headerlink" href="#analytic-results" title="Permalink to this headline">¶</a></h2>
 <p>The deterministic steady-state values for this model are</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1257,9 +1117,9 @@ title="Print to PDF"
 </div>
 </section>
 <section id="numeric-results">
-<h2>Numeric results<a class="headerlink" href="#numeric-results" title="Permalink to this headline">#</a></h2>
+<h2>Numeric results<a class="headerlink" href="#numeric-results" title="Permalink to this headline">¶</a></h2>
 <section id="state-space">
-<h3>State space<a class="headerlink" href="#state-space" title="Permalink to this headline">#</a></h3>
+<h3>State space<a class="headerlink" href="#state-space" title="Permalink to this headline">¶</a></h3>
 <p>The state variable is s=”Wealth”, which we restrict to <span class="math notranslate nohighlight">\(s\in[5, 10]\)</span>.</p>
 <p>Here, we represent it with a Chebyshev basis, with <span class="math notranslate nohighlight">\(n=10\)</span> nodes.</p>
 <div class="cell docutils container">
@@ -1272,7 +1132,7 @@ title="Print to PDF"
 </div>
 </section>
 <section id="continuous-state-shock-distribution">
-<h3>Continuous state shock distribution<a class="headerlink" href="#continuous-state-shock-distribution" title="Permalink to this headline">#</a></h3>
+<h3>Continuous state shock distribution<a class="headerlink" href="#continuous-state-shock-distribution" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">m</span> <span class="o">=</span> <span class="mi">5</span>
@@ -1283,7 +1143,7 @@ title="Print to PDF"
 </div>
 </section>
 <section id="action-space">
-<h3>Action space<a class="headerlink" href="#action-space" title="Permalink to this headline">#</a></h3>
+<h3>Action space<a class="headerlink" href="#action-space" title="Permalink to this headline">¶</a></h3>
 <p>The choice variable k=”Investment” must be nonnegative.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1295,7 +1155,7 @@ title="Print to PDF"
 </div>
 </section>
 <section id="reward-function">
-<h3>Reward function<a class="headerlink" href="#reward-function" title="Permalink to this headline">#</a></h3>
+<h3>Reward function<a class="headerlink" href="#reward-function" title="Permalink to this headline">¶</a></h3>
 <p>The reward function is the utility of consumption=<span class="math notranslate nohighlight">\(s-k\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1311,7 +1171,7 @@ title="Print to PDF"
 </div>
 </section>
 <section id="state-transition-function">
-<h3>State transition function<a class="headerlink" href="#state-transition-function" title="Permalink to this headline">#</a></h3>
+<h3>State transition function<a class="headerlink" href="#state-transition-function" title="Permalink to this headline">¶</a></h3>
 <p>Next period, wealth will be equal to production from available initial capital <span class="math notranslate nohighlight">\(k\)</span>, that is <span class="math notranslate nohighlight">\(s' = k^\beta\)</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1326,7 +1186,7 @@ title="Print to PDF"
 </div>
 </section>
 <section id="model-structure">
-<h3>Model structure<a class="headerlink" href="#model-structure" title="Permalink to this headline">#</a></h3>
+<h3>Model structure<a class="headerlink" href="#model-structure" title="Permalink to this headline">¶</a></h3>
 <p>The value of wealth <span class="math notranslate nohighlight">\(s\)</span> satisfies the Bellman equation</p>
 <div class="amsmath math notranslate nohighlight">
 \[\begin{equation*}
@@ -1344,7 +1204,7 @@ V(s) = \max_k\left\{\log(s-k) + \delta V(k^\beta)  \right\}
 </div>
 </section>
 <section id="solving-the-model">
-<h3>Solving the model<a class="headerlink" href="#solving-the-model" title="Permalink to this headline">#</a></h3>
+<h3>Solving the model<a class="headerlink" href="#solving-the-model" title="Permalink to this headline">¶</a></h3>
 <p>Solving the growth model by collocation.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1356,13 +1216,15 @@ V(s) = \max_k\left\{\log(s-k) + \delta V(k^\beta)  \right\}
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Solving infinite-horizon model collocation equation by Newton&#39;s method
 iter change       time    
 ------------------------------
-   0       8.2e+00    0.0060
-   1       9.6e+00    0.0748
-   2       2.2e+00    0.1137
-   3       3.8e-02    0.1486
-   4       7.0e-06    0.1736
-   5       7.1e-15    0.1785
-Elapsed Time =    0.18 Seconds
+   0       8.2e+00    0.0000
+   1       9.6e+00    0.0781
+   2       2.2e+00    0.1250
+   3       3.8e-02    0.1718
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   4       7.0e-06    0.2030
+   5       7.1e-15    0.2191
+Elapsed Time =    0.22 Seconds
 </pre></div>
 </div>
 </div>
@@ -1466,7 +1328,7 @@ Elapsed Time =    0.18 Seconds
 </div>
 </section>
 <section id="solving-the-model-by-linear-quadratic-approximation">
-<h3>Solving the model by Linear-Quadratic Approximation<a class="headerlink" href="#solving-the-model-by-linear-quadratic-approximation" title="Permalink to this headline">#</a></h3>
+<h3>Solving the model by Linear-Quadratic Approximation<a class="headerlink" href="#solving-the-model-by-linear-quadratic-approximation" title="Permalink to this headline">¶</a></h3>
 <p>The DPmodel.lqapprox solves the linear-quadratic approximation, in this case arround the steady-state. It returns a LQmodel which works similar to the DPmodel object.
 We also compute the shadow price and the approximation error to compare these results to the collocation results.</p>
 <div class="cell docutils container">
@@ -1575,73 +1437,71 @@ We also compute the shadow price and the approximation error to compare these re
 </section>
 </section>
 <section id="plotting-the-results">
-<h2>Plotting the results<a class="headerlink" href="#plotting-the-results" title="Permalink to this headline">#</a></h2>
+<h2>Plotting the results<a class="headerlink" href="#plotting-the-results" title="Permalink to this headline">¶</a></h2>
 <section id="optimal-policy">
-<h3>Optimal Policy<a class="headerlink" href="#optimal-policy" title="Permalink to this headline">#</a></h3>
+<h3>Optimal Policy<a class="headerlink" href="#optimal-policy" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig1</span> <span class="o">=</span> <span class="n">demo</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="s1">&#39;Optimal Investment Policy&#39;</span><span class="p">,</span> <span class="s1">&#39;Wealth&#39;</span><span class="p">,</span> <span class="s1">&#39;Investment&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">S</span><span class="o">.</span><span class="n">Investment</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Chebychev Collocation&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">Investment</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;L-Q Approximation&#39;</span><span class="p">)</span>
-<span class="n">demo</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">sstar</span><span class="p">,</span> <span class="n">kstar</span><span class="p">,</span><span class="s1">&#39;$s^*$ = </span><span class="si">%.2f</span><span class="se">\n</span><span class="s1">$V^*$ = </span><span class="si">%.2f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sstar</span><span class="p">,</span> <span class="n">kstar</span><span class="p">),</span><span class="s1">&#39;bo&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">17</span><span class="p">),</span><span class="n">ms</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span> <span class="s1">&#39;upper left&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig1</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span> 
+<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Optimal Investment Policy&#39;</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;Wealth&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Investment&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">S</span><span class="o">.</span><span class="n">Investment</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Chebychev Collocation&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">Investment</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;L-Q Approximation&#39;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sstar</span><span class="p">,</span> <span class="n">kstar</span><span class="p">,</span><span class="s1">&#39;wo&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;$s^*$ = </span><span class="si">{</span><span class="n">sstar</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="se">\n</span><span class="s2">$k^*$ = </span><span class="si">{</span><span class="n">kstar</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,[</span><span class="n">sstar</span><span class="p">,</span> <span class="n">kstar</span><span class="p">],</span><span class="n">va</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span> <span class="s1">&#39;upper left&#39;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x21cc550d550&gt;
-</pre></div>
-</div>
-<img alt="../../_images/07 Stochastic Optimal Economic Growth Model_29_1.png" src="../../_images/07 Stochastic Optimal Economic Growth Model_29_1.png" />
+<img alt="../../_images/07 Stochastic Optimal Economic Growth Model_29_0.png" src="../../_images/07 Stochastic Optimal Economic Growth Model_29_0.png" />
 </div>
 </div>
 </section>
 <section id="value-function">
-<h3>Value Function<a class="headerlink" href="#value-function" title="Permalink to this headline">#</a></h3>
+<h3>Value Function<a class="headerlink" href="#value-function" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig2</span> <span class="o">=</span> <span class="n">demo</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="s1">&#39;Value Function&#39;</span><span class="p">,</span> <span class="s1">&#39;Wealth&#39;</span><span class="p">,</span> <span class="s1">&#39;Value&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">S</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Chebychev Collocation&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;L-Q Approximation&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span> <span class="s1">&#39;upper left&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig2</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span> 
+<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Value Function&#39;</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;Wealth&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Value&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">S</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Chebychev Collocation&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;L-Q Approximation&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span> <span class="s1">&#39;upper left&#39;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x21cc5a66520&gt;
-</pre></div>
-</div>
-<img alt="../../_images/07 Stochastic Optimal Economic Growth Model_31_1.png" src="../../_images/07 Stochastic Optimal Economic Growth Model_31_1.png" />
+<img alt="../../_images/07 Stochastic Optimal Economic Growth Model_31_0.png" src="../../_images/07 Stochastic Optimal Economic Growth Model_31_0.png" />
 </div>
 </div>
 </section>
 <section id="shadow-price-function">
-<h3>Shadow Price Function<a class="headerlink" href="#shadow-price-function" title="Permalink to this headline">#</a></h3>
+<h3>Shadow Price Function<a class="headerlink" href="#shadow-price-function" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig3</span> <span class="o">=</span> <span class="n">demo</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="s1">&#39;Shadow Price Function&#39;</span><span class="p">,</span> <span class="s1">&#39;Wealth&#39;</span><span class="p">,</span> <span class="s1">&#39;Shadow Price&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">S</span><span class="p">[</span><span class="s1">&#39;shadow price&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Chebychev Collocation&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="s1">&#39;shadow price&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;L-Q Approximation&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span> <span class="s1">&#39;upper right&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig3</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span> 
+<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Shadow Price Function&#39;</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;Wealth&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Shadow Price&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">S</span><span class="p">[</span><span class="s1">&#39;shadow price&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Chebychev Collocation&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="s1">&#39;shadow price&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;L-Q Approximation&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span> <span class="s1">&#39;upper right&#39;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x21cc595c6d0&gt;
-</pre></div>
-</div>
-<img alt="../../_images/07 Stochastic Optimal Economic Growth Model_33_1.png" src="../../_images/07 Stochastic Optimal Economic Growth Model_33_1.png" />
+<img alt="../../_images/07 Stochastic Optimal Economic Growth Model_33_0.png" src="../../_images/07 Stochastic Optimal Economic Growth Model_33_0.png" />
 </div>
 </div>
 </section>
 <section id="chebychev-collocation-residual">
-<h3>Chebychev Collocation Residual<a class="headerlink" href="#chebychev-collocation-residual" title="Permalink to this headline">#</a></h3>
+<h3>Chebychev Collocation Residual<a class="headerlink" href="#chebychev-collocation-residual" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig4</span> <span class="o">=</span> <span class="n">demo</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="s1">&#39;Bellman Equation Residual&#39;</span><span class="p">,</span> <span class="s1">&#39;Wealth&#39;</span><span class="p">,</span> <span class="s1">&#39;Residual&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">hlines</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">smin</span><span class="p">,</span><span class="n">smax</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">linestyles</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">S</span><span class="p">[[</span><span class="s1">&#39;resid&#39;</span><span class="p">]])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig4</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span> 
+<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Bellman Equation Residual&#39;</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;Wealth&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Residual&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">S</span><span class="p">[[</span><span class="s1">&#39;resid&#39;</span><span class="p">]])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">basis</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">basis</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C1&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -1651,30 +1511,28 @@ We also compute the shadow price and the approximation error to compare these re
 </div>
 </section>
 <section id="wealth-dynamics">
-<h3>Wealth dynamics<a class="headerlink" href="#wealth-dynamics" title="Permalink to this headline">#</a></h3>
+<h3>Wealth dynamics<a class="headerlink" href="#wealth-dynamics" title="Permalink to this headline">¶</a></h3>
 <p>Notice how the steady-state is stable in the Chebyshev collocation solution, but unstable in the linear-quadratic approximation. In particular, simulated paths of wealth in the L-Q approximation will converge to zero, unless the initial states is within a small neighborhood of the steady-state.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig5</span> <span class="o">=</span> <span class="n">demo</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="s1">&#39;Wealth dynamics&#39;</span><span class="p">,</span> <span class="s1">&#39;Wealth&#39;</span><span class="p">,</span> <span class="s1">&#39;Wealth change&#39;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">S</span><span class="p">[</span><span class="s1">&#39;D.Wealth&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Chebychev Collocation&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="s1">&#39;D.Wealth&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;L-Q Approximation&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">hlines</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">smin</span><span class="p">,</span><span class="n">smax</span><span class="p">,</span><span class="n">linestyles</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
-
-<span class="n">demo</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">sstar</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;$s^* = </span><span class="si">{</span><span class="n">sstar</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">$</span><span class="se">\n</span><span class="s1">$\Delta s^* = </span><span class="si">{</span><span class="mi">0</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="s1">&#39;bo&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span><span class="n">ms</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">fs</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span> <span class="s1">&#39;lower left&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig5</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span> 
+<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Wealth dynamics&#39;</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;Wealth&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Wealth change&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">S</span><span class="p">[</span><span class="s1">&#39;D.Wealth&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Chebychev Collocation&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="s1">&#39;D.Wealth&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;L-Q Approximation&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sstar</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;wo&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;$s^*$   = </span><span class="si">{</span><span class="n">sstar</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="se">\n</span><span class="s2">$\Delta s^*$ = 0.00&quot;</span><span class="p">,[</span><span class="n">sstar</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span> <span class="s1">&#39;lower left&#39;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x21cc5a8e880&gt;
-</pre></div>
-</div>
-<img alt="../../_images/07 Stochastic Optimal Economic Growth Model_37_1.png" src="../../_images/07 Stochastic Optimal Economic Growth Model_37_1.png" />
+<img alt="../../_images/07 Stochastic Optimal Economic Growth Model_37_0.png" src="../../_images/07 Stochastic Optimal Economic Growth Model_37_0.png" />
 </div>
 </div>
 </section>
 <section id="simulating-the-model">
-<h3>Simulating the model<a class="headerlink" href="#simulating-the-model" title="Permalink to this headline">#</a></h3>
+<h3>Simulating the model<a class="headerlink" href="#simulating-the-model" title="Permalink to this headline">¶</a></h3>
 <p>We simulate 21 periods of the model starting from <span class="math notranslate nohighlight">\(s=s_{\min}\)</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1687,47 +1545,178 @@ We also compute the shadow price and the approximation error to compare these re
 </div>
 </section>
 <section id="simulated-state-and-policy-paths">
-<h3>Simulated State and Policy Paths<a class="headerlink" href="#simulated-state-and-policy-paths" title="Permalink to this headline">#</a></h3>
+<h3>Simulated State and Policy Paths<a class="headerlink" href="#simulated-state-and-policy-paths" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subdata</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;_rep&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">))]</span>
-<span class="n">opts</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="s1">&#39;r*&#39;</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">15</span><span class="p">),</span> <span class="n">fs</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subdata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;_rep &lt; 100&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig6</span> <span class="o">=</span> <span class="n">demo</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="s1">&#39;Simulated and Expected Wealth&#39;</span><span class="p">,</span><span class="s1">&#39;Period&#39;</span><span class="p">,</span> <span class="s1">&#39;Wealth&#39;</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;Wealth&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">subdata</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;_rep&#39;</span><span class="p">,</span><span class="s1">&#39;Wealth&#39;</span><span class="p">),</span><span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">demo</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">sstar</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;steady-state wealth</span><span class="se">\n</span><span class="s1"> = </span><span class="si">{</span><span class="n">sstar</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="../../_images/07 Stochastic Optimal Economic Growth Model_42_0.png" src="../../_images/07 Stochastic Optimal Economic Growth Model_42_0.png" />
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig7</span> <span class="o">=</span> <span class="n">demo</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="s1">&#39;Simulated and Expected Investment&#39;</span><span class="p">,</span><span class="s1">&#39;Period&#39;</span><span class="p">,</span> <span class="s1">&#39;Investment&#39;</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;Investment&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">subdata</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;_rep&#39;</span><span class="p">,</span><span class="s1">&#39;Investment&#39;</span><span class="p">),</span><span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">demo</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">kstar</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;steady-state investment</span><span class="se">\n</span><span class="s1"> = </span><span class="si">{</span><span class="n">kstar</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig6</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span> 
+<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Simulated and Expected Wealth&#39;</span><span class="p">,</span> 
+       <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;Period&#39;</span><span class="p">,</span> 
+       <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Wealth&#39;</span><span class="p">,</span> 
+       <span class="n">xlim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">])</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;Wealth&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">subdata</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;_rep&#39;</span><span class="p">,</span><span class="s1">&#39;Wealth&#39;</span><span class="p">),</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C0&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;steady-state wealth</span><span class="se">\n</span><span class="s1"> = </span><span class="si">{</span><span class="n">sstar</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="n">sstar</span><span class="o">-</span><span class="mf">0.03</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C0&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/07 Stochastic Optimal Economic Growth Model_43_0.png" src="../../_images/07 Stochastic Optimal Economic Growth Model_43_0.png" />
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(21, 7.386897506925211, &#39;steady-state wealth\n = 7.42&#39;)
+</pre></div>
+</div>
+<img alt="../../_images/07 Stochastic Optimal Economic Growth Model_42_1.png" src="../../_images/07 Stochastic Optimal Economic Growth Model_42_1.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig7</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span> 
+<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Simulated and Expected Investment&#39;</span><span class="p">,</span>
+       <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;Period&#39;</span><span class="p">,</span> 
+       <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Investment&#39;</span><span class="p">,</span>
+       <span class="n">xlim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">],</span> 
+       <span class="n">xticks</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">T</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;Investment&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C1&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">subdata</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;_rep&#39;</span><span class="p">,</span><span class="s1">&#39;Investment&#39;</span><span class="p">),</span><span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C1&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;steady-state investment</span><span class="se">\n</span><span class="s1"> = </span><span class="si">{</span><span class="n">sstar</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="n">kstar</span><span class="o">-</span><span class="mf">0.03</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C1&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(21, 5.579418282548479, &#39;steady-state investment\n = 7.42&#39;)
+</pre></div>
+</div>
+<img alt="../../_images/07 Stochastic Optimal Economic Growth Model_43_1.png" src="../../_images/07 Stochastic Optimal Economic Growth Model_43_1.png" />
 </div>
 </div>
 </section>
 <section id="ergodic-wealth-distribution">
-<h3>Ergodic Wealth Distribution<a class="headerlink" href="#ergodic-wealth-distribution" title="Permalink to this headline">#</a></h3>
+<h3>Ergodic Wealth Distribution<a class="headerlink" href="#ergodic-wealth-distribution" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subdata</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">T</span><span class="p">][[</span><span class="s1">&#39;Wealth&#39;</span><span class="p">,</span><span class="s1">&#39;Investment&#39;</span><span class="p">]]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;time == @T&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>time</th>
+      <th>_rep</th>
+      <th>Wealth</th>
+      <th>Investment</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1050000</th>
+      <td>21</td>
+      <td>0</td>
+      <td>7.316155</td>
+      <td>5.544752</td>
+    </tr>
+    <tr>
+      <th>1050001</th>
+      <td>21</td>
+      <td>1</td>
+      <td>7.340926</td>
+      <td>5.560817</td>
+    </tr>
+    <tr>
+      <th>1050002</th>
+      <td>21</td>
+      <td>2</td>
+      <td>7.582651</td>
+      <td>5.717136</td>
+    </tr>
+    <tr>
+      <th>1050003</th>
+      <td>21</td>
+      <td>3</td>
+      <td>7.236199</td>
+      <td>5.492836</td>
+    </tr>
+    <tr>
+      <th>1050004</th>
+      <td>21</td>
+      <td>4</td>
+      <td>7.489982</td>
+      <td>5.657305</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1099995</th>
+      <td>21</td>
+      <td>49995</td>
+      <td>7.827284</td>
+      <td>5.874527</td>
+    </tr>
+    <tr>
+      <th>1099996</th>
+      <td>21</td>
+      <td>49996</td>
+      <td>7.302025</td>
+      <td>5.535583</td>
+    </tr>
+    <tr>
+      <th>1099997</th>
+      <td>21</td>
+      <td>49997</td>
+      <td>7.833176</td>
+      <td>5.878308</td>
+    </tr>
+    <tr>
+      <th>1099998</th>
+      <td>21</td>
+      <td>49998</td>
+      <td>7.309855</td>
+      <td>5.540664</td>
+    </tr>
+    <tr>
+      <th>1099999</th>
+      <td>21</td>
+      <td>49999</td>
+      <td>7.911989</td>
+      <td>5.928839</td>
+    </tr>
+  </tbody>
+</table>
+<p>50000 rows × 4 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subdata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;time == @T&quot;</span><span class="p">)[[</span><span class="s1">&#39;Wealth&#39;</span><span class="p">,</span><span class="s1">&#39;Investment&#39;</span><span class="p">]]</span>
 <span class="n">stats</span> <span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;Deterministic Steady-State&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">sstar</span><span class="p">,</span> <span class="n">kstar</span><span class="p">],</span>
               <span class="s1">&#39;Ergodic Means&#39;</span><span class="p">:</span> <span class="n">subdata</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
               <span class="s1">&#39;Ergodic Standard Deviations&#39;</span><span class="p">:</span> <span class="n">subdata</span><span class="o">.</span><span class="n">std</span><span class="p">()})</span><span class="o">.</span><span class="n">T</span>
@@ -1766,13 +1755,13 @@ We also compute the shadow price and the approximation error to compare these re
     </tr>
     <tr>
       <th>Ergodic Means</th>
-      <td>7.413662</td>
-      <td>5.607115</td>
+      <td>7.410732</td>
+      <td>5.605236</td>
     </tr>
     <tr>
       <th>Ergodic Standard Deviations</th>
-      <td>0.343442</td>
-      <td>0.222214</td>
+      <td>0.339563</td>
+      <td>0.219709</td>
     </tr>
   </tbody>
 </table>
@@ -1780,24 +1769,21 @@ We also compute the shadow price and the approximation error to compare these re
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig8</span> <span class="o">=</span> <span class="n">demo</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="s1">&#39;Ergodic Wealth and Investment Distribution&#39;</span><span class="p">,</span><span class="s1">&#39;Wealth&#39;</span><span class="p">,</span><span class="s1">&#39;Probability&#39;</span><span class="p">,[</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">9.5</span><span class="p">])</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">subdata</span><span class="p">[</span><span class="s1">&#39;Wealth&#39;</span><span class="p">])</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">subdata</span><span class="p">[</span><span class="s1">&#39;Investment&#39;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig8</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Ergodic Wealth and Investment Distribution&#39;</span><span class="p">,</span>
+       <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;Wealth&#39;</span><span class="p">,</span>
+       <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Probability&#39;</span><span class="p">,</span>
+       <span class="n">xlim</span><span class="o">=</span><span class="p">[</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">9.5</span><span class="p">])</span>
+
+<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">subdata</span><span class="p">[</span><span class="s1">&#39;Wealth&#39;</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Wealth&#39;</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">subdata</span><span class="p">[</span><span class="s1">&#39;Investment&#39;</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Investment&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">();</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:title={&#39;center&#39;:&#39;Ergodic Wealth and Investment Distribution&#39;}, xlabel=&#39;Wealth&#39;, ylabel=&#39;Probability&#39;&gt;
-</pre></div>
-</div>
-<img alt="../../_images/07 Stochastic Optimal Economic Growth Model_46_1.png" src="../../_images/07 Stochastic Optimal Economic Growth Model_46_1.png" />
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#demo.savefig([fig1,fig2,fig3,fig4,fig5,fig6,fig7,fig8])</span>
-</pre></div>
-</div>
+<img alt="../../_images/07 Stochastic Optimal Economic Growth Model_47_0.png" src="../../_images/07 Stochastic Optimal Economic Growth Model_47_0.png" />
 </div>
 </div>
 </section>
@@ -1826,11 +1812,9 @@ We also compute the shadow price and the approximation error to compare these re
 
               </div>
               
-            </main>
-            <footer class="footer-article noprint">
-                
-    <!-- Previous / next buttons -->
-<div class='prev-next-area'>
+            
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
     <a class='left-prev' id="prev-link" href="06%20Deterministic%20Optimal%20Economic%20Growth%20Model.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
@@ -1846,28 +1830,24 @@ We also compute the shadow price and the approximation error to compare these re
     <i class="fas fa-angle-right"></i>
     </a>
 </div>
-            </footer>
+            
         </div>
     </div>
-    <div class="footer-content row">
-        <footer class="col footer"><p>
-  
-    By Randall Romero Aguilar<br/>
-  
-      &copy; Copyright 2022.<br/>
-</p>
-        </footer>
-    </div>
+    <footer class="footer">
+  <p>
     
-</div>
+      By Randall Romero Aguilar<br/>
+    
+        &copy; Copyright 2022.<br/>
+  </p>
+</footer>
+</main>
 
 
       </div>
     </div>
   
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-
+  <script src="../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
 
   </body>
 </html>
