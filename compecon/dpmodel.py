@@ -10,7 +10,7 @@ import pandas as pd
 from scipy.sparse import block_diag, kron, issparse, identity
 from scipy.sparse.linalg import spsolve
 from compecon.tools import jacobian, hessian, gridmake, indices
-from inspect import getargspec
+
 #from .lcpstep import lcpstep  # todo: is it worth to add lcpstep?
 import warnings
 
