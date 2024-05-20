@@ -703,7 +703,7 @@ class Basis(object):
 
         def clean(A):
             A = np.squeeze(A) if dropdim else A
-            return np.asscalar(A) if (A.size == 1 and dropdim) else A
+            return A.item() if (A.size == 1 and dropdim) else A
 
 
         if order in ['none', 'provided', 'jac']:
