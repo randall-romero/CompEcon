@@ -27,7 +27,7 @@ class OPoptions(Options_Container):
     description = 'Options for solving a Unconstraint Optimization Problem'
 
     def __init__(self, SearchMeth='bfgs', StepMeth='bt', maxit=250, maxsteps=50, tol=SQEPS,
-                 show=False, eps0=1.0, eps1=1.e-12,all_x=False, print=None):
+                 show=False, eps0=1.0, eps1=1.e-12,all_x=False):
         self.SearchMeth = SearchMeth
         self.StepMeth = StepMeth
         self.maxit = maxit
@@ -37,9 +37,6 @@ class OPoptions(Options_Container):
         self.eps1 = eps1
         self.show = show
         self.all_x = all_x
-        if print is not None:
-            warnings.warn("Keyword 'print=' is deprecated. Use 'show=' instead")
-            self.show = print
 
     def print_header(self):
         if self.show:

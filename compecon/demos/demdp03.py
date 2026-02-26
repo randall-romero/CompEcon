@@ -147,7 +147,7 @@ model = DPmodel(basis,
 # In[8]:
 
 
-S = model.solve(print=True)
+S = model.solve(show=True)
 S.head()
 
 

@@ -77,11 +77,11 @@ ktrue = delta * beta * snodes
 order = np.atleast_2d([0, 1])
 
 # ===========  Solve Bellman Equation
-options = dict(print=True,
+options = dict(show=True,
                algorithm='newton',
                maxit=253)
 
-S = growth_model.solve(vtrue, ktrue, print=True, algorithm='newton', maxit=120)
+S = growth_model.solve(vtrue, ktrue, show=True, algorithm='newton', maxit=120)
 v, pr = growth_model.Value(S.Wealth, order)
 k = growth_model.Policy(S.Wealth)
 # resid = growth_model.residuals(s)

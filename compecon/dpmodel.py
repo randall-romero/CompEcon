@@ -138,13 +138,13 @@ class DPoptions(Options_Container):
         D_reward_provided     true if Jacobian and Hessian of reward are provided
         D_transition_provided true if Jacobian and Hessian of transition are provided
         knownFunctions        ni.nj boolean array, true if discrete policy and value functions are known
-        print                whether to print output
+        show                  whether to print output
     """
     description = "Solver options for a DPmodel"
 
     def __init__(self, algorithm='newton', tol=np.sqrt(np.spacing(1)), ncpmethod='minmax',
                  maxit=80, maxitncp=50, discretized=False, X=None,
-                 knownFunctions=None, show=True, print=None):
+                 knownFunctions=None, show=True):
         self.algorithm = algorithm
         self.tol = tol
         self.ncpmethod = ncpmethod
@@ -154,8 +154,6 @@ class DPoptions(Options_Container):
         self.discretized = discretized
         self.X = X
         self.knownFunctions = knownFunctions
-        if print is not None:
-            warnings.warn("Keyword 'print=' is deprecated. Use 'show=' instead.")
 
 
     def print_header(self, method, horizon):
