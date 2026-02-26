@@ -46,7 +46,7 @@ P.shape = 2, n, n
 
 
 # Model Structure
-model = DDPmodel(f, P, delta).solve(print=True)
+model = DDPmodel(f, P, delta).solve(show=True)
 
 
 ## Analysis

@@ -4,6 +4,21 @@ The CompEcon package provides tools for computational economics. It's code is ba
 much of the functionality is implemented by OOP when possible.
 """
 
+__external_dependencies__ = {
+    # Core scientific stack
+    "numpy": "2.4.2",
+    "scipy": "1.17.1",
+    "pandas": "3.0.1",
+    "numba": "0.63.1",
+    # Visualization / interactive helpers (used by demos and some modules)
+    "matplotlib": "3.10.8",
+    "seaborn": "0.13.2",
+    "sympy": "1.14.0",
+    "IPython": "9.10.0",
+}
+
+# Version source: newest versions shown on Anaconda.org (anaconda/conda-forge) as of 2026-02-26.
+
 from .basis import Basis, SmolyakGrid, BasisOptions
 from .basisChebyshev import BasisChebyshev
 from .basisSpline import BasisSpline
