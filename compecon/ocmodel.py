@@ -173,8 +173,8 @@ class OCmodel(object):
         assert ds == ds2, 'initial continous state must have {} rows'.format(ds)
 
         # ***** *2: Simulate the model ***************************************************
-        problem = ODE(lambda s: self.__g(s, self.Policy(s)), T, sinit)
-        problem.rk4(N, self.Value.opts._labels)
+        problem = ODE(lambda s: self.__g(s, self.Policy(s)), T, sinit, labels= self.Value.opts._labels)
+        problem.rk4(N)
 
         DATA = problem.x
         DATA['control'] = self.Policy(DATA.values)
