@@ -23,3 +23,9 @@ Some other differences are:
 The toolbox also replicates some of the demos and examples from [Miranda and Fackler's textbook](https://mitpress.mit.edu/books/applied-computational-economics-and-finance). The examples can be found in the .\textbook directory, while the demos are in the directories .\demos (for .py files) and .\notebooks (for Jupyter notebooks).
 
 At this time the documentation is incomplete, so the best way to get going with this toolbox is by exploring the notebooks. 
+
+
+## Notice
+In March 2026 I moved all demo files (py scripts, jupyter notebooks) to a new repo, CompEcon--Demos. 
+
+The Compecon repo will be intended for the core scripts that implement the numerical work.
