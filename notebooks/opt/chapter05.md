@@ -1,1 +1,0 @@
-# Finite-Dimensional Optimization
